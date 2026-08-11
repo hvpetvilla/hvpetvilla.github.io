@@ -331,11 +331,32 @@
     if (petType === 'Other' && !document.getElementById('otherPet').value.trim())
       return showToast('⚠️ Please specify your pet type.');
 
-    // ── REPLACE with Formspree: change action URL below ──
-    // For now: show success state
+    const formData = new FormData();
+formData.append('name', name);
+formData.append('phone', phone);
+formData.append('address', document.getElementById('address').value.trim());
+formData.append('email', document.getElementById('email').value.trim());
+formData.append('pet_type', petType === 'Other' ? document.getElementById('otherPet').value.trim() : petType);
+formData.append('checkin_date', date);
+
+const imgFile = document.getElementById('petImg').files[0];
+if (imgFile) formData.append('pet_photo', imgFile);
+
+fetch('https://formspree.io/f/https://formspree.io/f/xljrbgzv', {   // ← paste your Formspree URL here
+  method: 'POST',
+  body: formData,
+  headers: { 'Accept': 'application/json' }
+})
+.then(res => {
+  if (res.ok) {
     document.getElementById('bookingForm').style.display = 'none';
     document.getElementById('successBox').style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showToast('❌ Submission failed. Please try WhatsApp instead.');
+  }
+})
+.catch(() => showToast('❌ Network error. Please try again.'));
   }
 </script>
 </body>
