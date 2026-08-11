@@ -333,32 +333,41 @@
 
     const finalPetType = petType === 'Other' ? document.getElementById('otherPet').value.trim() : petType;
 
-const params = new URLSearchParams({
-  'entry.415616079': name,
-  'entry.436373125': phone,
-  'entry.707571485': address,
-  'entry.2130813623': document.getElementById('email').value.trim(),
-  'entry.1331226292': finalPetType,
-  'entry.1457550029': date
-});
+    const FORM_ID = '1FAIpQLSfu1zF3eB_lS--vojwdRzk67JA8s9TUagCzOTVCfngtmTsGYQ';
 
-const FORM_ID = '1FAIpQLSfu1zF3eB_lS--vojwdRzk67JA8s9TUagCzOTVCfngtmTsGYQ';
-const url = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
 
-fetch(url, {
-  method: 'POST',
-  mode: 'no-cors',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body: params.toString()
-}).then(() => {
-  document.getElementById('bookingForm').style.display = 'none';
-  document.getElementById('successBox').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}).catch(() => {
-  document.getElementById('bookingForm').style.display = 'none';
-  document.getElementById('successBox').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+    form.target = 'hidden_iframe';
+
+    const fields = {
+      'entry.415616079': name,
+      'entry.436373125': phone,
+      'entry.707571485': address,
+      'entry.2130813623': document.getElementById('email').value.trim(),
+      'entry.1331226292': finalPetType,
+      'entry.1457550029': date
+    };
+
+    Object.entries(fields).forEach(([key, val]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = val;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    document.getElementById('bookingForm').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
 </body>
