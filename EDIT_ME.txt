@@ -1,0 +1,55 @@
+╔══════════════════════════════════════════════════════════╗
+║         HV PETVILLA — WHAT TO UPDATE LATER              ║
+╚══════════════════════════════════════════════════════════╝
+
+Open each file in Notepad (right-click → Open with → Notepad)
+and search (Ctrl+H) for the placeholder, then replace it.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ALL FILES — WhatsApp number
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    919999999999
+Replace: 91 + YOUR 10-DIGIT WHATSAPP NUMBER
+         e.g. if your number is 94929 19527 → type 919492919527
+
+Files: index.html, boarding.html, shop.html, communiTree.html, contact.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  shop.html — Razorpay Key
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    rzp_test_XXXXXXXXXXXXXX
+Replace: Your Razorpay Key ID (starts with rzp_live_ or rzp_test_)
+         Get it from: razorpay.com → Settings → API Keys
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  contact.html — Formspree form ID
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    https://formspree.io/f/XXXXXXXX
+Replace: Your Formspree form URL
+         Get it from: formspree.io → New Form → copy the URL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  communiTree.html — WhatsApp community invite link
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXXXXXXX
+Replace: Your WhatsApp Community invite link
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  contact.html — Email & Address
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    hello@hvpetvilla.in
+Replace: Your actual email address
+
+Find:    Hyderabad, Telangana, India  (the one under Address label)
+Replace: Your full address
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  sitemap.xml — If you connect a custom domain
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Find:    hvpetvilla.github.io
+Replace: your-domain.in  (e.g. hvpetvilla.in)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+After editing, save the file and re-upload to GitHub using
+GitHub Desktop (same Commit + Push steps as before).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

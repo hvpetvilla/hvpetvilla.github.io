@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CommuniTree — Pet Parent Community Hyderabad | HV Petvilla</title>
+  <meta name="description" content="Join CommuniTree — HV Petvilla's community for pet parents in Hyderabad. WhatsApp group, Instagram community, tips, and more."/>
+  <meta name="keywords" content="pet parents Hyderabad, pet community Hyderabad, exotic pet owners Hyderabad, rabbit owners WhatsApp group Hyderabad"/>
+  <link rel="canonical" href="https://hvpetvilla.github.io/communiTree.html"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .join-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      margin-bottom: 32px;
+    }
+    .join-card {
+      border-radius: var(--radius); padding: 36px 28px;
+      text-align: center; text-decoration: none; color: inherit;
+      border: 1.5px solid transparent;
+      transition: transform 0.22s, box-shadow 0.22s;
+      display: block;
+    }
+    .join-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .join-card.wa  { background: linear-gradient(135deg, #e8fdf0, #d5f5e3); border-color: #25D366; }
+    .join-card.ig  { background: linear-gradient(135deg, #fde8f5, #f5d5e8); border-color: #c13584; }
+    .join-card .icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .join-card h2 {
+      font-family: 'Nunito', sans-serif; font-weight: 900;
+      font-size: 1.2rem; margin-bottom: 8px;
+    }
+    .join-card.wa h2 { color: #128C7E; }
+    .join-card.ig h2 { color: #833AB4; }
+    .join-card p { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; line-height: 1.55; }
+    .wa-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #25D366; color: white;
+      padding: 11px 22px; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+      text-decoration: none; transition: background 0.18s;
+    }
+    .wa-btn:hover { background: #128C7E; }
+    .ig-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+      padding: 11px 22px; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+      text-decoration: none;
+    }
+    .ig-btn:hover { opacity: 0.9; }
+
+    /* T&C */
+    .tnc-section { margin-top: 32px; }
+    .tnc-section summary {
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-size: 1rem; color: var(--teal); cursor: pointer;
+      padding: 14px 18px; border-radius: var(--radius-sm);
+      background: var(--teal-light); list-style: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .tnc-section summary:hover { background: var(--border); }
+    .tnc-section details[open] summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+    .tnc-body {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      padding: 22px;
+    }
+    .tnc-body p, .tnc-body li {
+      font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 8px;
+    }
+    .tnc-body h4 {
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      color: var(--teal); margin: 16px 0 6px;
+    }
+    .tnc-body ol, .tnc-body ul { padding-left: 20px; }
+
+    @media (max-width: 560px) {
+      .join-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">🐾 HV <span class="accent">Pet</span>villa</a>
+  <div class="nav-links">
+    <a href="boarding.html">🏠 Boarding</a>
+    <a href="shop.html">🛒 Shop</a>
+    <a href="communiTree.html" class="active">🌳 CommuniTree</a>
+    <a href="contact.html">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-icon">🌳</div>
+  <h1>Communi<span class="hi">Tree</span></h1>
+  <p>A growing community for Hyderabad pet parents. Share, learn, and celebrate your pets together.</p>
+</div>
+
+<div class="container">
+
+  <div class="join-grid">
+    <!-- WhatsApp -->
+    <div class="join-card wa">
+      <span class="icon">💬</span>
+      <h2>WhatsApp Community</h2>
+      <p>Join our WhatsApp group to share pet updates, ask questions, and connect with fellow exotic pet owners in Hyderabad.</p>
+      <!-- REPLACE the href with your actual WhatsApp community invite link -->
+      <a href="https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXXXXXXX" target="_blank" class="wa-btn">
+        Join on WhatsApp →
+      </a>
+    </div>
+
+    <!-- Instagram -->
+    <div class="join-card ig">
+      <span class="icon">📸</span>
+      <h2>Instagram Community</h2>
+      <p>Follow us on Instagram for cute pet content, care tips, product highlights, and our monthly pet photo features.</p>
+      <!-- REPLACE the href with your actual Instagram link -->
+      <a href="https://instagram.com/Hv.petvilla" target="_blank" class="ig-btn">
+        Follow on Instagram →
+      </a>
+    </div>
+  </div>
+
+  <!-- Why join -->
+  <div class="card">
+    <h2>🌱 Why join CommuniTree?</h2>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+      <li style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;">🤝</span><span><strong>Connect with local pet parents</strong> — find others who own the same exotic species as you in Hyderabad.</span></li>
+      <li style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;">💡</span><span><strong>Expert care tips</strong> — get advice on diet, health, housing and enrichment for small and exotic pets.</span></li>
+      <li style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;">🛒</span><span><strong>Exclusive deals</strong> — community members get early access to new products and special discounts in our shop.</span></li>
+      <li style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;">📢</span><span><strong>Lost & found alerts</strong> — our community helps reunite lost pets with their owners across Hyderabad.</span></li>
+      <li style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;">🎉</span><span><strong>Pet spotlights</strong> — every week we feature a member's pet on our Instagram page.</span></li>
+    </ul>
+  </div>
+
+  <!-- Terms & Conditions -->
+  <div class="tnc-section">
+    <details>
+      <summary>📋 Community Terms & Conditions — Click to read</summary>
+      <div class="tnc-body">
+        <p>By joining the HV Petvilla CommuniTree community (via WhatsApp or Instagram), you agree to the following terms. Please read carefully.</p>
+
+        <h4>1. Community Purpose</h4>
+        <p>CommuniTree is a space for pet parents in Hyderabad to share knowledge, experiences, and support related to pet care — especially for exotic and small pets.</p>
+
+        <h4>2. Code of Conduct</h4>
+        <ol>
+          <li>Be respectful and kind to all members at all times.</li>
+          <li>No hate speech, harassment, bullying, or offensive language.</li>
+          <li>No sharing of graphic, violent, or disturbing content involving animals.</li>
+          <li>No promotion of illegal pet trade, wildlife smuggling, or cruelty.</li>
+          <li>Advertising and spam are not permitted without prior permission from HV Petvilla admins.</li>
+        </ol>
+
+        <h4>3. Content Sharing</h4>
+        <ol>
+          <li>You may share pet photos, videos, care tips, and questions relevant to the group topic.</li>
+          <li>By sharing content, you grant HV Petvilla permission to re-share it on our official social media channels, with credit to you.</li>
+          <li>Do not share personal details (phone numbers, home addresses) of others without their consent.</li>
+        </ol>
+
+        <h4>4. Health & Veterinary Advice</h4>
+        <p>Information shared in the community is for general guidance only and does not replace professional veterinary advice. Always consult a qualified vet for your pet's health concerns.</p>
+
+        <h4>5. Privacy</h4>
+        <p>Do not share screenshots of private conversations from the group to public platforms without all parties' consent.</p>
+
+        <h4>6. Moderation & Removal</h4>
+        <p>HV Petvilla admins reserve the right to remove any member who violates these terms, without prior notice.</p>
+
+        <h4>7. Changes to Terms</h4>
+        <p>HV Petvilla may update these terms at any time. Continued membership of the community implies acceptance of any updated terms.</p>
+
+        <p style="margin-top:16px;">For questions, contact us via <a href="contact.html" style="color:var(--teal);font-weight:600;">the contact page</a> or on WhatsApp.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 HV Petvilla · Hyderabad, Telangana ·
+  <a href="https://wa.me/919999999999" target="_blank">WhatsApp Us</a> ·
+  <a href="contact.html">Contact</a>
+</footer>
+
+<a href="https://wa.me/919999999999" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+
+</body>
+</html>

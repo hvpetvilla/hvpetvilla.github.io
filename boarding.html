@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pet Boarding Hyderabad — Book a Slot | HV Petvilla</title>
+  <meta name="description" content="Book a boarding slot for your bird, rabbit, hamster, sugar glider or small pet at HV Petvilla, Hyderabad. Safe, caring, affordable."/>
+  <meta name="keywords" content="pet boarding Hyderabad, exotic pet boarding, rabbit boarding Hyderabad, hamster boarding, sugar glider boarding, bird boarding Hyderabad"/>
+  <link rel="canonical" href="https://hvpetvilla.github.io/boarding.html"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Calendar strip */
+    .calendar-label {
+      font-size: 0.83rem; font-weight: 600; color: var(--teal); margin-bottom: 10px;
+    }
+    .month-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .month-nav button {
+      background: var(--teal-light); border: none;
+      border-radius: var(--radius-sm); padding: 6px 12px;
+      cursor: pointer; font-weight: 700; color: var(--teal); font-size: 0.9rem;
+    }
+    .month-nav button:hover { background: var(--teal); color: var(--white); }
+    .month-nav span {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; color: var(--teal); font-size: 1rem;
+    }
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7,1fr); gap: 5px;
+    }
+    .cal-day-name {
+      font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      text-align: center; padding: 4px 0;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent;
+    }
+    .cal-day:hover:not(.disabled):not(.empty) {
+      background: var(--teal-light); border-color: var(--teal);
+    }
+    .cal-day.selected { background: var(--teal); color: var(--white); }
+    .cal-day.today { border-color: var(--green); color: var(--green); font-weight: 800; }
+    .cal-day.disabled { color: #ccc; cursor: not-allowed; }
+    .cal-day.empty { cursor: default; }
+
+    /* Pet type pills */
+    .pet-types {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+    }
+    .pet-pill {
+      padding: 7px 14px; border-radius: 30px;
+      border: 1.5px solid var(--border); background: var(--bg);
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      transition: all 0.15s; font-family: 'Nunito', sans-serif;
+    }
+    .pet-pill:hover { border-color: var(--teal); }
+    .pet-pill.selected { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+    /* Image upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 28px; text-align: center;
+      background: var(--bg); cursor: pointer;
+      transition: border-color 0.18s;
+    }
+    .upload-area:hover { border-color: var(--teal); }
+    .upload-area input { display: none; }
+    .upload-area .icon { font-size: 2rem; margin-bottom: 6px; }
+    .upload-area p { font-size: 0.85rem; color: var(--muted); }
+    .upload-area p strong { color: var(--teal); }
+    #previewImg {
+      max-width: 100%; border-radius: var(--radius-sm);
+      margin-top: 12px; display: none;
+    }
+
+    /* Success box */
+    .success-box {
+      display: none; background: var(--green-light);
+      border: 1.5px solid var(--green);
+      border-radius: var(--radius); padding: 28px;
+      text-align: center;
+    }
+    .success-box .icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .success-box h3 {
+      font-family: 'Nunito', sans-serif; font-weight: 900;
+      color: var(--teal); font-size: 1.2rem; margin-bottom: 6px;
+    }
+    .success-box p { color: var(--muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">🐾 HV <span class="accent">Pet</span>villa</a>
+  <div class="nav-links">
+    <a href="boarding.html" class="active">🏠 Boarding</a>
+    <a href="shop.html">🛒 Shop</a>
+    <a href="communiTree.html">🌳 CommuniTree</a>
+    <a href="contact.html">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-icon">🏠</div>
+  <h1>Pet <span class="hi">Boarding</span></h1>
+  <p>Book a safe, caring slot for your small or exotic pet while you travel. Daily photo updates guaranteed.</p>
+</div>
+
+<div class="container">
+
+  <!-- Booking Form -->
+  <div class="card" id="bookingForm">
+    <h2>📋 Book Your Boarding Slot</h2>
+
+    <!-- Calendar -->
+    <div class="form-group">
+      <div class="calendar-label">📅 Select Check-in Date</div>
+      <div class="month-nav">
+        <button onclick="changeMonth(-1)">‹ Prev</button>
+        <span id="monthLabel"></span>
+        <button onclick="changeMonth(1)">Next ›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <input type="hidden" id="selectedDate" name="checkin_date"/>
+      <div id="dateDisplay" style="margin-top:8px; font-size:0.85rem; color:var(--green); font-weight:700;"></div>
+    </div>
+
+    <!-- Owner Info -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Your Name *</label>
+        <input type="text" id="ownerName" placeholder="e.g. Priya Sharma" required/>
+      </div>
+      <div class="form-group">
+        <label>Contact Number *</label>
+        <input type="tel" id="phone" placeholder="+91 98765 43210" required/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address <span style="color:var(--muted); font-weight:400;">(optional)</span></label>
+      <input type="email" id="email" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Address *</label>
+      <input type="text" id="address" placeholder="Your area / locality, Hyderabad" required/>
+    </div>
+
+    <!-- Pet Type -->
+    <div class="form-group">
+      <label>Pet Type *</label>
+      <div class="pet-types" id="petTypes">
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Birds')">🦜 Birds</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Rabbits')">🐇 Rabbits</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Hamster')">🐹 Hamster</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Mice')">🐁 Mice</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Rat')">🐀 Rat</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Sugar Glider')">🦝 Sugar Glider</button>
+        <button type="button" class="pet-pill" onclick="selectPet(this,'Other')">➕ Other</button>
+      </div>
+      <input type="hidden" id="petType"/>
+    </div>
+
+    <!-- Other specify -->
+    <div class="form-group" id="otherGroup" style="display:none;">
+      <label>Please specify your pet *</label>
+      <input type="text" id="otherPet" placeholder="e.g. Chinchilla, Hedgehog…"/>
+    </div>
+
+    <!-- Pet Image Upload -->
+    <div class="form-group">
+      <label>Pet Photo <span style="color:var(--muted); font-weight:400;">(optional but helpful)</span></label>
+      <div class="upload-area" onclick="document.getElementById('petImg').click()">
+        <input type="file" id="petImg" accept="image/*" onchange="previewImage(event)"/>
+        <div class="icon">📷</div>
+        <p><strong>Click to upload</strong> a photo of your pet<br/>JPG, PNG or GIF · Max 5 MB</p>
+        <img id="previewImg" alt="Pet preview"/>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" onclick="submitBooking()" style="margin-top:8px;">
+      Confirm Booking Request 🐾
+    </button>
+    <p style="font-size:0.78rem; color:var(--muted); text-align:center; margin-top:10px;">
+      We'll confirm your slot via WhatsApp within a few hours.
+    </p>
+  </div>
+
+  <!-- Success -->
+  <div class="success-box" id="successBox">
+    <div class="icon">🎉</div>
+    <h3>Booking Request Received!</h3>
+    <p>Thank you! Our team will confirm your slot on WhatsApp within a few hours.<br/>
+    You can also reach us directly at <strong>+91 99999 99999</strong>.</p>
+    <br/>
+    <a href="index.html" class="btn btn-primary">Back to Home</a>
+  </div>
+
+  <!-- Info cards -->
+  <div class="card" style="margin-top:20px;">
+    <h2>🌟 What's included in boarding</h2>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+      <li style="display:flex;gap:10px;"><span>✅</span><span>Fresh food and water throughout the day</span></li>
+      <li style="display:flex;gap:10px;"><span>✅</span><span>Daily WhatsApp photo and video updates</span></li>
+      <li style="display:flex;gap:10px;"><span>✅</span><span>Clean, temperature-appropriate enclosures</span></li>
+      <li style="display:flex;gap:10px;"><span>✅</span><span>Playtime and social interaction (for suitable pets)</span></li>
+      <li style="display:flex;gap:10px;"><span>✅</span><span>Emergency vet contact on standby</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📦 What to bring along</h2>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+      <li style="display:flex;gap:10px;"><span>🍽️</span><span>Your pet's regular food (especially if on a specific diet)</span></li>
+      <li style="display:flex;gap:10px;"><span>🧸</span><span>A familiar toy, bedding or blanket for comfort</span></li>
+      <li style="display:flex;gap:10px;"><span>💊</span><span>Any medications with clear dosage instructions</span></li>
+      <li style="display:flex;gap:10px;"><span>📋</span><span>Vaccination records (if applicable)</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 HV Petvilla · Hyderabad, Telangana ·
+  <a href="https://wa.me/919999999999" target="_blank">WhatsApp Us</a> ·
+  <a href="contact.html">Contact</a>
+</footer>
+
+<a href="https://wa.me/919999999999" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CALENDAR ──
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let now = new Date();
+  let viewYear = now.getFullYear();
+  let viewMonth = now.getMonth();
+  let selectedDay = null;
+
+  function renderCalendar() {
+    document.getElementById('monthLabel').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+    DAY_NAMES.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cal-day-name'; el.textContent = d;
+      grid.appendChild(el);
+    });
+    const first = new Date(viewYear, viewMonth, 1).getDay();
+    const days = new Date(viewYear, viewMonth + 1, 0).getDate();
+    for (let i = 0; i < first; i++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day empty'; grid.appendChild(el);
+    }
+    for (let d = 1; d <= days; d++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day';
+      el.textContent = d;
+      const date = new Date(viewYear, viewMonth, d);
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (date < today) { el.classList.add('disabled'); }
+      else {
+        if (date.toDateString() === today.toDateString()) el.classList.add('today');
+        if (selectedDay && date.toDateString() === selectedDay.toDateString()) el.classList.add('selected');
+        el.onclick = () => pickDay(date, el);
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  function pickDay(date, el) {
+    document.querySelectorAll('.cal-day.selected').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDay = date;
+    const str = date.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('selectedDate').value = str;
+    document.getElementById('dateDisplay').textContent = '📅 Selected: ' + str;
+  }
+
+  function changeMonth(delta) {
+    viewMonth += delta;
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderCalendar();
+  }
+
+  renderCalendar();
+
+  // ── PET TYPE ──
+  function selectPet(el, type) {
+    document.querySelectorAll('.pet-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('petType').value = type;
+    document.getElementById('otherGroup').style.display = type === 'Other' ? 'block' : 'none';
+  }
+
+  // ── IMAGE PREVIEW ──
+  function previewImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const img = document.getElementById('previewImg');
+    img.src = URL.createObjectURL(file);
+    img.style.display = 'block';
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // ── SUBMIT ──
+  function submitBooking() {
+    const name    = document.getElementById('ownerName').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const petType = document.getElementById('petType').value;
+    const date    = document.getElementById('selectedDate').value;
+
+    if (!name)    return showToast('⚠️ Please enter your name.');
+    if (!phone)   return showToast('⚠️ Please enter your contact number.');
+    if (!address) return showToast('⚠️ Please enter your address.');
+    if (!petType) return showToast('⚠️ Please select your pet type.');
+    if (!date)    return showToast('⚠️ Please select a check-in date.');
+    if (petType === 'Other' && !document.getElementById('otherPet').value.trim())
+      return showToast('⚠️ Please specify your pet type.');
+
+    // ── REPLACE with Formspree: change action URL below ──
+    // For now: show success state
+    document.getElementById('bookingForm').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

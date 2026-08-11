@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HV Petvilla — Pet Boarding, Shop & Community · Hyderabad</title>
+  <meta name="description" content="HV Petvilla offers trusted pet boarding, a curated pet shop, and CommuniTree — a community for pet parents across Hyderabad, Telangana."/>
+  <meta name="keywords" content="pet boarding Hyderabad, exotic pets Hyderabad, pet shop Hyderabad, hamster boarding, rabbit boarding, sugar glider, HV Petvilla"/>
+  <meta property="og:title" content="HV Petvilla — Pet Boarding & Shop, Hyderabad"/>
+  <meta property="og:description" content="Trusted pet boarding, curated pet shop, and CommuniTree for Hyderabad pet parents."/>
+  <meta property="og:type" content="website"/>
+  <link rel="canonical" href="https://hvpetvilla.github.io/"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Home-specific */
+    .home-hero {
+      background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 55%, #1a8a6e 100%);
+      color: var(--white);
+      padding: 64px 20px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .home-hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 30px; padding: 5px 18px;
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.06em; margin-bottom: 22px;
+    }
+    .home-hero h1 {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 3.8rem);
+      font-weight: 900; line-height: 1.08;
+      margin-bottom: 16px;
+    }
+    .home-hero h1 .hi { color: #7DF5C0; }
+    .home-hero p {
+      font-size: 1.05rem; opacity: 0.85;
+      max-width: 480px; margin: 0 auto 40px;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* Tile grid */
+    .tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 840px;
+      margin: -44px auto 0;
+      padding: 0 20px;
+      position: relative; z-index: 2;
+    }
+    .tile {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-md);
+      text-decoration: none; color: inherit;
+      display: block;
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+      position: relative; overflow: hidden;
+    }
+    .tile::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+    .tile:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--teal);
+    }
+    .tile-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+    .tile h2 {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 1.1rem;
+      color: var(--teal); margin-bottom: 7px;
+    }
+    .tile p { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+    .tile-cta {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 14px; font-size: 0.82rem;
+      font-weight: 700; color: var(--green);
+    }
+
+    /* Why section */
+    .why {
+      max-width: 840px; margin: 48px auto 0; padding: 0 20px;
+    }
+    .why-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900; font-size: 1.4rem;
+      color: var(--teal); text-align: center; margin-bottom: 24px;
+    }
+    .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .why-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      padding: 22px 18px; text-align: center;
+    }
+    .why-card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .why-card h3 {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 0.95rem;
+      color: var(--teal); margin-bottom: 5px;
+    }
+    .why-card p { font-size: 0.82rem; color: var(--muted); }
+
+    @media (max-width: 640px) {
+      .tiles { grid-template-columns: 1fr; margin-top: -28px; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .why-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">🐾 HV <span class="accent">Pet</span>villa</a>
+  <div class="nav-links">
+    <a href="boarding.html">🏠 Boarding</a>
+    <a href="shop.html">🛒 Shop</a>
+    <a href="communiTree.html">🌳 CommuniTree</a>
+    <a href="contact.html">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="home-hero">
+  <div class="badge">🐾 Hyderabad's Favourite Pet Hub</div>
+  <h1>Your pet's home<br><span class="hi">while you're away</span></h1>
+  <p>Trusted boarding for exotic & small pets, a curated pet shop, and a warm community for Hyderabad pet parents.</p>
+  <div class="hero-btns">
+    <a href="boarding.html" class="btn btn-green">Book a Boarding Slot</a>
+    <a href="shop.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.6);color:#fff;">Browse Pet Shop</a>
+  </div>
+</div>
+
+<div class="tiles">
+  <a href="boarding.html" class="tile">
+    <span class="tile-icon">🏠</span>
+    <h2>Pet Boarding</h2>
+    <p>Safe, loving care for birds, rabbits, hamsters, mice, rats, sugar gliders and more while you're away.</p>
+    <span class="tile-cta">Book a slot →</span>
+  </a>
+  <a href="shop.html" class="tile">
+    <span class="tile-icon">🛒</span>
+    <h2>Pet Shop</h2>
+    <p>Quality food, accessories and supplies for your exotic & small pets. Pay securely via Razorpay.</p>
+    <span class="tile-cta">Shop now →</span>
+  </a>
+  <a href="communiTree.html" class="tile">
+    <span class="tile-icon">🌳</span>
+    <h2>CommuniTree</h2>
+    <p>Join our WhatsApp & Instagram community of Hyderabad pet parents. Share, learn and grow together.</p>
+    <span class="tile-cta">Join community →</span>
+  </a>
+  <a href="contact.html" class="tile">
+    <span class="tile-icon">📞</span>
+    <h2>Contact Us</h2>
+    <p>Questions about boarding, products, or anything else? We're always happy to help on WhatsApp.</p>
+    <span class="tile-cta">Get in touch →</span>
+  </a>
+</div>
+
+<div class="why">
+  <div class="why-title">Why pet parents trust HV Petvilla 🐾</div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="icon">📸</div>
+      <h3>Daily Photo Updates</h3>
+      <p>We send WhatsApp photos so you always know your pet is happy.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">🦜</div>
+      <h3>Exotic Pet Specialists</h3>
+      <p>Birds, sugar gliders, hamsters — we care for pets others won't.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">🏥</div>
+      <h3>Vet On Call</h3>
+      <p>Emergency vet contact always on standby for your peace of mind.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">💰</div>
+      <h3>Affordable Rates</h3>
+      <p>Transparent, fair pricing with no hidden charges.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">🏠</div>
+      <h3>Home Environment</h3>
+      <p>Pets stay in a warm, homely setting — not a cage in a clinic.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">⭐</div>
+      <h3>Trusted by Hyderabad</h3>
+      <p>Dozens of happy pet parents across the city and counting.</p>
+    </div>
+  </div>
+</div>
+<br><br>
+
+<footer>
+  © 2025 HV Petvilla · Hyderabad, Telangana ·
+  <a href="https://wa.me/919999999999" target="_blank">WhatsApp Us</a> ·
+  <a href="contact.html">Contact</a>
+</footer>
+
+<a href="https://wa.me/919999999999" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+
+</body>
+</html>

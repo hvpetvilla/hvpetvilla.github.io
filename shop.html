@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pet Shop Hyderabad — Food & Accessories | HV Petvilla</title>
+  <meta name="description" content="Buy pet food, accessories and supplies for exotic and small pets in Hyderabad. Secure payment via Razorpay. HV Petvilla pet shop."/>
+  <meta name="keywords" content="pet shop Hyderabad, buy hamster food Hyderabad, rabbit food, bird accessories, sugar glider food, exotic pet supplies Hyderabad"/>
+  <link rel="canonical" href="https://hvpetvilla.github.io/shop.html"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .shop-bar {
+      display: flex; gap: 10px; align-items: center;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .search-wrap {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: 9px 14px;
+    }
+    .search-wrap input {
+      border: none; outline: none; font-size: 0.9rem;
+      font-family: 'Inter', sans-serif; width: 100%; background: transparent;
+    }
+    .chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 22px; }
+    .chip {
+      padding: 6px 14px; border-radius: 30px;
+      border: 1.5px solid var(--border); background: var(--white);
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      transition: all 0.15s; font-family: 'Nunito', sans-serif;
+    }
+    .chip:hover, .chip.on { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+    .product-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+      margin-bottom: 32px;
+    }
+    .product-card {
+      background: var(--white); border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .product-thumb {
+      height: 140px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.6rem;
+      background: linear-gradient(135deg, var(--teal-light), #e8f8f0);
+    }
+    .product-body { padding: 14px; }
+    .product-cat {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--green); margin-bottom: 3px;
+    }
+    .product-name {
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-size: 0.95rem; color: var(--teal); margin-bottom: 4px;
+    }
+    .product-desc { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
+    .product-foot { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: 'Nunito', sans-serif; font-weight: 900; color: var(--teal); font-size: 1.05rem; }
+    .add-btn {
+      background: var(--teal); color: var(--white); border: none;
+      border-radius: var(--radius-sm); padding: 7px 13px;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      font-family: 'Nunito', sans-serif; transition: background 0.18s;
+    }
+    .add-btn:hover { background: var(--teal-dark); }
+
+    /* Cart sidebar / drawer */
+    .cart-btn {
+      position: fixed; bottom: 80px; right: 20px;
+      background: var(--teal); color: var(--white);
+      border: none; border-radius: 50px; padding: 12px 20px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+      cursor: pointer; box-shadow: var(--shadow-md);
+      display: none; align-items: center; gap: 8px; z-index: 90;
+      transition: transform 0.18s;
+    }
+    .cart-btn:hover { transform: scale(1.05); }
+    .cart-badge {
+      background: var(--red); border-radius: 50%;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+    }
+
+    /* Cart Modal */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 300;
+      align-items: center; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: var(--radius);
+      padding: 28px; max-width: 480px; width: 92%;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-head h2 {
+      font-family: 'Nunito', sans-serif; font-weight: 900;
+      color: var(--teal); font-size: 1.15rem;
+    }
+    .close-x {
+      background: none; border: none; font-size: 1.3rem;
+      cursor: pointer; color: var(--muted);
+    }
+    .cart-item {
+      display: flex; gap: 12px; align-items: center;
+      padding: 12px 0; border-bottom: 1.5px solid var(--border);
+    }
+    .cart-item-icon { font-size: 2rem; }
+    .cart-item-info { flex: 1; }
+    .cart-item-info strong { font-size: 0.9rem; color: var(--teal); display: block; }
+    .cart-item-info span { font-size: 0.8rem; color: var(--muted); }
+    .qty-controls { display: flex; align-items: center; gap: 7px; }
+    .qty-btn {
+      background: var(--teal-light); border: none;
+      border-radius: 6px; width: 26px; height: 26px;
+      cursor: pointer; font-weight: 900; font-size: 1rem; color: var(--teal);
+    }
+    .qty-val { font-weight: 800; font-size: 0.9rem; min-width: 20px; text-align: center; }
+    .cart-total {
+      display: flex; justify-content: space-between;
+      font-family: 'Nunito', sans-serif; font-weight: 900;
+      font-size: 1.1rem; color: var(--teal);
+      border-top: 2px solid var(--border); padding-top: 16px; margin-top: 16px;
+    }
+    .empty-cart { text-align: center; padding: 32px 0; color: var(--muted); }
+    .empty-cart .icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+    @media (max-width: 640px) {
+      .product-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .product-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">🐾 HV <span class="accent">Pet</span>villa</a>
+  <div class="nav-links">
+    <a href="boarding.html">🏠 Boarding</a>
+    <a href="shop.html" class="active">🛒 Shop</a>
+    <a href="communiTree.html">🌳 CommuniTree</a>
+    <a href="contact.html">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-icon">🛒</div>
+  <h1>Pet <span class="hi">Shop</span></h1>
+  <p>Quality food, accessories and supplies for exotic & small pets. Safe checkout via Razorpay.</p>
+</div>
+
+<div class="container">
+  <div class="shop-bar">
+    <div class="search-wrap">
+      🔍 <input type="text" id="searchInput" placeholder="Search products…" oninput="renderProducts()"/>
+    </div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="product-grid" id="productGrid"></div>
+</div>
+
+<!-- Cart Button -->
+<button class="cart-btn" id="cartBtn" onclick="openCart()">
+  🛒 View Cart <div class="cart-badge" id="cartBadge">0</div>
+</button>
+
+<!-- Cart Modal -->
+<div class="overlay" id="cartOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🛒 Your Cart</h2>
+      <button class="close-x" onclick="closeCart()">✕</button>
+    </div>
+    <div id="cartBody"></div>
+    <div id="cartEmptyMsg" class="empty-cart">
+      <div class="icon">🛒</div>
+      <p>Your cart is empty</p>
+    </div>
+    <div id="cartFooterBlock" style="display:none;">
+      <div class="cart-total"><span>Total</span><span id="cartTotalAmt"></span></div>
+      <button class="btn btn-green btn-block" style="margin-top:16px;" onclick="payNow()">
+        Pay Now via Razorpay 💳
+      </button>
+      <p style="font-size:0.75rem; color:var(--muted); text-align:center; margin-top:8px;">
+        Secure payment · UPI · Card · Net Banking
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 HV Petvilla · Hyderabad, Telangana ·
+  <a href="https://wa.me/919999999999" target="_blank">WhatsApp Us</a> ·
+  <a href="contact.html">Contact</a>
+</footer>
+
+<a href="https://wa.me/919999999999" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+<div class="toast" id="toast"></div>
+
+<!-- ──────── PRODUCT DATA — EDIT THIS SECTION ──────── -->
+<script>
+const PRODUCTS = [
+  { id:1, name:'Premium Bird Seed Mix',      cat:'food',        emoji:'🌾', desc:'Nutritious blend of millet, sunflower & safflower seeds for parrots and finches.',         price:320 },
+  { id:2, name:'Rabbit Pellet Food',         cat:'food',        emoji:'🥕', desc:'High-fibre pellets with added vitamins. Ideal for adult rabbits and guinea pigs.',           price:280 },
+  { id:3, name:'Hamster Grain Mix',          cat:'food',        emoji:'🌽', desc:'Multi-grain blend with dried veggies, perfect for hamsters, gerbils and mice.',             price:190 },
+  { id:4, name:'Sugar Glider Nectar Blend',  cat:'food',        emoji:'🍯', desc:'Ready-to-mix nectar powder replicating their natural diet. 300 g pack.',                    price:450 },
+  { id:5, name:'Stainless Water Bottle',     cat:'accessories', emoji:'💧', desc:'Leak-proof 250 ml bottle. Fits most standard cages. Easy click-on mount.',                  price:160 },
+  { id:6, name:'Wooden Exercise Wheel',      cat:'accessories', emoji:'🎡', desc:'Silent spinner wheel for hamsters & mice. 20 cm diameter, smooth surface.',                 price:320 },
+  { id:7, name:'Bird Perch Set (3-piece)',   cat:'accessories', emoji:'🪵', desc:'Natural wood perches in 3 sizes. Helps keep claws trimmed naturally.',                      price:240 },
+  { id:8, name:'Rabbit Hay Feeder',          cat:'accessories', emoji:'🌿', desc:'Wire hay rack keeps hay fresh and tidy. Attaches to cage bars in seconds.',                  price:180 },
+  { id:9, name:'Small Animal Cage',          cat:'cages',       emoji:'🏡', desc:'Starter cage for hamsters or mice — includes wheel, water bottle, and nesting tray.',       price:890 },
+  { id:10,name:'Bird Cage (Medium)',         cat:'cages',       emoji:'🐦', desc:'Powder-coated steel cage, 45×35×55 cm. Ideal for cockatiels and love birds.',               price:1450 },
+  { id:11,name:'Natural Bedding (5 L)',      cat:'accessories', emoji:'🪹', desc:'Dust-free paper bedding. Highly absorbent, safe for all small animals.',                    price:220 },
+  { id:12,name:'Calcium Chew Sticks',        cat:'food',        emoji:'🦴', desc:'Mineral chews that help maintain healthy teeth in rabbits, hamsters and guinea pigs.',      price:130 },
+];
+
+const CATS = ['all','food','accessories','cages'];
+const CAT_LABELS = { all:'All Products 🐾', food:'Food & Treats 🍖', accessories:'Accessories 🎀', cages:'Cages & Habitats 🏡' };
+let activecat = 'all';
+let cart = [];
+
+// Build filter chips
+const chipsEl = document.getElementById('chips');
+CATS.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'chip' + (c === activecat ? ' on' : '');
+  btn.textContent = CAT_LABELS[c];
+  btn.onclick = () => { activecat = c; document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); btn.classList.add('on'); renderProducts(); };
+  chipsEl.appendChild(btn);
+});
+
+function renderProducts() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = PRODUCTS.filter(p =>
+    (activecat === 'all' || p.cat === activecat) &&
+    p.name.toLowerCase().includes(q)
+  );
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = filtered.length ? filtered.map(p => `
+    <div class="product-card">
+      <div class="product-thumb">${p.emoji}</div>
+      <div class="product-body">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-foot">
+          <div class="product-price">₹${p.price}</div>
+          <button class="add-btn" onclick="addToCart(${p.id})">+ Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('') : '<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
+}
+
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const ex = cart.find(x => x.id === id);
+  if (ex) ex.qty++;
+  else cart.push({ ...p, qty: 1 });
+  updateCartUI();
+  showToast('✅ ' + p.name + ' added to cart!');
+}
+
+function updateCartUI() {
+  const total = cart.reduce((a,b)=>a+b.qty,0);
+  document.getElementById('cartBadge').textContent = total;
+  const btn = document.getElementById('cartBtn');
+  btn.style.display = total > 0 ? 'flex' : 'none';
+  renderCartModal();
+}
+
+function renderCartModal() {
+  const body = document.getElementById('cartBody');
+  const empty = document.getElementById('cartEmptyMsg');
+  const footer = document.getElementById('cartFooterBlock');
+  if (cart.length === 0) { body.innerHTML=''; empty.style.display='block'; footer.style.display='none'; return; }
+  empty.style.display='none'; footer.style.display='block';
+  const totalAmt = cart.reduce((a,b)=>a+b.price*b.qty,0);
+  body.innerHTML = cart.map(item=>`
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.emoji}</div>
+      <div class="cart-item-info">
+        <strong>${item.name}</strong>
+        <span>₹${item.price} each</span>
+      </div>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+        <div class="qty-val">${item.qty}</div>
+        <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+      </div>
+      <div style="min-width:56px;text-align:right;font-weight:800;color:var(--teal);">₹${item.price*item.qty}</div>
+    </div>
+  `).join('');
+  document.getElementById('cartTotalAmt').textContent = '₹' + totalAmt.toLocaleString('en-IN');
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(x=>x.id===id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(x=>x.id!==id);
+  updateCartUI();
+}
+
+function openCart()  { document.getElementById('cartOverlay').classList.add('open'); }
+function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); }
+document.getElementById('cartOverlay').addEventListener('click', e => { if(e.target===document.getElementById('cartOverlay')) closeCart(); });
+
+// ── RAZORPAY PAYMENT ──
+// REPLACE 'rzp_test_XXXXXXXXXXXXXX' with your actual Razorpay Key ID
+function payNow() {
+  const total = cart.reduce((a,b)=>a+b.price*b.qty,0);
+  const options = {
+    key: 'rzp_test_XXXXXXXXXXXXXX', // ← REPLACE THIS
+    amount: total * 100,            // Razorpay uses paise
+    currency: 'INR',
+    name: 'HV Petvilla',
+    description: 'Pet Shop Order',
+    image: '',                      // ← optionally add your logo URL
+    handler: function(response) {
+      closeCart();
+      cart = [];
+      updateCartUI();
+      showToast('🎉 Payment successful! Order confirmed.');
+    },
+    prefill: { name: '', email: '', contact: '' },
+    theme: { color: '#0E6655' }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+renderProducts();
+</script>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+</html>
