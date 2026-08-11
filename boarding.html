@@ -342,7 +342,7 @@ formData.append('checkin_date', date);
 const imgFile = document.getElementById('petImg').files[0];
 if (imgFile) formData.append('pet_photo', imgFile);
 
-fetch('https://formspree.io/f/https://formspree.io/f/xljrbgzv', {   // ← paste your Formspree URL here
+fetch('https://formspree.io/f/xljrbgzv', {   // ← paste your Formspree URL here
   method: 'POST',
   body: formData,
   headers: { 'Accept': 'application/json' }
