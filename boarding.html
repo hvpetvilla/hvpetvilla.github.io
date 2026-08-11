@@ -331,29 +331,34 @@
     if (petType === 'Other' && !document.getElementById('otherPet').value.trim())
       return showToast('⚠️ Please specify your pet type.');
 
-    const formData = new FormData();
-formData.append('name', name);
-formData.append('phone', phone);
-formData.append('address', document.getElementById('address').value.trim());
-formData.append('email', document.getElementById('email').value.trim());
-formData.append('pet_type', petType === 'Other' ? document.getElementById('otherPet').value.trim() : petType);
-formData.append('checkin_date', date);
+    const finalPetType = petType === 'Other' ? document.getElementById('otherPet').value.trim() : petType;
 
-const imgFile = document.getElementById('petImg').files[0];
-if (imgFile) formData.append('pet_photo', imgFile);
+const params = new URLSearchParams({
+  'entry.415616079': name,
+  'entry.436373125': phone,
+  'entry.707571485': address,
+  'entry.2130813623': document.getElementById('email').value.trim(),
+  'entry.1331226292': finalPetType,
+  'entry.1457550029': date
+});
 
-fetch('https://formspree.io/f/xljrbgzv', {   // ← paste your Formspree URL here
+const FORM_ID = '1FAIpQLSfu1zF3eB_lS--vojwdRzk67JA8s9TUagCzOTVCfngtmTsGYQ';
+const url = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+
+fetch(url, {
   method: 'POST',
-  body: formData,
-  headers: { 'Accept': 'application/json' }
-})
-.then(res => {
-  if (res.ok) {
-    document.getElementById('bookingForm').style.display = 'none';
-    document.getElementById('successBox').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    showToast('❌ Submission failed. Please try WhatsApp instead.');
+  mode: 'no-cors',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: params.toString()
+}).then(() => {
+  document.getElementById('bookingForm').style.display = 'none';
+  document.getElementById('successBox').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}).catch(() => {
+  document.getElementById('bookingForm').style.display = 'none';
+  document.getElementById('successBox').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
   }
 })
 .catch(() => showToast('❌ Network error. Please try again.'));
