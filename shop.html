@@ -267,8 +267,10 @@
   </div>
 </footer>
 <a href="https://wa.me/919492919527" target="_blank" class="wa-float">💬</a>
+<a href="#" id="backTop" class="back-top" title="Back to top">↑</a>
 <div class="toast" id="toast"></div>
 
+<script src="main.js" defer></script>
 <script>
 function toggleNav(){
   const h=document.getElementById('hamburger');
@@ -337,8 +339,11 @@ function renderProducts(){
   const grid=document.getElementById('productGrid');
   const isAdmin=adminOpen;
   grid.className='product-grid'+(isAdmin?' admin-mode':'');
+  const BESTSELLERS=[4,10];
+  const NEW_ARRIVALS=[11];
   grid.innerHTML=filtered.length?filtered.map(p=>`
-    <div class="product-card">
+    <div class="product-card reveal">
+      ${BESTSELLERS.includes(p.id)?'<span class="badge-pill badge-best">🔥 Bestseller</span>':(NEW_ARRIVALS.includes(p.id)?'<span class="badge-pill badge-new">✨ New</span>':'')}
       <div class="product-thumb">
         ${p.imgUrl?`<img src="${p.imgUrl}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.emoji||'🐾'}'"/>`:(p.emoji||'🐾')}
       </div>

@@ -135,7 +135,7 @@
   </div>
 
   <!-- Booking Form -->
-  <div class="card" id="bookingForm">
+  <div class="card hoverable reveal" id="bookingForm">
     <h2>📋 Book Your Boarding Slot</h2>
 
     <!-- Calendar -->
@@ -237,7 +237,7 @@
   </div>
 
   <!-- Info cards -->
-  <div class="card" style="margin-top:20px;">
+  <div class="card hoverable reveal reveal-1" style="margin-top:20px;">
     <h2>🌟 What's included in boarding</h2>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
       <li style="display:flex;gap:10px;"><span>✅</span><span>Fresh food and water throughout the day</span></li>
@@ -247,7 +247,7 @@
       <li style="display:flex;gap:10px;"><span>✅</span><span>Species-specific diet and care expertise</span></li>
     </ul>
   </div>
-  <div class="card">
+  <div class="card hoverable reveal reveal-2">
     <h2>📦 What to bring along</h2>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
       <li style="display:flex;gap:10px;"><span>🍽️</span><span>Your pet's regular food (especially if on a specific diet)</span></li>
@@ -267,8 +267,10 @@
   </div>
 </footer>
 <a href="https://wa.me/919492919527" target="_blank" class="wa-float">💬</a>
+<a href="#" id="backTop" class="back-top" title="Back to top">↑</a>
 <div class="toast" id="toast"></div>
 
+<script src="main.js" defer></script>
 <script>
 function toggleNav(){
   const h=document.getElementById('hamburger');

@@ -225,3 +225,127 @@ footer a:hover { text-decoration: underline; }
 @media (max-width: 420px) {
   .hero { padding: 40px 16px 48px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   PROFESSIONAL POLISH LAYER — added
+   Scroll reveals, stats, badges, back-to-top, nav shadow,
+   testimonial polish, product shine, micro-interactions
+═══════════════════════════════════════════════════════ */
+
+/* Nav gains depth once page is scrolled */
+.nav.scrolled { box-shadow: 0 2px 16px rgba(14,102,85,.10); }
+
+/* Active nav link gets a little animated underline */
+.nav-links a { position: relative; }
+.nav-links a.active::after {
+  content:''; position:absolute; left:13px; right:13px; bottom:3px;
+  height:2px; border-radius:2px;
+  background: linear-gradient(90deg,var(--teal),var(--green));
+}
+
+/* Scroll-reveal utility: elements fade + rise into place */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+.reveal-1.in-view { transition-delay: .05s; }
+.reveal-2.in-view { transition-delay: .12s; }
+.reveal-3.in-view { transition-delay: .19s; }
+.reveal-4.in-view { transition-delay: .26s; }
+.reveal-5.in-view { transition-delay: .33s; }
+.reveal-6.in-view { transition-delay: .40s; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  max-width: 860px; margin: 0 auto; padding: 0 20px;
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 14px;
+  position: relative; z-index: 2; margin-top: -30px;
+}
+.stat-box {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+  padding: 16px 10px; text-align: center;
+}
+.stat-num {
+  font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.5rem;
+  color: var(--teal); line-height: 1.1;
+  background: linear-gradient(135deg,var(--teal),var(--green));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat-label { font-size: .68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+@media (max-width: 700px) {
+  .stats-strip { grid-template-columns: repeat(2,1fr); margin-top: -20px; }
+}
+
+/* ── BADGES on cards/products ── */
+.badge-pill {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  font-size: .65rem; font-weight: 800; letter-spacing: .03em;
+  padding: 4px 9px; border-radius: 20px; color: var(--white);
+  font-family: 'Nunito', sans-serif; text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+.badge-best { background: linear-gradient(135deg,#F59E0B,#D97706); }
+.badge-new  { background: linear-gradient(135deg,var(--teal),var(--green)); }
+
+/* ── Product card shine + lift (extends .product-card) ── */
+.product-card { position: relative; }
+.product-thumb { position: relative; }
+.product-thumb::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%);
+  transform: translateX(-120%); transition: transform .6s ease;
+}
+.product-card:hover .product-thumb::after { transform: translateX(120%); }
+
+/* ── Tile icon float animation on hover ── */
+.tile-icon { display: inline-block; transition: transform .3s ease; }
+.tile:hover .tile-icon { transform: translateY(-4px) scale(1.1) rotate(-4deg); }
+
+/* ── Section eyebrow tag ── */
+.eyebrow {
+  display: inline-block; font-family:'Nunito',sans-serif; font-weight: 800;
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--green); background: var(--green-light);
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 10px;
+}
+
+/* ── Back to top button ── */
+.back-top {
+  position: fixed; bottom: 20px; left: 20px; z-index: 300;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--white); color: var(--teal);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; cursor: pointer; text-decoration: none;
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: all .25s ease;
+}
+.back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.back-top:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+/* ── WhatsApp float: gentle pulse ring ── */
+.wa-float { position: fixed; }
+.wa-float::before {
+  content:''; position:absolute; inset:-6px; border-radius:50%;
+  border: 2px solid #25D366; opacity: .55;
+  animation: wa-pulse 2.4s ease-out infinite;
+}
+@keyframes wa-pulse {
+  0% { transform: scale(.85); opacity: .55; }
+  70% { transform: scale(1.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ── Divider with icon ── */
+.divider-icon {
+  display:flex; align-items:center; gap:14px; max-width:860px;
+  margin: 40px auto 22px; padding: 0 20px; color: var(--muted);
+}
+.divider-icon::before, .divider-icon::after { content:''; flex:1; height:1.5px; background: var(--border); }
+.divider-icon span { font-size: 1.2rem; }
+
+/* ── Improved card hover for .card ── */
+.card { transition: box-shadow .25s ease, transform .25s ease; }
+.card.hoverable:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }

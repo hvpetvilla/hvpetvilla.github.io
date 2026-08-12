@@ -192,26 +192,33 @@
   </div>
 </div>
 
+<div class="stats-strip">
+  <div class="stat-box"><div class="stat-num" data-count="500" data-suffix="+">0</div><div class="stat-label">Happy Pets</div></div>
+  <div class="stat-box"><div class="stat-num" data-count="12" data-suffix="+">0</div><div class="stat-label">Species Cared For</div></div>
+  <div class="stat-box"><div class="stat-num" data-count="5" data-suffix=".0★">0</div><div class="stat-label">Average Rating</div></div>
+  <div class="stat-box"><div class="stat-num" data-count="100" data-suffix="%">0</div><div class="stat-label">Daily Updates</div></div>
+</div>
+
 <div class="tiles">
-  <a href="boarding.html" class="tile">
+  <a href="boarding.html" class="tile reveal reveal-1">
     <span class="tile-icon">🏠</span>
     <h2>Pet Boarding</h2>
     <p>Safe, loving care for birds, rabbits, hamsters, mice, rats, sugar gliders and more while you're away.</p>
     <span class="tile-cta">Book a slot →</span>
   </a>
-  <a href="shop.html" class="tile">
+  <a href="shop.html" class="tile reveal reveal-2">
     <span class="tile-icon">🛒</span>
     <h2>Pet Shop</h2>
     <p>Quality food, accessories and supplies for your exotic & small pets. Pay securely via Razorpay.</p>
     <span class="tile-cta">Shop now →</span>
   </a>
-  <a href="communiTree.html" class="tile">
+  <a href="communiTree.html" class="tile reveal reveal-3">
     <span class="tile-icon">🌳</span>
     <h2>CommuniTree</h2>
     <p>Join our WhatsApp & Instagram community of Hyderabad pet parents. Share, learn and grow together.</p>
     <span class="tile-cta">Join community →</span>
   </a>
-  <a href="contact.html" class="tile">
+  <a href="contact.html" class="tile reveal reveal-4">
     <span class="tile-icon">📞</span>
     <h2>Contact Us</h2>
     <p>Questions about boarding, products, or anything else? We're always happy to help on WhatsApp.</p>
@@ -221,34 +228,35 @@
 
 <!-- WHY SECTION -->
 <div class="why">
-  <div class="why-title">Why pet parents trust HV Petvilla 🐾</div>
+  <div style="text-align:center;"><span class="eyebrow">Why HV Petvilla</span></div>
+  <div class="why-title reveal">Why pet parents trust HV Petvilla 🐾</div>
   <div class="why-grid">
-    <div class="why-card">
+    <div class="why-card reveal reveal-1">
       <div class="icon">📸</div>
       <h3>Daily Photo Updates</h3>
       <p>We send WhatsApp photos and videos so you always know your pet is happy and safe.</p>
     </div>
-    <div class="why-card">
+    <div class="why-card reveal reveal-2">
       <div class="icon">🦜</div>
       <h3>Exotic Pet Specialists</h3>
       <p>Years of hands-on experience caring for birds, sugar gliders, reptiles, hamsters and other exotic and small pets that others won't handle.</p>
     </div>
-    <div class="why-card">
+    <div class="why-card reveal reveal-3">
       <div class="icon">💰</div>
       <h3>Affordable Rates</h3>
       <p>Transparent, fair pricing with no hidden charges — quality care that doesn't break the bank.</p>
     </div>
-    <div class="why-card">
+    <div class="why-card reveal reveal-4">
       <div class="icon">🏠</div>
       <h3>Home Environment</h3>
       <p>Pets stay in a warm, homely setting — not a cage in a clinic. Comfortable and stress-free.</p>
     </div>
-    <div class="why-card">
+    <div class="why-card reveal reveal-5">
       <div class="icon">🌡️</div>
       <h3>Species-Specific Care</h3>
       <p>Each pet gets the right diet, temperature, and attention suited to their specific species and needs.</p>
     </div>
-    <div class="why-card">
+    <div class="why-card reveal reveal-6">
       <div class="icon">⭐</div>
       <h3>Trusted by Hyderabad</h3>
       <p>Dozens of happy pet parents across the city and counting. Read their stories below!</p>
@@ -257,8 +265,10 @@
 </div>
 
 <!-- REVIEWS SECTION -->
+<div class="divider-icon"><span>🐾</span></div>
 <div class="reviews-section">
-  <div class="reviews-title">❤️ What Pet Parents Say</div>
+  <div style="text-align:center;"><span class="eyebrow">Testimonials</span></div>
+  <div class="reviews-title reveal">❤️ What Pet Parents Say</div>
   <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
   <div class="reviews-grid" id="reviewsGrid"></div>
 
@@ -317,8 +327,10 @@
   </div>
 </footer>
 <a href="https://wa.me/919492919527" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+<a href="#" id="backTop" class="back-top" title="Back to top">↑</a>
 <div class="toast" id="toast"></div>
 
+<script src="main.js" defer></script>
 <script>
 function toggleNav(){
   const h=document.getElementById('hamburger');
