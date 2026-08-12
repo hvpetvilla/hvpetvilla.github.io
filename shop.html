@@ -196,7 +196,7 @@
   -->
 
   <div class="admin-toggle">
-    <button onclick="toggleAdmin()">⚙️ Manage Products (Admin)</button>
+    <button onclick="showAdminLogin()">⚙️ Admin</button>
   </div>
 
   <div class="admin-panel" id="adminPanel">
@@ -357,11 +357,24 @@ function renderProducts(){
 }
 
 // ── ADMIN ──
-function toggleAdmin(){
-  adminOpen=!adminOpen;
-  document.getElementById('adminPanel').style.display=adminOpen?'block':'none';
-  renderProducts();
+function showAdminLogin(){
+  if(sessionStorage.getItem('hvpv_shop_admin')==='1'){
+    adminOpen=!adminOpen;
+    document.getElementById('adminPanel').style.display=adminOpen?'block':'none';
+    renderProducts();
+    return;
+  }
+  const pw = prompt('Enter admin passcode:');
+  if(pw === '093627'){
+    sessionStorage.setItem('hvpv_shop_admin','1');
+    adminOpen = true;
+    document.getElementById('adminPanel').style.display='block';
+    renderProducts();
+  } else if(pw !== null){
+    alert('Incorrect passcode. Access denied.');
+  }
 }
+function toggleAdmin(){ showAdminLogin(); }
 function clearAdminForm(){
   ['ap-name','ap-price','ap-emoji','ap-desc','ap-img','ap-edit-id'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ap-cat').value='food';

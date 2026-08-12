@@ -262,7 +262,13 @@
   <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
   <div class="reviews-grid" id="reviewsGrid"></div>
 
-  <button class="write-review-btn" onclick="toggleReviewForm()">✍️ Write a Review</button>
+  <div id="moreReviewsWrap"></div>
+
+  <div style="text-align:center;margin-bottom:16px">
+    <button class="write-review-btn" onclick="toggleReviewForm()">✍️ Write a Review</button>
+    &nbsp;
+    <button onclick="showAdminReviewPanel()" style="background:none;border:none;font-size:.75rem;color:#9ca3af;cursor:pointer;text-decoration:underline">Admin</button>
+  </div>
 
   <div class="review-form-box" id="reviewFormBox">
     <h3>✍️ Share Your Experience</h3>
@@ -340,21 +346,54 @@ const SEED_REVIEWS = [
 
 function loadReviews() {
   const saved = JSON.parse(localStorage.getItem('hvpv_reviews') || '[]');
-  return [...SEED_REVIEWS, ...saved];
+  const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
+  const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
+  return [...seeds, ...saved];
 }
 
+function reviewCard(r, isAdmin) {
+  return `<div class="review-card">
+    ${r.img ? `<img src="${r.img}" class="review-img" alt="Pet photo"/>` : ''}
+    <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
+    <div class="review-text">"${r.text}"</div>
+    <div class="review-author">— ${r.name}</div>
+    ${r.pet ? `<div class="review-pet">🐾 ${r.pet}</div>` : ''}
+    ${isAdmin ? `<button onclick="adminDeleteReview(${r._idx})" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
+  </div>`;
+}
 function renderReviews() {
-  const reviews = loadReviews();
+  const all = loadReviews().map((r,i)=>({...r,_idx:i}));
   const grid = document.getElementById('reviewsGrid');
-  grid.innerHTML = reviews.map(r => `
-    <div class="review-card">
-      ${r.img ? `<img src="${r.img}" class="review-img" alt="Pet photo"/>` : ''}
-      <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
-      <div class="review-text">"${r.text}"</div>
-      <div class="review-author">— ${r.name}</div>
-      ${r.pet ? `<div class="review-pet">🐾 ${r.pet}</div>` : ''}
+  const moreWrap = document.getElementById('moreReviewsWrap');
+  const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
+  const SHOW = 5;
+  if(all.length === 0){
+    grid.innerHTML='<p style="text-align:center;color:#9ca3af">No reviews yet. Be the first!</p>';
+    if(moreWrap) moreWrap.innerHTML='';
+    return;
+  }
+  grid.innerHTML = all.slice(0,SHOW).map(r=>reviewCard(r,isAdmin)).join('');
+  if(!moreWrap){ return; }
+  if(all.length <= SHOW){ moreWrap.innerHTML=''; return; }
+  const rest = all.slice(SHOW);
+  moreWrap.innerHTML = `
+    <div id="extraReviews" style="display:none">
+      <div class="reviews-grid">${rest.map(r=>reviewCard(r,isAdmin)).join('')}</div>
     </div>
-  `).join('');
+    <div style="text-align:center;margin-top:12px">
+      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid #d1fae5;padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:#2D6A4F;cursor:pointer">
+        ▾ Show ${rest.length} more review${rest.length>1?'s':''}
+      </button>
+    </div>`;
+}
+function toggleMoreReviews(){
+  const el=document.getElementById('extraReviews');
+  const btn=document.getElementById('moreRevBtn');
+  if(!el||!btn) return;
+  const open = el.style.display==='block';
+  el.style.display = open?'none':'block';
+  const cnt = el.querySelectorAll('.review-card').length;
+  btn.textContent = open ? `▾ Show ${cnt} more review${cnt>1?'s':''}` : '▴ Show fewer reviews';
 }
 
 // ── STAR RATING ──
@@ -403,6 +442,35 @@ function submitReview() {
   selectedRating=0;
   document.querySelectorAll('.star-pick').forEach(s=>s.classList.remove('lit'));
   showToast('🎉 Thank you for your review!');
+}
+
+function adminDeleteReview(idx) {
+  // Only seed reviews (idx < 3) cannot be deleted by index manipulation;
+  // user-submitted reviews are stored separately
+  const SEED_COUNT = SEED_REVIEWS.length;
+  const saved = JSON.parse(localStorage.getItem('hvpv_reviews')||'[]');
+  if(idx < SEED_COUNT){
+    // delete from seed override list
+    const overrides = JSON.parse(localStorage.getItem('hvpv_seed_deleted')||'[]');
+    if(!overrides.includes(idx)) overrides.push(idx);
+    localStorage.setItem('hvpv_seed_deleted', JSON.stringify(overrides));
+  } else {
+    saved.splice(idx - SEED_COUNT, 1);
+    localStorage.setItem('hvpv_reviews', JSON.stringify(saved));
+  }
+  renderReviews();
+  showToast('Review deleted');
+}
+
+function showAdminReviewPanel() {
+  const pw = prompt('Enter admin passcode:');
+  if(pw === '093627'){
+    sessionStorage.setItem('hvpv_admin_ok','1');
+    renderReviews();
+    showToast('✅ Admin mode enabled — you can now delete reviews');
+  } else if(pw !== null){
+    showToast('⚠️ Incorrect passcode');
+  }
 }
 
 function showToast(msg) {
