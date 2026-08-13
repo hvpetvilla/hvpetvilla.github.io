@@ -1,5 +1,14 @@
 /* ===== HV Petvilla — Shared interactivity ===== */
 
+// Escapes user-submitted text before it's interpolated into innerHTML,
+// so a review/product field can't inject markup or break out of an
+// HTML attribute (e.g. an img src) into a new one.
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
 // Nav shadow on scroll
 (function(){
   const nav = document.getElementById('mainNav') || document.querySelector('.nav');

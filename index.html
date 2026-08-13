@@ -414,11 +414,11 @@ async function loadReviews() {
 
 function reviewCard(r, isAdmin) {
   return `<div class="review-card">
-    ${r.img ? `<img src="${r.img}" class="review-img" alt="Pet photo"/>` : ''}
+    ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo"/>` : ''}
     <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
-    <div class="review-text">"${r.text}"</div>
-    <div class="review-author">— ${r.name}</div>
-    ${r.pet ? `<div class="review-pet">🐾 ${r.pet}</div>` : ''}
+    <div class="review-text">"${escapeHtml(r.text)}"</div>
+    <div class="review-author">— ${escapeHtml(r.name)}</div>
+    ${r.pet ? `<div class="review-pet">🐾 ${escapeHtml(r.pet)}</div>` : ''}
     ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:rgba(193,68,58,.12);color:#A93326;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
   </div>`;
 }
@@ -528,14 +528,22 @@ async function adminDeleteReview(id) {
   showToast('Review deleted');
 }
 
-function showAdminReviewPanel() {
+async function showAdminReviewPanel() {
   const pw = prompt('Enter admin passcode:');
-  if(pw === '093627'){
+  if(pw === null) return;
+  try {
+    const res = await fetch(API_URL + '/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ passcode: pw })
+    });
+    if(!res.ok) throw new Error('bad passcode');
+    const { token } = await res.json();
     sessionStorage.setItem('hvpv_admin_ok','1');
-    sessionStorage.setItem('hvpv_admin_key', pw);
+    sessionStorage.setItem('hvpv_admin_key', token);
     renderReviews();
     showToast('✅ Admin mode enabled — you can now delete reviews');
-  } else if(pw !== null){
+  } catch(e) {
     showToast('⚠️ Incorrect passcode');
   }
 }

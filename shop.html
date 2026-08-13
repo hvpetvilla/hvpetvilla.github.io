@@ -320,6 +320,14 @@ function getAllProducts(){
   return apiProducts;
 }
 
+// Called via onerror when a product image fails to load. Reads the
+// fallback emoji from a data-attribute rather than having it inlined
+// into the onerror string itself, since HTML-escaping alone doesn't
+// stop a quote in that string from breaking out into the handler's JS.
+function showFallbackEmoji(img){
+  img.parentElement.textContent = img.dataset.emoji || '🐾';
+}
+
 // Build chips
 function buildChips(){
   const el=document.getElementById('chips'); el.innerHTML='';
@@ -344,12 +352,12 @@ function renderProducts(){
     <div class="product-card reveal">
       ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best">🔥 Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new">✨ New</span>':'')}
       <div class="product-thumb">
-        ${p.imgUrl?`<img src="${p.imgUrl}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.emoji||'🐾'}'"/>`:(p.emoji||'🐾')}
+        ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'🐾')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:escapeHtml(p.emoji||'🐾')}
       </div>
       <div class="product-body">
-        <div class="product-cat">${p.cat}</div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-desc">${p.desc||''}</div>
+        <div class="product-cat">${escapeHtml(p.cat)}</div>
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-desc">${escapeHtml(p.desc||'')}</div>
         <div class="product-foot">
           <div class="product-price">₹${p.price}</div>
           <button class="add-btn" onclick="addToCart(${JSON.stringify(p.id)})">+ Add</button>
@@ -362,7 +370,7 @@ function renderProducts(){
 }
 
 // ── ADMIN ──
-function showAdminLogin(){
+async function showAdminLogin(){
   if(sessionStorage.getItem('hvpv_shop_admin')==='1'){
     adminOpen=!adminOpen;
     document.getElementById('adminPanel').style.display=adminOpen?'block':'none';
@@ -370,13 +378,21 @@ function showAdminLogin(){
     return;
   }
   const pw = prompt('Enter admin passcode:');
-  if(pw === '093627'){
+  if(pw === null) return;
+  try {
+    const res = await fetch(API_URL + '/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ passcode: pw })
+    });
+    if(!res.ok) throw new Error('bad passcode');
+    const { token } = await res.json();
     sessionStorage.setItem('hvpv_shop_admin','1');
-    sessionStorage.setItem('hvpv_shop_admin_key', pw);
+    sessionStorage.setItem('hvpv_shop_admin_key', token);
     adminOpen = true;
     document.getElementById('adminPanel').style.display='block';
     renderProducts();
-  } else if(pw !== null){
+  } catch(e) {
     alert('Incorrect passcode. Access denied.');
   }
 }
