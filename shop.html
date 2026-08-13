@@ -189,10 +189,8 @@
        ══════════════════════════════════════
        Open this page, click "Manage Products (Admin)",
        fill in the form, click "Add Product".
-       Products are saved in your browser's localStorage
-       — they persist across page reloads.
-       To share products across devices, edit the PRODUCTS
-       array in the <script> section of this file directly.
+       Products are saved to the database and are visible
+       to every visitor immediately.
   -->
 
   <div class="admin-toggle">
@@ -223,7 +221,7 @@
       <button class="btn" style="background:#fde;color:#c00;" onclick="exportProducts()">📋 Export JSON</button>
     </div>
     <div style="margin-top:14px;font-size:.78rem;color:var(--muted);">
-      Products added here are stored in your browser. To make them permanent for all visitors, copy the exported JSON into the PRODUCTS array in the source code.
+      Products added here are stored in the database and visible to every visitor immediately.
     </div>
   </div>
 
@@ -313,10 +311,28 @@ const CATS=['all','food','accessories','cages','other'];
 const CAT_LABELS={all:'All Products 🐾',food:'Food & Treats 🍖',accessories:'Accessories 🎀',cages:'Cages & Habitats 🏡',other:'Other'};
 let activecat='all', cart=[], adminOpen=false;
 
-// Merge built-in + localStorage products
+const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
+let apiProducts = [];
+
+async function loadProducts(){
+  try {
+    const res = await fetch(API_URL + '/api/products');
+    if(!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    apiProducts = data.map(p => ({
+      id: p._id,
+      name: p.name, cat: p.cat, emoji: p.emoji,
+      imgUrl: p.imgUrl || '', desc: p.desc || '', price: p.price
+    }));
+  } catch(e) {
+    console.error('Failed to load products:', e);
+    apiProducts = [];
+  }
+}
+
+// Merge built-in + API products
 function getAllProducts(){
-  const extra=JSON.parse(localStorage.getItem('hvpv_products')||'[]');
-  return [...BUILT_IN_PRODUCTS, ...extra];
+  return [...BUILT_IN_PRODUCTS, ...apiProducts];
 }
 
 // Build chips
@@ -353,10 +369,10 @@ function renderProducts(){
         <div class="product-desc">${p.desc||''}</div>
         <div class="product-foot">
           <div class="product-price">₹${p.price}</div>
-          <button class="add-btn" onclick="addToCart(${p.id})">+ Add</button>
+          <button class="add-btn" onclick="addToCart(${JSON.stringify(p.id)})">+ Add</button>
         </div>
       </div>
-      <button class="delete-prod" onclick="deleteProduct(${p.id})">✕ Delete</button>
+      <button class="delete-prod" onclick="deleteProduct(${JSON.stringify(p.id)})">✕ Delete</button>
     </div>
   `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
 }
@@ -372,6 +388,7 @@ function showAdminLogin(){
   const pw = prompt('Enter admin passcode:');
   if(pw === '093627'){
     sessionStorage.setItem('hvpv_shop_admin','1');
+    sessionStorage.setItem('hvpv_shop_admin_key', pw);
     adminOpen = true;
     document.getElementById('adminPanel').style.display='block';
     renderProducts();
@@ -384,38 +401,50 @@ function clearAdminForm(){
   ['ap-name','ap-price','ap-emoji','ap-desc','ap-img','ap-edit-id'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ap-cat').value='food';
 }
-function saveProduct(){
+async function saveProduct(){
   const name=document.getElementById('ap-name').value.trim();
   const price=parseInt(document.getElementById('ap-price').value)||0;
   const cat=document.getElementById('ap-cat').value;
   const emoji=document.getElementById('ap-emoji').value.trim()||'🐾';
   const desc=document.getElementById('ap-desc').value.trim();
   const imgUrl=document.getElementById('ap-img').value.trim();
-  const editId=document.getElementById('ap-edit-id').value;
   if(!name||!price) return showToast('⚠️ Name and Price are required');
-  const products=JSON.parse(localStorage.getItem('hvpv_products')||'[]');
-  if(editId){
-    const idx=products.findIndex(p=>String(p.id)===editId);
-    if(idx>-1) products[idx]={id:parseInt(editId),name,cat,emoji,imgUrl,desc,price};
-  } else {
-    const newId=Date.now();
-    products.push({id:newId,name,cat,emoji,imgUrl,desc,price});
+  const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
+  try {
+    const res = await fetch(API_URL + '/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
+      body: JSON.stringify({ name, cat, emoji, imgUrl, desc, price })
+    });
+    if(!res.ok) throw new Error('API error ' + res.status);
+  } catch(e) {
+    console.error('Failed to save product:', e);
+    return showToast('⚠️ Could not save product — please try again later');
   }
-  localStorage.setItem('hvpv_products',JSON.stringify(products));
+  await loadProducts();
   clearAdminForm(); renderProducts();
   showToast('✅ Product saved!');
 }
-function deleteProduct(id){
-  // Only allows deleting local (non built-in) products
+async function deleteProduct(id){
+  // Only allows deleting API-backed (non built-in) products
   const builtin=BUILT_IN_PRODUCTS.find(p=>p.id===id);
   if(builtin){ showToast('⚠️ Built-in products cannot be deleted here. Edit the source code.'); return; }
-  const products=JSON.parse(localStorage.getItem('hvpv_products')||'[]').filter(p=>p.id!==id);
-  localStorage.setItem('hvpv_products',JSON.stringify(products));
+  const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
+  try {
+    const res = await fetch(API_URL + '/api/products?id=' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Key': adminKey || '' }
+    });
+    if(!res.ok) throw new Error('API error ' + res.status);
+  } catch(e) {
+    console.error('Failed to delete product:', e);
+    return showToast('⚠️ Could not delete product — please try again later');
+  }
+  await loadProducts();
   renderProducts(); showToast('🗑️ Product deleted');
 }
 function exportProducts(){
-  const extra=JSON.parse(localStorage.getItem('hvpv_products')||'[]');
-  const json=JSON.stringify(extra,null,2);
+  const json=JSON.stringify(apiProducts,null,2);
   navigator.clipboard.writeText(json).then(()=>showToast('📋 JSON copied to clipboard!')).catch(()=>{
     const ta=document.createElement('textarea'); ta.value=json;
     document.body.appendChild(ta); ta.select(); document.execCommand('copy');
@@ -494,7 +523,8 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-buildChips(); renderProducts();
+buildChips();
+loadProducts().then(renderProducts);
 </script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
