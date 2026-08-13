@@ -2,20 +2,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..900&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --teal:       #5FBF8F;   /* fresh fern-leaf green — primary accent */
-  --teal-dark:  #12281F;   /* shaded canopy floor, hero/footer */
-  --teal-light: #26493C;   /* moss-tinted surface (hover states) */
-  --green:      #D9C86A;   /* dappled sunlight through the canopy — secondary accent */
-  --green-light:rgba(217,200,106,.12);
-  --white:      #EDF3EE;   /* pale mist — text on dark surfaces */
-  --surface:    #1E4238;   /* leaf-litter surface, lifted off the bg */
-  --bg:         #173A2F;   /* rainforest canopy — page background */
-  --border:     #35594B;
-  --muted:      #A3C6B4;
-  --red:        #E2694F;
-  --shadow-sm:  0 1px 4px rgba(0,0,0,.22);
-  --shadow-md:  0 4px 18px rgba(0,0,0,.3);
-  --shadow-lg:  0 10px 40px rgba(0,0,0,.4);
+  --teal:       #8A5A34;   /* saddle brown — primary accent */
+  --teal-dark:  #3D2817;   /* dark roast espresso — hero/footer bands */
+  --teal-light: #EDE0CB;   /* pale latte tint (hover states) */
+  --green:      #C89B5C;   /* warm caramel — secondary accent */
+  --green-light:rgba(200,155,92,.15);
+  --white:      #FBF6EC;   /* cream — text on dark bands (hero/footer/buttons) */
+  --ink:        #3A2A1C;   /* dark roast — body text on light surfaces */
+  --surface:    #FFFBF3;   /* card surface, lifted off the page bg */
+  --bg:         #F6EFE0;   /* warm cream — page background */
+  --border:     #E4D5BC;
+  --muted:      #8A7860;
+  --red:        #C1443A;
+  --shadow-sm:  0 1px 4px rgba(58,42,28,.08);
+  --shadow-md:  0 4px 18px rgba(58,42,28,.12);
+  --shadow-lg:  0 10px 40px rgba(58,42,28,.18);
   --radius:     16px;
   --radius-sm:  10px;
 }
@@ -27,7 +28,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: 'Inter', sans-serif;
   background: var(--bg);
-  color: var(--white);
+  color: var(--ink);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -36,7 +37,7 @@ body {
 /* ── NAV ── */
 .nav {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(23,58,47,0.92);
+  background: rgba(246,239,224,0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1.5px solid var(--border);
   display: flex; align-items: center;
@@ -110,7 +111,7 @@ body {
 
 /* ── HERO ── */
 .hero {
-  background: linear-gradient(135deg, var(--teal-dark) 0%, #1B4536 45%, var(--teal) 100%);
+  background: linear-gradient(135deg, var(--teal-dark) 0%, #5C3B22 45%, var(--teal) 100%);
   color: var(--white); padding: 52px 20px 60px;
   text-align: center; position: relative; overflow: hidden;
 }
@@ -154,7 +155,7 @@ body {
   width: 100%; padding: 11px 14px;
   border: 1.5px solid var(--border); border-radius: var(--radius-sm);
   font-family: 'Inter', sans-serif; font-size: 0.9rem;
-  background: var(--surface); color: var(--white);
+  background: var(--surface); color: var(--ink);
   transition: border-color 0.18s;
   outline: none;
 }
@@ -173,11 +174,11 @@ body {
 }
 .btn-primary {
   background: linear-gradient(135deg, var(--teal), var(--green));
-  color: var(--teal-dark); box-shadow: 0 4px 14px rgba(95,191,143,.3);
+  color: var(--white); box-shadow: 0 4px 14px rgba(138,90,52,.35);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(95,191,143,.4); }
-.btn-green  { background: var(--teal); color: var(--teal-dark); }
-.btn-green:hover { background: #4CA97A; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(138,90,52,.45); }
+.btn-green  { background: var(--teal); color: var(--white); }
+.btn-green:hover { background: #6E4327; }
 .btn-outline { border: 2px solid currentColor; background: transparent; }
 .btn-outline:hover { background: rgba(244,239,227,.1); }
 .btn-block { width: 100%; }
@@ -187,7 +188,7 @@ footer {
   background: var(--teal-dark); color: rgba(244,239,227,0.75);
   text-align: center; padding: 24px 20px; font-size: 0.84rem;
 }
-footer a { color: #8FE0B5; text-decoration: none; }
+footer a { color: #E8C888; text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* ── FOOTER LOGO ── */
@@ -209,7 +210,7 @@ footer a:hover { text-decoration: underline; }
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--teal); color: var(--teal-dark);
+  background: var(--teal); color: var(--white);
   padding: 11px 22px; border-radius: 30px; font-size: 0.88rem; font-weight: 600;
   opacity: 0; transition: all 0.3s; z-index: 500; white-space: nowrap;
   pointer-events: none;
@@ -234,7 +235,7 @@ footer a:hover { text-decoration: underline; }
 ═══════════════════════════════════════════════════════ */
 
 /* Nav gains depth once page is scrolled */
-.nav.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,.18); }
+.nav.scrolled { box-shadow: 0 2px 16px rgba(58,42,28,.12); }
 
 /* Active nav link gets a little animated underline */
 .nav-links a { position: relative; }
@@ -287,7 +288,7 @@ footer a:hover { text-decoration: underline; }
   font-family: 'Bricolage Grotesque', sans-serif; text-transform: uppercase;
   box-shadow: 0 2px 8px rgba(0,0,0,.18);
 }
-.badge-best { background: linear-gradient(135deg,var(--green),#B89A3E); }
+.badge-best { background: linear-gradient(135deg,var(--green),#9C7440); }
 .badge-new  { background: linear-gradient(135deg,var(--teal),var(--green)); }
 
 /* ── Product card shine + lift (extends .product-card) ── */
@@ -324,7 +325,7 @@ footer a:hover { text-decoration: underline; }
   transition: all .25s ease;
 }
 .back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.back-top:hover { background: var(--teal); color: var(--teal-dark); border-color: var(--teal); }
+.back-top:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
 
 /* ── WhatsApp float: gentle pulse ring ── */
 .wa-float { position: fixed; }

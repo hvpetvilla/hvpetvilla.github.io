@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="style.css"/>
   <style>
     .home-hero {
-      background: linear-gradient(135deg, var(--teal-dark) 0%, #1B4536 45%, var(--teal) 100%);
+      background: linear-gradient(135deg, var(--teal-dark) 0%, #5C3B22 45%, var(--teal) 100%);
       color: var(--white); padding: 64px 20px 80px;
       text-align: center; position: relative; overflow: hidden;
     }
@@ -113,7 +113,7 @@
       box-shadow: var(--shadow-sm);
     }
     .review-stars { color:var(--green); font-size:1.1rem; margin-bottom:6px; }
-    .review-text { font-size:0.85rem; color:var(--white); line-height:1.55; margin-bottom:10px; font-style:italic; }
+    .review-text { font-size:0.85rem; color:var(--ink); line-height:1.55; margin-bottom:10px; font-style:italic; }
     .review-author { font-size:0.8rem; font-weight:700; color:var(--teal); }
     .review-pet { font-size:0.75rem; color:var(--muted); }
     .review-img { width:100%; border-radius:8px; object-fit:cover; max-height:120px; margin-bottom:10px; }
@@ -123,11 +123,11 @@
       display:block; width:fit-content; margin:0 auto 20px;
       padding:12px 28px; border-radius:var(--radius-sm);
       background:linear-gradient(135deg,var(--teal),var(--green));
-      color:var(--teal-dark); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
+      color:var(--white); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
       font-size:0.95rem; cursor:pointer; border:none;
-      box-shadow:0 4px 14px rgba(95,191,143,.3); transition:all .18s;
+      box-shadow:0 4px 14px rgba(138,90,52,.3); transition:all .18s;
     }
-    .write-review-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(95,191,143,.4); }
+    .write-review-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(138,90,52,.4); }
     .review-form-box {
       background:var(--surface); border:1.5px solid var(--border);
       border-radius:var(--radius); padding:24px; display:none; margin-top:16px;
@@ -370,7 +370,7 @@ document.addEventListener('click',function(e){
       if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
       const flicker = 0.55 + 0.45*Math.sin(t/900 + p.phase);
       ctx.beginPath();
-      ctx.fillStyle = `rgba(217,200,106,${(p.a*flicker).toFixed(3)})`;
+      ctx.fillStyle = `rgba(200,155,92,${(p.a*flicker).toFixed(3)})`;
       ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fill();
     });
@@ -419,7 +419,7 @@ function reviewCard(r, isAdmin) {
     <div class="review-text">"${r.text}"</div>
     <div class="review-author">— ${r.name}</div>
     ${r.pet ? `<div class="review-pet">🐾 ${r.pet}</div>` : ''}
-    ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:rgba(226,105,79,.15);color:#FF9B82;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
+    ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:rgba(193,68,58,.12);color:#A93326;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
   </div>`;
 }
 async function renderReviews() {
@@ -442,7 +442,7 @@ async function renderReviews() {
       <div class="reviews-grid">${rest.map(r=>reviewCard(r,isAdmin)).join('')}</div>
     </div>
     <div style="text-align:center;margin-top:12px">
-      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid rgba(95,191,143,.35);padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--teal);cursor:pointer">
+      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid rgba(138,90,52,.35);padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--teal);cursor:pointer">
         ▾ Show ${rest.length} more review${rest.length>1?'s':''}
       </button>
     </div>`;
