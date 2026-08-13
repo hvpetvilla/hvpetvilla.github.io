@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="style.css"/>
   <style>
     .home-hero {
-      background: linear-gradient(135deg, var(--teal-dark) 0%, #12271F 45%, var(--teal) 100%);
+      background: linear-gradient(135deg, var(--teal-dark) 0%, #1B4536 45%, var(--teal) 100%);
       color: var(--white); padding: 64px 20px 80px;
       text-align: center; position: relative; overflow: hidden;
     }
@@ -125,9 +125,9 @@
       background:linear-gradient(135deg,var(--teal),var(--green));
       color:var(--teal-dark); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
       font-size:0.95rem; cursor:pointer; border:none;
-      box-shadow:0 4px 14px rgba(52,169,135,.3); transition:all .18s;
+      box-shadow:0 4px 14px rgba(95,191,143,.3); transition:all .18s;
     }
-    .write-review-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(52,169,135,.4); }
+    .write-review-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(95,191,143,.4); }
     .review-form-box {
       background:var(--surface); border:1.5px solid var(--border);
       border-radius:var(--radius); padding:24px; display:none; margin-top:16px;
@@ -135,7 +135,7 @@
     .review-form-box h3 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); margin-bottom:18px; }
     .star-picker { display:flex; gap:6px; margin-bottom:16px; }
     .star-pick {
-      font-size:1.6rem; cursor:pointer; color:#3D5347; transition:color .12s;
+      font-size:1.6rem; cursor:pointer; color:var(--border); transition:color .12s;
       background:none; border:none; padding:0;
     }
     .star-pick.lit { color:var(--green); }
@@ -370,7 +370,7 @@ document.addEventListener('click',function(e){
       if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
       const flicker = 0.55 + 0.45*Math.sin(t/900 + p.phase);
       ctx.beginPath();
-      ctx.fillStyle = `rgba(242,166,59,${(p.a*flicker).toFixed(3)})`;
+      ctx.fillStyle = `rgba(217,200,106,${(p.a*flicker).toFixed(3)})`;
       ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fill();
     });
@@ -442,7 +442,7 @@ async function renderReviews() {
       <div class="reviews-grid">${rest.map(r=>reviewCard(r,isAdmin)).join('')}</div>
     </div>
     <div style="text-align:center;margin-top:12px">
-      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid rgba(52,169,135,.35);padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--teal);cursor:pointer">
+      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid rgba(95,191,143,.35);padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--teal);cursor:pointer">
         ▾ Show ${rest.length} more review${rest.length>1?'s':''}
       </button>
     </div>`;

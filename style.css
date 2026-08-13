@@ -2,20 +2,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..900&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --teal:       #34A987;   /* jewel-teal accent */
-  --teal-dark:  #0B1A15;   /* deep spruce-black, hero/footer */
-  --teal-light: #1E362B;   /* dark teal-tinted surface (hover states) */
-  --green:      #F2A63B;   /* marigold accent */
-  --green-light:rgba(242,166,59,.12);
-  --white:      #F4EFE3;   /* warm ivory — text on dark surfaces */
-  --surface:    #17281F;   /* card / component surface */
-  --bg:         #10201B;   /* page background — deep spruce */
-  --border:     #2A4136;
-  --muted:      #93B0A3;
+  --teal:       #5FBF8F;   /* fresh fern-leaf green — primary accent */
+  --teal-dark:  #12281F;   /* shaded canopy floor, hero/footer */
+  --teal-light: #26493C;   /* moss-tinted surface (hover states) */
+  --green:      #D9C86A;   /* dappled sunlight through the canopy — secondary accent */
+  --green-light:rgba(217,200,106,.12);
+  --white:      #EDF3EE;   /* pale mist — text on dark surfaces */
+  --surface:    #1E4238;   /* leaf-litter surface, lifted off the bg */
+  --bg:         #173A2F;   /* rainforest canopy — page background */
+  --border:     #35594B;
+  --muted:      #A3C6B4;
   --red:        #E2694F;
-  --shadow-sm:  0 1px 4px rgba(0,0,0,.25);
-  --shadow-md:  0 4px 18px rgba(0,0,0,.35);
-  --shadow-lg:  0 10px 40px rgba(0,0,0,.45);
+  --shadow-sm:  0 1px 4px rgba(0,0,0,.22);
+  --shadow-md:  0 4px 18px rgba(0,0,0,.3);
+  --shadow-lg:  0 10px 40px rgba(0,0,0,.4);
   --radius:     16px;
   --radius-sm:  10px;
 }
@@ -36,7 +36,7 @@ body {
 /* ── NAV ── */
 .nav {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(16,32,27,0.92);
+  background: rgba(23,58,47,0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1.5px solid var(--border);
   display: flex; align-items: center;
@@ -110,7 +110,7 @@ body {
 
 /* ── HERO ── */
 .hero {
-  background: linear-gradient(135deg, var(--teal-dark) 0%, #12271F 45%, var(--teal) 100%);
+  background: linear-gradient(135deg, var(--teal-dark) 0%, #1B4536 45%, var(--teal) 100%);
   color: var(--white); padding: 52px 20px 60px;
   text-align: center; position: relative; overflow: hidden;
 }
@@ -173,11 +173,11 @@ body {
 }
 .btn-primary {
   background: linear-gradient(135deg, var(--teal), var(--green));
-  color: var(--teal-dark); box-shadow: 0 4px 14px rgba(52,169,135,.3);
+  color: var(--teal-dark); box-shadow: 0 4px 14px rgba(95,191,143,.3);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52,169,135,.4); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(95,191,143,.4); }
 .btn-green  { background: var(--teal); color: var(--teal-dark); }
-.btn-green:hover { background: #2C9679; }
+.btn-green:hover { background: #4CA97A; }
 .btn-outline { border: 2px solid currentColor; background: transparent; }
 .btn-outline:hover { background: rgba(244,239,227,.1); }
 .btn-block { width: 100%; }
@@ -187,7 +187,7 @@ footer {
   background: var(--teal-dark); color: rgba(244,239,227,0.75);
   text-align: center; padding: 24px 20px; font-size: 0.84rem;
 }
-footer a { color: #6FE3C0; text-decoration: none; }
+footer a { color: #8FE0B5; text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* ── FOOTER LOGO ── */
@@ -234,7 +234,7 @@ footer a:hover { text-decoration: underline; }
 ═══════════════════════════════════════════════════════ */
 
 /* Nav gains depth once page is scrolled */
-.nav.scrolled { box-shadow: 0 2px 16px rgba(14,102,85,.10); }
+.nav.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,.18); }
 
 /* Active nav link gets a little animated underline */
 .nav-links a { position: relative; }
@@ -287,7 +287,7 @@ footer a:hover { text-decoration: underline; }
   font-family: 'Bricolage Grotesque', sans-serif; text-transform: uppercase;
   box-shadow: 0 2px 8px rgba(0,0,0,.18);
 }
-.badge-best { background: linear-gradient(135deg,var(--green),#DD8A1F); }
+.badge-best { background: linear-gradient(135deg,var(--green),#B89A3E); }
 .badge-new  { background: linear-gradient(135deg,var(--teal),var(--green)); }
 
 /* ── Product card shine + lift (extends .product-card) ── */
