@@ -69,6 +69,17 @@
       color:var(--teal); margin-bottom:4px;
     }
     .admin-actions { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .buyer-details { margin-top:14px; display:flex; flex-direction:column; gap:10px; }
+    .buyer-details input, .buyer-details textarea {
+      width:100%; padding:9px 12px; border:1.5px solid var(--border);
+      border-radius:var(--radius-sm); font-size:.85rem;
+      font-family:'Inter',sans-serif; outline:none; resize:vertical;
+    }
+    .buyer-details input:focus, .buyer-details textarea:focus { border-color:var(--teal); }
+    .buyer-details label {
+      display:block; font-size:.78rem; font-weight:600;
+      color:var(--teal); margin-bottom:4px;
+    }
 
     /* Product grid */
     .product-grid {
@@ -99,13 +110,16 @@
       font-family:'Bricolage Grotesque',sans-serif; transition:background .18s;
     }
     .add-btn:hover { background:var(--teal-dark); }
-    .delete-prod {
-      position:absolute; top:8px; right:8px;
-      background:rgba(231,76,60,.85); color:#fff; border:none;
-      border-radius:6px; padding:4px 8px; font-size:.72rem;
-      cursor:pointer; display:none;
+    .admin-card-actions {
+      position:absolute; top:8px; right:8px; gap:6px; display:none;
     }
-    .admin-mode .delete-prod { display:block; }
+    .admin-mode .admin-card-actions { display:flex; }
+    .admin-card-actions button {
+      color:#fff; border:none; border-radius:6px; padding:4px 8px;
+      font-size:.72rem; cursor:pointer;
+    }
+    .edit-prod { background:rgba(58,141,193,.85); }
+    .delete-prod { background:rgba(231,76,60,.85); }
 
     /* Cart */
     .cart-btn {
@@ -256,6 +270,11 @@
     <div id="cartEmptyMsg" class="empty-cart"><div style="font-size:2.5rem;margin-bottom:8px;">🛒</div><p>Your cart is empty</p></div>
     <div id="cartFooterBlock" style="display:none;">
       <div class="cart-total"><span>Total</span><span id="cartTotalAmt"></span></div>
+      <div class="buyer-details">
+        <div><label>Your Name *</label><input id="cb-name" placeholder="Full name"/></div>
+        <div><label>Phone Number *</label><input id="cb-phone" type="tel" placeholder="10-digit mobile number" maxlength="15"/></div>
+        <div><label>Delivery Address *</label><textarea id="cb-address" rows="2" placeholder="House no, street, area, city, pincode"></textarea></div>
+      </div>
       <button class="btn btn-green btn-block" style="margin-top:16px;" onclick="checkoutViaWhatsApp()">Checkout via WhatsApp 🟢</button>
       <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:8px;">We'll confirm your order & send a payment QR on WhatsApp</p>
     </div>
@@ -364,7 +383,10 @@ function renderProducts(){
           <button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>
         </div>
       </div>
-      <button class="delete-prod" onclick="deleteProduct(${escapeHtml(JSON.stringify(p.id))})">✕ Delete</button>
+      <div class="admin-card-actions">
+        <button class="edit-prod" onclick="editProduct(${escapeHtml(JSON.stringify(p.id))})">✎ Edit</button>
+        <button class="delete-prod" onclick="deleteProduct(${escapeHtml(JSON.stringify(p.id))})">✕ Delete</button>
+      </div>
     </div>
   `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
   if(window.applyScrollReveal) applyScrollReveal();
@@ -439,10 +461,29 @@ function clearAdminForm(){
   document.getElementById('ap-cat').value='food';
   const preview=document.getElementById('ap-img-preview');
   preview.style.display='none'; preview.src='';
+  const saveBtn=document.getElementById('saveProductBtn');
+  if(saveBtn) saveBtn.textContent='💾 Save Product';
+}
+function editProduct(id){
+  const p = apiProducts.find(x=>x.id===id); if(!p) return;
+  document.getElementById('ap-edit-id').value = p.id;
+  document.getElementById('ap-name').value = p.name;
+  document.getElementById('ap-cat').value = p.cat;
+  document.getElementById('ap-price').value = p.price;
+  document.getElementById('ap-emoji').value = p.emoji || '';
+  document.getElementById('ap-desc').value = p.desc || '';
+  document.getElementById('ap-img').value = p.imgUrl || '';
+  document.getElementById('ap-imgfile').value = '';
+  const preview=document.getElementById('ap-img-preview');
+  preview.style.display='none'; preview.src='';
+  const saveBtn=document.getElementById('saveProductBtn');
+  if(saveBtn) saveBtn.textContent='💾 Update Product';
+  document.getElementById('adminPanel').scrollIntoView({behavior:'smooth', block:'start'});
 }
 let isSavingProduct = false;
 async function saveProduct(){
   if(isSavingProduct) return; // guards against duplicate submissions from repeated clicks
+  const editId = document.getElementById('ap-edit-id').value.trim();
   const name=document.getElementById('ap-name').value.trim();
   const price=parseInt(document.getElementById('ap-price').value)||0;
   const cat=document.getElementById('ap-cat').value;
@@ -454,10 +495,11 @@ async function saveProduct(){
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
   const saveBtn = document.getElementById('saveProductBtn');
   isSavingProduct = true;
-  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = editId ? 'Updating…' : 'Saving…'; }
   try {
-    const res = await fetch(API_URL + '/api/products', {
-      method: 'POST',
+    const url = API_URL + '/api/products' + (editId ? '?id=' + encodeURIComponent(editId) : '');
+    const res = await fetch(url, {
+      method: editId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
       body: JSON.stringify({ name, cat, emoji, imgUrl, desc, price })
     });
@@ -465,13 +507,16 @@ async function saveProduct(){
     if(!res.ok) throw new Error('API error ' + res.status);
     await loadProducts();
     clearAdminForm(); renderProducts();
-    showToast('✅ Product saved!');
+    showToast(editId ? '✅ Product updated!' : '✅ Product saved!');
   } catch(e) {
     console.error('Failed to save product:', e);
     showToast('⚠️ Could not save product — please try again later');
   } finally {
     isSavingProduct = false;
-    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = '💾 Save Product'; }
+    if(saveBtn){
+      saveBtn.disabled = false;
+      saveBtn.textContent = document.getElementById('ap-edit-id').value.trim() ? '💾 Update Product' : '💾 Save Product';
+    }
   }
 }
 async function deleteProduct(id){
@@ -545,8 +590,22 @@ document.getElementById('cartOverlay').addEventListener('click',e=>{if(e.target=
 
 // ── WHATSAPP CHECKOUT ──
 const WHATSAPP_NUMBER = '919492919527';
+function prefillBuyerDetails(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('hvpv_buyer_info') || 'null');
+    if(!saved) return;
+    if(saved.name) document.getElementById('cb-name').value = saved.name;
+    if(saved.phone) document.getElementById('cb-phone').value = saved.phone;
+    if(saved.address) document.getElementById('cb-address').value = saved.address;
+  } catch(e) {}
+}
 function checkoutViaWhatsApp(){
   if(!cart.length) return;
+  const name=document.getElementById('cb-name').value.trim();
+  const phone=document.getElementById('cb-phone').value.trim();
+  const address=document.getElementById('cb-address').value.trim();
+  if(!name||!phone||!address) return showToast('⚠️ Please add your name, phone & address to checkout');
+  localStorage.setItem('hvpv_buyer_info', JSON.stringify({name,phone,address}));
   const totalAmt=cart.reduce((a,b)=>a+b.price*b.qty,0);
   const lines=cart.map((item,i)=>`${i+1}. ${item.name} x${item.qty} - ₹${item.price*item.qty}`);
   const message=[
@@ -555,6 +614,10 @@ function checkoutViaWhatsApp(){
     ...lines,
     '',
     `Total: ₹${totalAmt.toLocaleString('en-IN')}`,
+    '',
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Address: ${address}`,
     '',
     'Please share the payment QR to complete my order. Thank you!'
   ].join('\n');
@@ -570,6 +633,7 @@ function showToast(msg){
 
 buildChips();
 updateAdminLogoutVisibility();
+prefillBuyerDetails();
 loadProducts().then(renderProducts);
 </script>
 </body>
