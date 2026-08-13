@@ -15,11 +15,14 @@ Replace: 91 + YOUR 10-DIGIT WHATSAPP NUMBER
 Files: index.html, boarding.html, shop.html, communiTree.html, contact.html
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  shop.html — Razorpay Key
+  shop.html — Checkout now goes via WhatsApp
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Find:    rzp_test_XXXXXXXXXXXXXX
-Replace: Your Razorpay Key ID (starts with rzp_live_ or rzp_test_)
-         Get it from: razorpay.com → Settings → API Keys
+"Checkout via WhatsApp" uses the same WHATSAPP_NUMBER as the
+rest of the site (see "ALL FILES — WhatsApp number" above) —
+nothing extra to configure here. When a customer taps it, it
+opens a WhatsApp chat to that number with their cart items,
+quantities and total pre-filled, so you can reply with a
+payment QR and confirm the order.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   contact.html — Formspree form ID
