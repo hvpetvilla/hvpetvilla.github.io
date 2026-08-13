@@ -172,6 +172,7 @@ body {
   cursor: pointer; border: none; transition: all 0.18s;
   text-decoration: none;
 }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 .btn-primary {
   background: linear-gradient(135deg, var(--teal), var(--green));
   color: var(--white); box-shadow: 0 4px 14px rgba(138,90,52,.35);

@@ -270,6 +270,7 @@
     <button class="write-review-btn" onclick="toggleReviewForm()">✍️ Write a Review</button>
     &nbsp;
     <button onclick="showAdminReviewPanel()" style="background:none;border:none;font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline">Admin</button>
+    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;background:none;border:none;font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline;margin-left:10px;">🚪 Logout</button>
   </div>
 
   <div class="review-form-box" id="reviewFormBox">
@@ -305,7 +306,7 @@
         <img id="rv-img-preview" style="max-width:100%;border-radius:8px;margin-top:10px;display:none;" alt="Preview"/>
       </div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="submitReview()">Submit Review 🐾</button>
+    <button class="btn btn-primary btn-block" id="submitReviewBtn" onclick="submitReview()">Submit Review 🐾</button>
   </div>
 </div>
 <br>
@@ -482,7 +483,9 @@ function previewReviewImg(e) {
   reader.readAsDataURL(file);
 }
 
+let isSubmittingReview = false;
 async function submitReview() {
+  if(isSubmittingReview) return; // guards against duplicate submissions from repeated clicks
   const name = document.getElementById('rv-name').value.trim();
   const pet  = document.getElementById('rv-pet').value.trim();
   const text = document.getElementById('rv-text').value.trim();
@@ -490,6 +493,9 @@ async function submitReview() {
   if(!name) return showToast('⚠️ Please enter your name');
   if(!selectedRating) return showToast('⚠️ Please select a star rating');
   if(!text) return showToast('⚠️ Please write your review');
+  const submitBtn = document.getElementById('submitReviewBtn');
+  isSubmittingReview = true;
+  if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
   try {
     const res = await fetch(API_URL + '/api/reviews', {
       method: 'POST',
@@ -497,19 +503,22 @@ async function submitReview() {
       body: JSON.stringify({ name, pet, rating: selectedRating, message: text, img: imgEl.style.display==='block'?imgEl.src:'' })
     });
     if(!res.ok) throw new Error('API error ' + res.status);
+    renderReviews();
+    document.getElementById('reviewFormBox').style.display='none';
+    document.getElementById('rv-name').value='';
+    document.getElementById('rv-pet').value='';
+    document.getElementById('rv-text').value='';
+    document.getElementById('rv-img-preview').style.display='none';
+    selectedRating=0;
+    document.querySelectorAll('.star-pick').forEach(s=>s.classList.remove('lit'));
+    showToast('🎉 Thank you for your review!');
   } catch(e) {
     console.error('Failed to submit review:', e);
-    return showToast('⚠️ Could not submit your review — please try again later');
+    showToast('⚠️ Could not submit your review — please try again later');
+  } finally {
+    isSubmittingReview = false;
+    if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Submit Review 🐾'; }
   }
-  renderReviews();
-  document.getElementById('reviewFormBox').style.display='none';
-  document.getElementById('rv-name').value='';
-  document.getElementById('rv-pet').value='';
-  document.getElementById('rv-text').value='';
-  document.getElementById('rv-img-preview').style.display='none';
-  selectedRating=0;
-  document.querySelectorAll('.star-pick').forEach(s=>s.classList.remove('lit'));
-  showToast('🎉 Thank you for your review!');
 }
 
 async function adminDeleteReview(id) {
@@ -519,6 +528,7 @@ async function adminDeleteReview(id) {
       method: 'DELETE',
       headers: { 'X-Admin-Key': adminKey || '' }
     });
+    if(res.status === 401) return handleAdminAuthFailure();
     if(!res.ok) throw new Error('API error ' + res.status);
   } catch(e) {
     console.error('Failed to delete review:', e);
@@ -528,6 +538,10 @@ async function adminDeleteReview(id) {
   showToast('Review deleted');
 }
 
+function updateAdminLogoutVisibility(){
+  const btn = document.getElementById('adminLogoutBtn');
+  if(btn) btn.style.display = sessionStorage.getItem('hvpv_admin_ok')==='1' ? 'inline-block' : 'none';
+}
 async function showAdminReviewPanel() {
   const pw = prompt('Enter admin passcode:');
   if(pw === null) return;
@@ -541,11 +555,29 @@ async function showAdminReviewPanel() {
     const { token } = await res.json();
     sessionStorage.setItem('hvpv_admin_ok','1');
     sessionStorage.setItem('hvpv_admin_key', token);
+    updateAdminLogoutVisibility();
     renderReviews();
     showToast('✅ Admin mode enabled — you can now delete reviews');
   } catch(e) {
     showToast('⚠️ Incorrect passcode');
   }
+}
+function logoutAdmin(){
+  sessionStorage.removeItem('hvpv_admin_ok');
+  sessionStorage.removeItem('hvpv_admin_key');
+  updateAdminLogoutVisibility();
+  renderReviews();
+  showToast('👋 Logged out');
+}
+// A 401 here means the session token expired or is stale (e.g. logged in
+// before a backend deploy rotated auth) — surface it clearly and force a
+// fresh login, instead of a vague failure that looks like the action did nothing.
+function handleAdminAuthFailure(){
+  sessionStorage.removeItem('hvpv_admin_ok');
+  sessionStorage.removeItem('hvpv_admin_key');
+  updateAdminLogoutVisibility();
+  renderReviews();
+  alert('Your admin session expired. Please click Admin and log in again.');
 }
 
 function showToast(msg) {
@@ -553,6 +585,7 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
+updateAdminLogoutVisibility();
 renderReviews();
 </script>
 </body>

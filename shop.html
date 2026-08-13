@@ -195,6 +195,7 @@
 
   <div class="admin-toggle">
     <button onclick="showAdminLogin()">⚙️ Admin</button>
+    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;margin-left:8px;">🚪 Logout</button>
   </div>
 
   <div class="admin-panel" id="adminPanel">
@@ -221,7 +222,7 @@
       </div>
     </div>
     <div class="admin-actions">
-      <button class="btn btn-primary" onclick="saveProduct()">💾 Save Product</button>
+      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()">💾 Save Product</button>
       <button class="btn" style="background:var(--teal-light);color:var(--teal);" onclick="clearAdminForm()">Clear</button>
       <button class="btn" style="background:rgba(193,68,58,.12);color:#A93326;" onclick="exportProducts()">📋 Export JSON</button>
     </div>
@@ -370,6 +371,10 @@ function renderProducts(){
 }
 
 // ── ADMIN ──
+function updateAdminLogoutVisibility(){
+  const btn = document.getElementById('adminLogoutBtn');
+  if(btn) btn.style.display = sessionStorage.getItem('hvpv_shop_admin')==='1' ? 'inline-block' : 'none';
+}
 async function showAdminLogin(){
   if(sessionStorage.getItem('hvpv_shop_admin')==='1'){
     adminOpen=!adminOpen;
@@ -391,10 +396,33 @@ async function showAdminLogin(){
     sessionStorage.setItem('hvpv_shop_admin_key', token);
     adminOpen = true;
     document.getElementById('adminPanel').style.display='block';
+    updateAdminLogoutVisibility();
     renderProducts();
   } catch(e) {
     alert('Incorrect passcode. Access denied.');
   }
+}
+function logoutAdmin(){
+  sessionStorage.removeItem('hvpv_shop_admin');
+  sessionStorage.removeItem('hvpv_shop_admin_key');
+  adminOpen = false;
+  document.getElementById('adminPanel').style.display='none';
+  updateAdminLogoutVisibility();
+  renderProducts();
+  showToast('👋 Logged out');
+}
+// A 401 here means the session token expired or is stale (e.g. logged in
+// before a backend deploy rotated auth) — surface it clearly and force a
+// fresh login, instead of a vague "could not save/delete" that looks like
+// the action silently did nothing.
+function handleAdminAuthFailure(){
+  sessionStorage.removeItem('hvpv_shop_admin');
+  sessionStorage.removeItem('hvpv_shop_admin_key');
+  adminOpen = false;
+  document.getElementById('adminPanel').style.display='none';
+  updateAdminLogoutVisibility();
+  renderProducts();
+  alert('Your admin session expired. Please click ⚙️ Admin and log in again.');
 }
 function toggleAdmin(){ showAdminLogin(); }
 function previewProductImg(e){
@@ -412,7 +440,9 @@ function clearAdminForm(){
   const preview=document.getElementById('ap-img-preview');
   preview.style.display='none'; preview.src='';
 }
+let isSavingProduct = false;
 async function saveProduct(){
+  if(isSavingProduct) return; // guards against duplicate submissions from repeated clicks
   const name=document.getElementById('ap-name').value.trim();
   const price=parseInt(document.getElementById('ap-price').value)||0;
   const cat=document.getElementById('ap-cat').value;
@@ -422,20 +452,27 @@ async function saveProduct(){
   const imgUrl = preview.style.display==='block' ? preview.src : document.getElementById('ap-img').value.trim();
   if(!name||!price) return showToast('⚠️ Name and Price are required');
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
+  const saveBtn = document.getElementById('saveProductBtn');
+  isSavingProduct = true;
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
   try {
     const res = await fetch(API_URL + '/api/products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
       body: JSON.stringify({ name, cat, emoji, imgUrl, desc, price })
     });
+    if(res.status === 401) return handleAdminAuthFailure();
     if(!res.ok) throw new Error('API error ' + res.status);
+    await loadProducts();
+    clearAdminForm(); renderProducts();
+    showToast('✅ Product saved!');
   } catch(e) {
     console.error('Failed to save product:', e);
-    return showToast('⚠️ Could not save product — please try again later');
+    showToast('⚠️ Could not save product — please try again later');
+  } finally {
+    isSavingProduct = false;
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = '💾 Save Product'; }
   }
-  await loadProducts();
-  clearAdminForm(); renderProducts();
-  showToast('✅ Product saved!');
 }
 async function deleteProduct(id){
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
@@ -444,6 +481,7 @@ async function deleteProduct(id){
       method: 'DELETE',
       headers: { 'X-Admin-Key': adminKey || '' }
     });
+    if(res.status === 401) return handleAdminAuthFailure();
     if(!res.ok) throw new Error('API error ' + res.status);
   } catch(e) {
     console.error('Failed to delete product:', e);
@@ -533,6 +571,7 @@ function showToast(msg){
 }
 
 buildChips();
+updateAdminLogoutVisibility();
 loadProducts().then(renderProducts);
 </script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
