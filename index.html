@@ -344,11 +344,29 @@ const SEED_REVIEWS = [
   { name:'Sneha P.', pet:'Hamster', rating:5, text:'My hamster was in great hands. Very responsive on WhatsApp and affordable pricing. Will definitely book again!', img:'' },
 ];
 
-function loadReviews() {
-  const saved = JSON.parse(localStorage.getItem('hvpv_reviews') || '[]');
-  const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
-  const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
-  return [...seeds, ...saved];
+const API_URL = 'https://hvp-reviews-backend-hvhwxp12x-hv-petvilla.vercel.app';
+
+async function loadReviews() {
+  try {
+    const res = await fetch(API_URL + '/api/reviews');
+    const data = await res.json();
+    // Convert API format to site format
+    const apiReviews = data.map(r => ({
+      name: r.name,
+      pet: r.pet || '',
+      rating: r.rating,
+      text: r.message || r.text || '',
+      img: r.img || ''
+    }));
+    const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
+    const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
+    return [...apiReviews, ...seeds];
+  } catch(e) {
+    const saved = JSON.parse(localStorage.getItem('hvpv_reviews') || '[]');
+    const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
+    const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
+    return [...seeds, ...saved];
+  }
 }
 
 function reviewCard(r, isAdmin) {
@@ -361,8 +379,8 @@ function reviewCard(r, isAdmin) {
     ${isAdmin ? `<button onclick="adminDeleteReview(${r._idx})" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
   </div>`;
 }
-function renderReviews() {
-  const all = loadReviews().map((r,i)=>({...r,_idx:i}));
+async function renderReviews() {
+  const all = (await loadReviews()).map((r,i)=>({...r,_idx:i}));
   const grid = document.getElementById('reviewsGrid');
   const moreWrap = document.getElementById('moreReviewsWrap');
   const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
@@ -421,7 +439,7 @@ function previewReviewImg(e) {
   reader.readAsDataURL(file);
 }
 
-function submitReview() {
+async function submitReview() {
   const name = document.getElementById('rv-name').value.trim();
   const pet  = document.getElementById('rv-pet').value.trim();
   const text = document.getElementById('rv-text').value.trim();
@@ -429,10 +447,17 @@ function submitReview() {
   if(!name) return showToast('⚠️ Please enter your name');
   if(!selectedRating) return showToast('⚠️ Please select a star rating');
   if(!text) return showToast('⚠️ Please write your review');
-  const review = { name, pet, rating:selectedRating, text, img: imgEl.style.display==='block'?imgEl.src:'' };
-  const saved = JSON.parse(localStorage.getItem('hvpv_reviews')||'[]');
-  saved.unshift(review);
-  localStorage.setItem('hvpv_reviews', JSON.stringify(saved));
+  try {
+    await fetch(API_URL + '/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, pet, rating: selectedRating, message: text, img: imgEl.style.display==='block'?imgEl.src:'' })
+    });
+  } catch(e) {
+    const saved = JSON.parse(localStorage.getItem('hvpv_reviews')||'[]');
+    saved.unshift({ name, pet, rating:selectedRating, text, img: imgEl.style.display==='block'?imgEl.src:'' });
+    localStorage.setItem('hvpv_reviews', JSON.stringify(saved));
+  }
   renderReviews();
   document.getElementById('reviewFormBox').style.display='none';
   document.getElementById('rv-name').value='';
@@ -655,3 +680,7 @@ loadReviews();
 </script>
 </body>
 </html>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 2e5512570bcc588905e974cb45aeca97e62c157f
