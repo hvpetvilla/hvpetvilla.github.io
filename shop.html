@@ -214,6 +214,11 @@
       <div><label>Emoji / Icon</label><input id="ap-emoji" placeholder="🌾" maxlength="4"/></div>
       <div style="grid-column:1/-1"><label>Description</label><input id="ap-desc" placeholder="Short product description"/></div>
       <div style="grid-column:1/-1"><label>Product Image URL (optional)</label><input id="ap-img" placeholder="https://…/product.jpg  or leave blank to use emoji"/></div>
+      <div style="grid-column:1/-1">
+        <label>Or Upload Product Photo (optional)</label>
+        <input type="file" id="ap-imgfile" accept="image/*" onchange="previewProductImg(event)"/>
+        <img id="ap-img-preview" style="max-width:160px;border-radius:8px;margin-top:10px;display:none;" alt="Preview"/>
+      </div>
     </div>
     <div class="admin-actions">
       <button class="btn btn-primary" onclick="saveProduct()">💾 Save Product</button>
@@ -285,30 +290,11 @@ document.addEventListener('click',function(e){
 });
 </script>
 
-<!-- ══════════════════════════════════════════════════════
-     PRODUCT DATA  ← EDIT THE ARRAY BELOW TO ADD PRODUCTS
-     Each product: { id, name, cat, emoji, imgUrl, desc, price }
-     cat values: 'food' | 'accessories' | 'cages' | 'other'
-     imgUrl: URL string or '' to use emoji instead
-══════════════════════════════════════════════════════ -->
 <script>
-const BUILT_IN_PRODUCTS = [
-  { id:1,  name:'Premium Bird Seed Mix',     cat:'food',        emoji:'🌾', imgUrl:'', desc:'Nutritious blend of millet, sunflower & safflower seeds for parrots and finches.',        price:320 },
-  { id:2,  name:'Rabbit Pellet Food',        cat:'food',        emoji:'🥕', imgUrl:'', desc:'High-fibre pellets with added vitamins. Ideal for adult rabbits and guinea pigs.',          price:280 },
-  { id:3,  name:'Hamster Grain Mix',         cat:'food',        emoji:'🌽', imgUrl:'', desc:'Multi-grain blend with dried veggies, perfect for hamsters, gerbils and mice.',            price:190 },
-  { id:4,  name:'Sugar Glider Nectar Blend', cat:'food',        emoji:'🍯', imgUrl:'', desc:'Ready-to-mix nectar powder replicating their natural diet. 300 g pack.',                   price:450 },
-  { id:5,  name:'Stainless Water Bottle',    cat:'accessories', emoji:'💧', imgUrl:'', desc:'Leak-proof 250 ml bottle. Fits most standard cages. Easy click-on mount.',                 price:160 },
-  { id:6,  name:'Wooden Exercise Wheel',     cat:'accessories', emoji:'🎡', imgUrl:'', desc:'Silent spinner wheel for hamsters & mice. 20 cm diameter, smooth surface.',                price:320 },
-  { id:7,  name:'Bird Perch Set (3-piece)',  cat:'accessories', emoji:'🪵', imgUrl:'', desc:'Natural wood perches in 3 sizes. Helps keep claws trimmed naturally.',                     price:240 },
-  { id:8,  name:'Rabbit Hay Feeder',         cat:'accessories', emoji:'🌿', imgUrl:'', desc:'Wire hay rack keeps hay fresh and tidy. Attaches to cage bars in seconds.',                price:180 },
-  { id:9,  name:'Small Animal Starter Cage', cat:'cages',       emoji:'🏡', imgUrl:'', desc:'Starter cage for hamsters or mice — includes wheel, water bottle, and nesting tray.',      price:890 },
-  { id:10, name:'Bird Cage (Medium)',        cat:'cages',       emoji:'🐦', imgUrl:'', desc:'Powder-coated steel cage, 45×35×55 cm. Ideal for cockatiels and love birds.',              price:1450 },
-  { id:11, name:'Natural Bedding (5 L)',     cat:'accessories', emoji:'🪹', imgUrl:'', desc:'Dust-free paper bedding. Highly absorbent, safe for all small animals.',                   price:220 },
-  { id:12, name:'Calcium Chew Sticks',       cat:'food',        emoji:'🦴', imgUrl:'', desc:'Mineral chews for healthy teeth in rabbits, hamsters and guinea pigs.',                    price:130 },
-];
-
 const CATS=['all','food','accessories','cages','other'];
 const CAT_LABELS={all:'All Products 🐾',food:'Food & Treats 🍖',accessories:'Accessories 🎀',cages:'Cages & Habitats 🏡',other:'Other'};
+const BESTSELLER_NAMES=['Sugar Glider Nectar Blend','Bird Cage (Medium)'];
+const NEW_ARRIVAL_NAMES=['Natural Bedding (5 L)'];
 let activecat='all', cart=[], adminOpen=false;
 
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
@@ -330,9 +316,8 @@ async function loadProducts(){
   }
 }
 
-// Merge built-in + API products
 function getAllProducts(){
-  return [...BUILT_IN_PRODUCTS, ...apiProducts];
+  return apiProducts;
 }
 
 // Build chips
@@ -355,11 +340,9 @@ function renderProducts(){
   const grid=document.getElementById('productGrid');
   const isAdmin=adminOpen;
   grid.className='product-grid'+(isAdmin?' admin-mode':'');
-  const BESTSELLERS=[4,10];
-  const NEW_ARRIVALS=[11];
   grid.innerHTML=filtered.length?filtered.map(p=>`
     <div class="product-card reveal">
-      ${BESTSELLERS.includes(p.id)?'<span class="badge-pill badge-best">🔥 Bestseller</span>':(NEW_ARRIVALS.includes(p.id)?'<span class="badge-pill badge-new">✨ New</span>':'')}
+      ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best">🔥 Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new">✨ New</span>':'')}
       <div class="product-thumb">
         ${p.imgUrl?`<img src="${p.imgUrl}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.emoji||'🐾'}'"/>`:(p.emoji||'🐾')}
       </div>
@@ -397,9 +380,20 @@ function showAdminLogin(){
   }
 }
 function toggleAdmin(){ showAdminLogin(); }
+function previewProductImg(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('ap-img-preview');
+    img.src = ev.target.result; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
 function clearAdminForm(){
-  ['ap-name','ap-price','ap-emoji','ap-desc','ap-img','ap-edit-id'].forEach(id=>document.getElementById(id).value='');
+  ['ap-name','ap-price','ap-emoji','ap-desc','ap-img','ap-edit-id','ap-imgfile'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ap-cat').value='food';
+  const preview=document.getElementById('ap-img-preview');
+  preview.style.display='none'; preview.src='';
 }
 async function saveProduct(){
   const name=document.getElementById('ap-name').value.trim();
@@ -407,7 +401,8 @@ async function saveProduct(){
   const cat=document.getElementById('ap-cat').value;
   const emoji=document.getElementById('ap-emoji').value.trim()||'🐾';
   const desc=document.getElementById('ap-desc').value.trim();
-  const imgUrl=document.getElementById('ap-img').value.trim();
+  const preview=document.getElementById('ap-img-preview');
+  const imgUrl = preview.style.display==='block' ? preview.src : document.getElementById('ap-img').value.trim();
   if(!name||!price) return showToast('⚠️ Name and Price are required');
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
   try {
@@ -426,9 +421,6 @@ async function saveProduct(){
   showToast('✅ Product saved!');
 }
 async function deleteProduct(id){
-  // Only allows deleting API-backed (non built-in) products
-  const builtin=BUILT_IN_PRODUCTS.find(p=>p.id===id);
-  if(builtin){ showToast('⚠️ Built-in products cannot be deleted here. Edit the source code.'); return; }
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
   try {
     const res = await fetch(API_URL + '/api/products?id=' + encodeURIComponent(id), {
