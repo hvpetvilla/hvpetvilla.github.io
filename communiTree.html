@@ -29,30 +29,30 @@
       display: block;
     }
     .join-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-    .join-card.wa  { background: linear-gradient(135deg, #e8fdf0, #d5f5e3); border-color: #25D366; }
-    .join-card.ig  { background: linear-gradient(135deg, #fde8f5, #f5d5e8); border-color: #c13584; }
+    .join-card.wa  { background: linear-gradient(135deg, rgba(37,211,102,.14), rgba(37,211,102,.05)); border-color: #25D366; }
+    .join-card.ig  { background: linear-gradient(135deg, rgba(193,53,132,.16), rgba(193,53,132,.05)); border-color: #c13584; }
     .join-card .icon { font-size: 3rem; margin-bottom: 14px; display: block; }
     .join-card h2 {
-      font-family: 'Nunito', sans-serif; font-weight: 900;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 900;
       font-size: 1.2rem; margin-bottom: 8px;
     }
-    .join-card.wa h2 { color: #128C7E; }
-    .join-card.ig h2 { color: #833AB4; }
+    .join-card.wa h2 { color: #3FCFA6; }
+    .join-card.ig h2 { color: #D18FEA; }
     .join-card p { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; line-height: 1.55; }
     .wa-btn {
       display: inline-flex; align-items: center; gap: 8px;
       background: #25D366; color: white;
       padding: 11px 22px; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 0.9rem;
       text-decoration: none; transition: background 0.18s;
     }
-    .wa-btn:hover { background: #128C7E; }
+    .wa-btn:hover { background: #1DA851; }
     .ig-btn {
       display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       color: white;
       padding: 11px 22px; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 0.9rem;
       text-decoration: none;
     }
     .ig-btn:hover { opacity: 0.9; }
@@ -60,7 +60,7 @@
     /* T&C */
     .tnc-section { margin-top: 32px; }
     .tnc-section summary {
-      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
       font-size: 1rem; color: var(--teal); cursor: pointer;
       padding: 14px 18px; border-radius: var(--radius-sm);
       background: var(--teal-light); list-style: none;
@@ -70,7 +70,7 @@
     .tnc-section summary:hover { background: var(--border); }
     .tnc-section details[open] summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
     .tnc-body {
-      background: var(--white); border: 1.5px solid var(--border);
+      background: var(--surface); border: 1.5px solid var(--border);
       border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
       padding: 22px;
     }
@@ -78,7 +78,7 @@
       font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 8px;
     }
     .tnc-body h4 {
-      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
       color: var(--teal); margin: 16px 0 6px;
     }
     .tnc-body ol, .tnc-body ul { padding-left: 20px; }
@@ -114,7 +114,7 @@
 
 <div class="hero">
   <div class="hero-icon">🌳</div>
-  <h1>Communi<span class="hi">Tree</span></h1>
+  <h1 class="word-reveal-init">Communi<span class="hi">Tree</span></h1>
   <p>A growing community for Hyderabad pet parents. Share, learn, and celebrate your pets together.</p>
 </div>
 

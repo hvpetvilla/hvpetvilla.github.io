@@ -31,7 +31,7 @@
       transition:.15s;
     }
     .month-nav button:hover { background:var(--teal); color:var(--white); }
-    .month-nav span { font-family:'Nunito',sans-serif; font-weight:800; color:var(--teal); font-size:1rem; }
+    .month-nav span { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; color:var(--teal); font-size:1rem; }
     .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
     .cal-day-name { font-size:.72rem; font-weight:700; color:var(--muted); text-align:center; padding:4px 0; }
     .cal-day {
@@ -42,15 +42,15 @@
     .cal-day:hover:not(.disabled):not(.empty) { background:var(--teal-light); border-color:var(--teal); }
     .cal-day.selected { background:var(--teal); color:var(--white); }
     .cal-day.today { border-color:var(--green); color:var(--green); font-weight:800; }
-    .cal-day.disabled { color:#ccc; cursor:not-allowed; }
+    .cal-day.disabled { color:#3D5347; cursor:not-allowed; }
     .cal-day.empty { cursor:default; }
 
     /* Pet pills */
     .pet-types { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
     .pet-pill {
       padding:7px 14px; border-radius:30px; border:1.5px solid var(--border);
-      background:var(--bg); font-size:.82rem; font-weight:700; cursor:pointer;
-      transition:all .15s; font-family:'Nunito',sans-serif;
+      background:var(--surface); font-size:.82rem; font-weight:700; cursor:pointer;
+      transition:all .15s; font-family:'Bricolage Grotesque',sans-serif;
     }
     .pet-pill:hover { border-color:var(--teal); }
     .pet-pill.selected { background:var(--teal); color:var(--white); border-color:var(--teal); }
@@ -58,7 +58,7 @@
     /* Upload */
     .upload-area {
       border:2px dashed var(--border); border-radius:var(--radius-sm);
-      padding:28px; text-align:center; background:var(--bg);
+      padding:28px; text-align:center; background:var(--surface);
       cursor:pointer; transition:border-color .18s;
     }
     .upload-area:hover { border-color:var(--teal); }
@@ -67,24 +67,24 @@
 
     /* Success */
     .success-box {
-      display:none; background:var(--green-light);
-      border:1.5px solid var(--green); border-radius:var(--radius);
+      display:none; background:var(--teal-light);
+      border:1.5px solid var(--teal); border-radius:var(--radius);
       padding:36px; text-align:center;
     }
     .success-box .sicon { font-size:3rem; margin-bottom:12px; }
     .success-box h3 {
-      font-family:'Nunito',sans-serif; font-weight:900;
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:900;
       color:var(--teal); font-size:1.3rem; margin-bottom:8px;
     }
     .success-box p { color:var(--muted); font-size:.92rem; line-height:1.6; }
 
     /* Setup banner */
     .setup-note {
-      background:#FFF9C4; border:1.5px solid #F59E0B;
+      background:rgba(242,166,59,.12); border:1.5px solid rgba(242,166,59,.4);
       border-radius:var(--radius-sm); padding:14px 18px;
-      font-size:.82rem; color:#92400E; margin-bottom:20px; line-height:1.5;
+      font-size:.82rem; color:#F2CE8F; margin-bottom:20px; line-height:1.5;
     }
-    .setup-note strong { color:#78350F; }
+    .setup-note strong { color:var(--green); }
     .spinner {
       display:inline-block; width:18px; height:18px;
       border:2.5px solid rgba(255,255,255,.4);
@@ -120,7 +120,7 @@
 
 <div class="hero">
   <div class="hero-icon">🏠</div>
-  <h1>Pet <span class="hi">Boarding</span></h1>
+  <h1 class="word-reveal-init">Pet <span class="hi">Boarding</span></h1>
   <p>Book a safe, caring slot for your small or exotic pet while you travel. Daily photo updates guaranteed.</p>
 </div>
 
@@ -129,7 +129,7 @@
   <!-- ── SETUP NOTE (remove once EmailJS is configured) ── -->
   <div class="setup-note" id="setupNote">
     <strong>⚙️ One-time setup needed:</strong> To enable automatic booking emails, sign up free at
-    <a href="https://www.emailjs.com" target="_blank" style="color:#0E6655;font-weight:700;">emailjs.com</a>,
+    <a href="https://www.emailjs.com" target="_blank" style="color:var(--teal);font-weight:700;">emailjs.com</a>,
     create a service + template, then replace <code>YOUR_SERVICE_ID</code>, <code>YOUR_TEMPLATE_ID</code>
     and <code>YOUR_PUBLIC_KEY</code> in the script below. Until then, bookings are sent via WhatsApp.
   </div>

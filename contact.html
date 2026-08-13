@@ -26,13 +26,13 @@
       padding: 20px; border-radius: var(--radius);
       text-decoration: none; color: inherit;
       border: 1.5px solid var(--border);
-      background: var(--white);
+      background: var(--surface);
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
     .contact-link:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
     .contact-link.wa  { border-color: #25D366; }
     .contact-link.ig  { border-color: #c13584; }
-    .contact-link.mail { border-color: var(--amber); }
+    .contact-link.mail { border-color: var(--green); }
     .contact-link.fb  { border-color: #1877F2; }
     .c-icon {
       width: 52px; height: 52px; border-radius: 12px;
@@ -41,10 +41,10 @@
     }
     .bg-wa   { background: #25D366; }
     .bg-ig   { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
-    .bg-mail { background: var(--amber); }
+    .bg-mail { background: var(--green); }
     .bg-fb   { background: #1877F2; }
     .c-text h3 {
-      font-family: 'Nunito', sans-serif; font-weight: 800;
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
       font-size: 0.95rem; color: var(--teal); margin-bottom: 2px;
     }
     .c-text p { font-size: 0.83rem; color: var(--muted); }
@@ -57,7 +57,7 @@
     .info-row:last-child { border-bottom: none; }
     .info-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
     .info-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
-    .info-value { font-size: 0.95rem; color: var(--text); font-weight: 600; }
+    .info-value { font-size: 0.95rem; color: var(--white); font-weight: 600; }
 
     /* Quick message form */
     .quick-form { margin-top: 28px; }
@@ -93,7 +93,7 @@
 
 <div class="hero">
   <div class="hero-icon">📞</div>
-  <h1>Get in <span class="hi">Touch</span></h1>
+  <h1 class="word-reveal-init">Get in <span class="hi">Touch</span></h1>
   <p>We'd love to hear from you. Reach us on WhatsApp anytime — we typically reply within a few hours.</p>
 </div>
 

@@ -21,7 +21,7 @@
     }
     .search-wrap {
       flex:1; min-width:200px; display:flex; align-items:center; gap:8px;
-      background:var(--white); border:1.5px solid var(--border);
+      background:var(--surface); border:1.5px solid var(--border);
       border-radius:var(--radius-sm); padding:9px 14px;
     }
     .search-wrap input {
@@ -31,10 +31,10 @@
     .chips { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:22px; }
     .chip {
       padding:6px 14px; border-radius:30px; border:1.5px solid var(--border);
-      background:var(--white); font-size:.8rem; font-weight:700; cursor:pointer;
-      transition:all .15s; font-family:'Nunito',sans-serif;
+      background:var(--surface); font-size:.8rem; font-weight:700; cursor:pointer;
+      transition:all .15s; font-family:'Bricolage Grotesque',sans-serif;
     }
-    .chip:hover,.chip.on { background:var(--teal); color:var(--white); border-color:var(--teal); }
+    .chip:hover,.chip.on { background:var(--teal); color:var(--teal-dark); border-color:var(--teal); }
 
     /* Admin button */
     .admin-toggle {
@@ -49,12 +49,12 @@
 
     /* Admin panel */
     .admin-panel {
-      background:var(--white); border:2px solid var(--teal-light);
+      background:var(--surface); border:2px solid var(--teal-light);
       border-radius:var(--radius); padding:24px; margin-bottom:24px;
       display:none;
     }
     .admin-panel h3 {
-      font-family:'Nunito',sans-serif; font-weight:900; color:var(--teal);
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal);
       margin-bottom:16px; font-size:1rem;
     }
     .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
@@ -75,28 +75,28 @@
       display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;
     }
     .product-card {
-      background:var(--white); border-radius:var(--radius);
+      background:var(--surface); border-radius:var(--radius);
       border:1.5px solid var(--border); overflow:hidden;
       transition:transform .2s,box-shadow .2s; position:relative;
     }
     .product-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
     .product-thumb {
       height:150px; display:flex; align-items:center; justify-content:center;
-      font-size:3.6rem; background:linear-gradient(135deg,var(--teal-light),#e8f8f0);
+      font-size:3.6rem; background:linear-gradient(135deg,var(--teal-light),var(--surface));
       overflow:hidden; position:relative;
     }
     .product-thumb img { width:100%; height:100%; object-fit:cover; }
     .product-body { padding:14px; }
     .product-cat { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--green); margin-bottom:3px; }
-    .product-name { font-family:'Nunito',sans-serif; font-weight:800; font-size:.95rem; color:var(--teal); margin-bottom:4px; }
+    .product-name { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:.95rem; color:var(--teal); margin-bottom:4px; }
     .product-desc { font-size:.78rem; color:var(--muted); margin-bottom:12px; line-height:1.4; }
     .product-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; }
-    .product-price { font-family:'Nunito',sans-serif; font-weight:900; color:var(--teal); font-size:1.05rem; }
+    .product-price { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.05rem; }
     .add-btn {
-      background:var(--teal); color:var(--white); border:none;
+      background:var(--teal); color:var(--teal-dark); border:none;
       border-radius:var(--radius-sm); padding:8px 14px;
       font-size:.82rem; font-weight:700; cursor:pointer;
-      font-family:'Nunito',sans-serif; transition:background .18s;
+      font-family:'Bricolage Grotesque',sans-serif; transition:background .18s;
     }
     .add-btn:hover { background:var(--teal-dark); }
     .delete-prod {
@@ -110,9 +110,9 @@
     /* Cart */
     .cart-btn {
       position:fixed; bottom:84px; right:20px;
-      background:var(--teal); color:var(--white); border:none;
+      background:var(--teal); color:var(--teal-dark); border:none;
       border-radius:50px; padding:12px 20px;
-      font-family:'Nunito',sans-serif; font-weight:800; font-size:.9rem;
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:.9rem;
       cursor:pointer; box-shadow:var(--shadow-md);
       display:none; align-items:center; gap:8px; z-index:90; transition:transform .18s;
     }
@@ -127,11 +127,11 @@
     }
     .overlay.open { display:flex; }
     .modal {
-      background:var(--white); border-radius:var(--radius);
+      background:var(--surface); border-radius:var(--radius);
       padding:28px; max-width:480px; width:92%; max-height:90vh; overflow-y:auto;
     }
     .modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-    .modal-head h2 { font-family:'Nunito',sans-serif; font-weight:900; color:var(--teal); font-size:1.15rem; }
+    .modal-head h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.15rem; }
     .close-x { background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--muted); }
     .cart-item { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1.5px solid var(--border); }
     .cart-item-icon { font-size:2rem; }
@@ -143,7 +143,7 @@
     .qty-val { font-weight:800; font-size:.9rem; min-width:20px; text-align:center; }
     .cart-total {
       display:flex; justify-content:space-between;
-      font-family:'Nunito',sans-serif; font-weight:900; font-size:1.1rem; color:var(--teal);
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.1rem; color:var(--teal);
       border-top:2px solid var(--border); padding-top:16px; margin-top:16px;
     }
     .empty-cart { text-align:center; padding:32px 0; color:var(--muted); }
@@ -178,7 +178,7 @@
 
 <div class="hero">
   <div class="hero-icon">🛒</div>
-  <h1>Pet <span class="hi">Shop</span></h1>
+  <h1 class="word-reveal-init">Pet <span class="hi">Shop</span></h1>
   <p>Quality food, accessories and supplies for exotic & small pets. Safe checkout via Razorpay.</p>
 </div>
 
@@ -223,7 +223,7 @@
     <div class="admin-actions">
       <button class="btn btn-primary" onclick="saveProduct()">💾 Save Product</button>
       <button class="btn" style="background:var(--teal-light);color:var(--teal);" onclick="clearAdminForm()">Clear</button>
-      <button class="btn" style="background:#fde;color:#c00;" onclick="exportProducts()">📋 Export JSON</button>
+      <button class="btn" style="background:rgba(226,105,79,.15);color:#FF9B82;" onclick="exportProducts()">📋 Export JSON</button>
     </div>
     <div style="margin-top:14px;font-size:.78rem;color:var(--muted);">
       Products added here are stored in the database and visible to every visitor immediately.
@@ -358,6 +358,7 @@ function renderProducts(){
       <button class="delete-prod" onclick="deleteProduct(${JSON.stringify(p.id)})">✕ Delete</button>
     </div>
   `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
+  if(window.applyScrollReveal) applyScrollReveal();
 }
 
 // ── ADMIN ──
@@ -501,7 +502,7 @@ function payNow(){
       showToast('🎉 Payment successful! Order confirmed.');
     },
     prefill:{name:'',email:'',contact:''},
-    theme:{color:'#0E6655'}
+    theme:{color:'#34A987'}
   };
   if(typeof Razorpay==='undefined'){
     showToast('⚠️ Payment not configured yet. Contact us on WhatsApp.');
