@@ -344,28 +344,26 @@ const SEED_REVIEWS = [
   { name:'Sneha P.', pet:'Hamster', rating:5, text:'My hamster was in great hands. Very responsive on WhatsApp and affordable pricing. Will definitely book again!', img:'' },
 ];
 
-const API_URL = 'https://hvp-reviews-backend-hvhwxp12x-hv-petvilla.vercel.app';
+const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 
 async function loadReviews() {
   try {
     const res = await fetch(API_URL + '/api/reviews');
+    if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     // Convert API format to site format
     const apiReviews = data.map(r => ({
+      id: r._id,
       name: r.name,
       pet: r.pet || '',
       rating: r.rating,
       text: r.message || r.text || '',
       img: r.img || ''
     }));
-    const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
-    const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
-    return [...apiReviews, ...seeds];
+    return [...apiReviews, ...SEED_REVIEWS];
   } catch(e) {
-    const saved = JSON.parse(localStorage.getItem('hvpv_reviews') || '[]');
-    const deleted = JSON.parse(localStorage.getItem('hvpv_seed_deleted') || '[]');
-    const seeds = SEED_REVIEWS.filter((_,i)=>!deleted.includes(i));
-    return [...seeds, ...saved];
+    console.error('Failed to load reviews:', e);
+    return [...SEED_REVIEWS];
   }
 }
 
@@ -376,11 +374,11 @@ function reviewCard(r, isAdmin) {
     <div class="review-text">"${r.text}"</div>
     <div class="review-author">— ${r.name}</div>
     ${r.pet ? `<div class="review-pet">🐾 ${r.pet}</div>` : ''}
-    ${isAdmin ? `<button onclick="adminDeleteReview(${r._idx})" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
+    ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:#fee2e2;color:#b91c1c;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
   </div>`;
 }
 async function renderReviews() {
-  const all = (await loadReviews()).map((r,i)=>({...r,_idx:i}));
+  const all = await loadReviews();
   const grid = document.getElementById('reviewsGrid');
   const moreWrap = document.getElementById('moreReviewsWrap');
   const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
@@ -448,15 +446,15 @@ async function submitReview() {
   if(!selectedRating) return showToast('⚠️ Please select a star rating');
   if(!text) return showToast('⚠️ Please write your review');
   try {
-    await fetch(API_URL + '/api/reviews', {
+    const res = await fetch(API_URL + '/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, pet, rating: selectedRating, message: text, img: imgEl.style.display==='block'?imgEl.src:'' })
     });
+    if(!res.ok) throw new Error('API error ' + res.status);
   } catch(e) {
-    const saved = JSON.parse(localStorage.getItem('hvpv_reviews')||'[]');
-    saved.unshift({ name, pet, rating:selectedRating, text, img: imgEl.style.display==='block'?imgEl.src:'' });
-    localStorage.setItem('hvpv_reviews', JSON.stringify(saved));
+    console.error('Failed to submit review:', e);
+    return showToast('⚠️ Could not submit your review — please try again later');
   }
   renderReviews();
   document.getElementById('reviewFormBox').style.display='none';
@@ -469,19 +467,17 @@ async function submitReview() {
   showToast('🎉 Thank you for your review!');
 }
 
-function adminDeleteReview(idx) {
-  // Only seed reviews (idx < 3) cannot be deleted by index manipulation;
-  // user-submitted reviews are stored separately
-  const SEED_COUNT = SEED_REVIEWS.length;
-  const saved = JSON.parse(localStorage.getItem('hvpv_reviews')||'[]');
-  if(idx < SEED_COUNT){
-    // delete from seed override list
-    const overrides = JSON.parse(localStorage.getItem('hvpv_seed_deleted')||'[]');
-    if(!overrides.includes(idx)) overrides.push(idx);
-    localStorage.setItem('hvpv_seed_deleted', JSON.stringify(overrides));
-  } else {
-    saved.splice(idx - SEED_COUNT, 1);
-    localStorage.setItem('hvpv_reviews', JSON.stringify(saved));
+async function adminDeleteReview(id) {
+  const adminKey = sessionStorage.getItem('hvpv_admin_key');
+  try {
+    const res = await fetch(API_URL + '/api/reviews?id=' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Key': adminKey || '' }
+    });
+    if(!res.ok) throw new Error('API error ' + res.status);
+  } catch(e) {
+    console.error('Failed to delete review:', e);
+    return showToast('⚠️ Could not delete review — please try again later');
   }
   renderReviews();
   showToast('Review deleted');
@@ -491,6 +487,7 @@ function showAdminReviewPanel() {
   const pw = prompt('Enter admin passcode:');
   if(pw === '093627'){
     sessionStorage.setItem('hvpv_admin_ok','1');
+    sessionStorage.setItem('hvpv_admin_key', pw);
     renderReviews();
     showToast('✅ Admin mode enabled — you can now delete reviews');
   } else if(pw !== null){
