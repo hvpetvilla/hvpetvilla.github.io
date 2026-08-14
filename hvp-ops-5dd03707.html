@@ -1735,7 +1735,7 @@ async function bizGateSubmit(){
 }
 
 // Runs once on load. Never trusts the stored flag alone — confirms the
-// token still verifies server-side (it may have expired past 12h) before
+// token still verifies server-side (it may have expired past 1h) before
 // revealing anything or firing any module's data load.
 async function checkBizAuth(){
   const key = bizToken();
