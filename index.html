@@ -428,7 +428,7 @@ async function renderReviews() {
   const grid = document.getElementById('reviewsGrid');
   const moreWrap = document.getElementById('moreReviewsWrap');
   const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
-  const SHOW = 5;
+  const SHOW = 3;
   if(all.length === 0){
     grid.innerHTML='<p style="text-align:center;color:var(--muted)">No reviews yet. Be the first!</p>';
     if(moreWrap) moreWrap.innerHTML='';
@@ -443,8 +443,8 @@ async function renderReviews() {
       <div class="reviews-grid">${rest.map(r=>reviewCard(r,isAdmin)).join('')}</div>
     </div>
     <div style="text-align:center;margin-top:12px">
-      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:1.5px solid rgba(138,90,52,.35);padding:8px 22px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--teal);cursor:pointer">
-        ▾ Show ${rest.length} more review${rest.length>1?'s':''}
+      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:none;padding:4px;font-size:.85rem;font-weight:700;color:var(--teal);text-decoration:underline;cursor:pointer">
+        Show ${rest.length} more review${rest.length>1?'s':''}
       </button>
     </div>`;
 }
@@ -455,7 +455,7 @@ function toggleMoreReviews(){
   const open = el.style.display==='block';
   el.style.display = open?'none':'block';
   const cnt = el.querySelectorAll('.review-card').length;
-  btn.textContent = open ? `▾ Show ${cnt} more review${cnt>1?'s':''}` : '▴ Show fewer reviews';
+  btn.textContent = open ? `Show ${cnt} more review${cnt>1?'s':''}` : 'Show fewer reviews';
 }
 
 // ── STAR RATING ──
