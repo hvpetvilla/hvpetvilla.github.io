@@ -3826,15 +3826,15 @@ function renderProducts(){
 // ============================================================
 //  REQUIREMENTS
 // ============================================================
-let requirements = JSON.parse(localStorage.getItem('hvp_requirements')||'[]');
-let editingReqIdx = null;
+let requirements = [];
+let editingReqId = null;
 
-function rSave(){ localStorage.setItem('hvp_requirements', JSON.stringify(requirements)); }
+async function loadRequirements(){ requirements = await bizFetch('requirements'); }
 
-function openReqModal(idx=null){
-  editingReqIdx=idx;
-  const r=idx!==null?requirements[idx]:null;
-  el('req-modal-title').textContent=idx!==null?'Edit Requirement':'Add Requirement';
+function openReqModal(id=null){
+  editingReqId=id;
+  const r=id!==null?requirements.find(x=>x._id===id):null;
+  el('req-modal-title').textContent=id!==null?'Edit Requirement':'Add Requirement';
   el('r-customer').value=r?r.customer||'':'';
   el('r-mobile').value=r?r.mobile||'':'';
   el('r-requirement').value=r?r.requirement||'':'';
@@ -3849,25 +3849,42 @@ function openReqModal(idx=null){
 }
 function closeReqModal(){ el('req-modal').classList.add('hidden'); }
 
-function saveRequirement(){
+async function saveRequirement(){
   const customer=el('r-customer').value.trim();
   const requirement=el('r-requirement').value.trim();
   if(!customer||!requirement){ toast('Customer and requirement are required','error'); return; }
+  const editing=editingReqId!==null?requirements.find(x=>x._id===editingReqId):null;
   const req={customer,mobile:el('r-mobile').value.trim(),requirement,
     category:el('r-category').value,budget:parseFloat(el('r-budget').value)||0,
     status:el('r-status').value,priority:el('r-priority').value,
     dateReq:el('r-date-req').value,dateDone:el('r-date-done').value,
     remarks:el('r-remarks').value.trim(),
-    addedOn:editingReqIdx!==null?(requirements[editingReqIdx].addedOn||new Date().toISOString()):new Date().toISOString()
+    addedOn:editing?(editing.addedOn||new Date().toISOString()):new Date().toISOString()
   };
-  if(editingReqIdx!==null) requirements[editingReqIdx]=req; else requirements.push(req);
-  rSave(); closeReqModal(); renderRequirements();
-  toast(editingReqIdx!==null?'Requirement updated':'Requirement added','success'); editingReqIdx=null;
+  try {
+    if(editingReqId!==null){
+      const { requirement: saved } = await bizFetch('requirements', { method:'PUT', id:editingReqId, body:req });
+      requirements[requirements.findIndex(x=>x._id===editingReqId)] = saved;
+    } else {
+      const { requirement: saved } = await bizFetch('requirements', { method:'POST', body:req });
+      requirements.push(saved);
+    }
+    closeReqModal(); renderRequirements();
+    toast(editingReqId!==null?'Requirement updated':'Requirement added','success'); editingReqId=null;
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save requirement — '+e.message,'error');
+  }
 }
 
-function deleteRequirement(idx){
+async function deleteRequirement(id){
   if(!confirm('Delete this requirement?')) return;
-  requirements.splice(idx,1); rSave(); renderRequirements(); toast('Requirement deleted');
+  try {
+    await bizFetch('requirements', { method:'DELETE', id });
+    requirements = requirements.filter(x=>x._id!==id);
+    renderRequirements(); toast('Requirement deleted');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete requirement — '+e.message,'error');
+  }
 }
 
 function clearReqFilters(){
@@ -3920,7 +3937,6 @@ function renderRequirements(){
   let rowNum=0;
   tbody.innerHTML=sorted.map(r=>{
     rowNum++;
-    const realIdx=requirements.indexOf(r);
     const fmtDate=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'-';
     return`<tr>
       <td style="font-size:12px;color:var(--text3)">${rowNum}</td>
@@ -3935,8 +3951,8 @@ function renderRequirements(){
       <td style="max-width:180px;font-size:12px;color:var(--text2)">${r.remarks||'—'}</td>
       <td>
         <div class="flex gap-2">
-          <button class="btn btn-secondary btn-sm" onclick="openReqModal(${realIdx})">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteRequirement(${realIdx})">Del</button>
+          <button class="btn btn-secondary btn-sm" onclick="openReqModal(${escapeHtml(JSON.stringify(r._id))})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteRequirement(${escapeHtml(JSON.stringify(r._id))})">Del</button>
         </div>
       </td>
     </tr>`;
@@ -4137,7 +4153,7 @@ async function bootApp(){
   initDB();
   addPetRow();
   try {
-    await Promise.all([ loadVendors(), loadSupplies() ]);
+    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements() ]);
   } catch(e) {
     if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
   }
