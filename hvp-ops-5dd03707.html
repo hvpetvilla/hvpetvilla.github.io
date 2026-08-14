@@ -3977,13 +3977,18 @@ function renderRequirements(){
 // ============================================================
 //  PRICE COMPARE
 // ============================================================
-let pcData = JSON.parse(localStorage.getItem('hvp_pricecompare')||'null') || {
-  products: ['Cockatiel Grey','Lovebird Pair','African Grey'],
-  vendors: ['Akshay','Hemanth','Local Market'],
-  prices: {}
-};
+let pcData = { products: [], vendors: [], prices: {} };
 
-function pcSave(){ localStorage.setItem('hvp_pricecompare', JSON.stringify(pcData)); }
+async function loadPriceCompare(){ pcData = await bizFetch('pricecompare'); }
+
+// Fire-and-forget: pcSave() is called on every keystroke while typing a
+// price (oninput), so it stays synchronous-looking at every call site and
+// syncs to the backend in the background rather than awaiting each one.
+function pcSave(){
+  bizFetch('pricecompare', { method:'PUT', body: pcData }).catch(e => {
+    if(e.message!=='auth') toast('Could not save price comparison — '+e.message,'error');
+  });
+}
 
 function addPCProduct(){
   const name = prompt('Enter product / item name:');
@@ -4168,7 +4173,7 @@ async function bootApp(){
   initDB();
   addPetRow();
   try {
-    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts() ]);
+    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts(), loadPriceCompare() ]);
   } catch(e) {
     if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
   }
