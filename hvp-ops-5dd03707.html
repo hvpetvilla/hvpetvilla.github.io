@@ -1868,6 +1868,17 @@ function showPage(name){
 // ============================================================
 function v(id){ return (el(id)?.value||'').trim(); }
 function el(id){ return document.getElementById(id); }
+// Escapes a value before it's interpolated into an inline onclick="..." (or
+// any other double-quoted) HTML attribute. Without this, a Mongo _id passed
+// through JSON.stringify(id) comes out wrapped in its own literal double
+// quotes, which collide with the attribute's own quotes and silently
+// truncate the handler mid-argument -- the exact bug already found and
+// fixed in shop.html this project.
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
 function fmt(n){ return (settings.currency||'₹')+(+n||0).toFixed(2); }
 function pad(n,l=6){ return String(n).padStart(l,'0'); }
 
@@ -3250,13 +3261,13 @@ function renderTrackerAnalytics(){
 // ============================================================
 //  VENDORS
 // ============================================================
-let vendors = JSON.parse(localStorage.getItem('hv_vendors')||'[]');
-let supplies = JSON.parse(localStorage.getItem('hv_supplies')||'[]');
-let editingVendorIdx = null;
-let editingSupplyIdx = null;
+let vendors = [];
+let supplies = [];
+let editingVendorId = null;
+let editingSupplyId = null;
 
-function vSave(){ localStorage.setItem('hv_vendors', JSON.stringify(vendors)); }
-function sSave(){ localStorage.setItem('hv_supplies', JSON.stringify(supplies)); }
+async function loadVendors(){ vendors = await bizFetch('vendors'); }
+async function loadSupplies(){ supplies = await bizFetch('supplies'); }
 
 function renderVendors(){
   // Stats
@@ -3281,7 +3292,7 @@ function renderVendors(){
     const statusBadgeV=(s)=>{const m={Active:'badge-green',Inactive:'badge-gray',Blacklisted:'badge-red'};return`<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;};
     const q=(el('vendor-search')?.value||'').toLowerCase();
     const filtered=q?vendors.filter(v=>(v.name||'').toLowerCase().includes(q)||(v.contact||'').toLowerCase().includes(q)||(v.city||'').toLowerCase().includes(q)):vendors;
-    tbody.innerHTML=filtered.map((v,i)=>{
+    tbody.innerHTML=filtered.map(v=>{
       const vSupplies=supplies.filter(s=>s.vendor===v.name);
       const total=vSupplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
       return`<tr>
@@ -3294,8 +3305,8 @@ function renderVendors(){
         <td>${statusBadgeV(v.status||'Active')}</td>
         <td>
           <div class="flex gap-2">
-            <button class="btn btn-secondary btn-sm" onclick="openVendorModal(${i})">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteVendor(${i})">Del</button>
+            <button class="btn btn-secondary btn-sm" onclick="openVendorModal(${escapeHtml(JSON.stringify(v._id))})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteVendor(${escapeHtml(JSON.stringify(v._id))})">Del</button>
           </div>
         </td>
       </tr>`;
@@ -3309,7 +3320,7 @@ function renderVendors(){
     el('supply-total').innerHTML='';
   } else {
     const sorted=[...supplies].sort((a,b)=>new Date(b.date)-new Date(a.date));
-    sbody.innerHTML=sorted.map((s,i)=>`<tr>
+    sbody.innerHTML=sorted.map(s=>`<tr>
       <td class="text-sm">${s.date?new Date(s.date+'T00:00:00').toLocaleDateString('en-IN'):'-'}</td>
       <td><strong class="text-sm">${s.vendor||'—'}</strong></td>
       <td class="text-sm">${s.item||'—'}</td>
@@ -3319,8 +3330,8 @@ function renderVendors(){
       <td style="font-size:12px;color:var(--text3)">${s.notes||'—'}</td>
       <td>
         <div class="flex gap-2">
-          <button class="btn btn-secondary btn-sm" onclick="openSupplyModal(${supplies.indexOf(s)})" title="Edit">✏️ Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteSupply(${supplies.indexOf(s)})" title="Delete">🗑</button>
+          <button class="btn btn-secondary btn-sm" onclick="openSupplyModal(${escapeHtml(JSON.stringify(s._id))})" title="Edit">✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSupply(${escapeHtml(JSON.stringify(s._id))})" title="Delete">🗑</button>
         </div>
       </td>
     </tr>`).join('');
@@ -3331,10 +3342,10 @@ function renderVendors(){
 
 function filterVendors(q){ renderVendors(); }
 
-function openVendorModal(idx=null){
-  editingVendorIdx=idx;
-  el('vendor-modal-title').textContent=idx!==null?'Edit Vendor':'Add Vendor';
-  const v=idx!==null?vendors[idx]:null;
+function openVendorModal(id=null){
+  editingVendorId=id;
+  el('vendor-modal-title').textContent=id!==null?'Edit Vendor':'Add Vendor';
+  const v=id!==null?vendors.find(x=>x._id===id):null;
   el('v-name').value=v?v.name:'';
   el('v-category').value=v?(v.category||'Birds'):'Birds';
   el('v-status').value=v?(v.status||'Active'):'Active';
@@ -3347,26 +3358,42 @@ function openVendorModal(idx=null){
   el('vendor-modal').classList.remove('hidden');
 }
 function closeVendorModal(){ el('vendor-modal').classList.add('hidden'); }
-function saveVendor(){
+async function saveVendor(){
   const name=el('v-name').value.trim();
   if(!name){ toast('Vendor name is required','error'); return; }
   const vendor={name,category:el('v-category').value,status:el('v-status').value,
     contact:el('v-contact').value.trim(),phone:el('v-phone').value.trim(),
     email:el('v-email').value.trim(),city:el('v-city').value.trim(),
     address:el('v-address').value.trim(),notes:el('v-notes').value.trim()};
-  if(editingVendorIdx!==null) vendors[editingVendorIdx]=vendor; else vendors.push(vendor);
-  vSave(); closeVendorModal(); renderVendors();
-  toast(editingVendorIdx!==null?'Vendor updated':'Vendor added','success'); editingVendorIdx=null;
+  try {
+    if(editingVendorId!==null){
+      const { vendor: saved } = await bizFetch('vendors', { method:'PUT', id:editingVendorId, body:vendor });
+      vendors[vendors.findIndex(x=>x._id===editingVendorId)] = saved;
+    } else {
+      const { vendor: saved } = await bizFetch('vendors', { method:'POST', body:vendor });
+      vendors.push(saved);
+    }
+    closeVendorModal(); renderVendors();
+    toast(editingVendorId!==null?'Vendor updated':'Vendor added','success'); editingVendorId=null;
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save vendor — '+e.message,'error');
+  }
 }
-function deleteVendor(idx){
+async function deleteVendor(id){
   if(!confirm('Delete this vendor?')) return;
-  vendors.splice(idx,1); vSave(); renderVendors(); toast('Vendor deleted');
+  try {
+    await bizFetch('vendors', { method:'DELETE', id });
+    vendors = vendors.filter(x=>x._id!==id);
+    renderVendors(); toast('Vendor deleted');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete vendor — '+e.message,'error');
+  }
 }
 
-function openSupplyModal(idx=null){
-  editingSupplyIdx=idx;
-  el('supply-modal-title').textContent=idx!==null?'Edit Supply':'Log Supply';
-  const s=idx!==null?supplies[idx]:null;
+function openSupplyModal(id=null){
+  editingSupplyId=id;
+  el('supply-modal-title').textContent=id!==null?'Edit Supply':'Log Supply';
+  const s=id!==null?supplies.find(x=>x._id===id):null;
   // Populate vendor dropdown
   const vSelect=el('s-vendor');
   vSelect.innerHTML='<option value="">Select vendor...</option>'+vendors.map(v=>`<option value="${v.name}">${v.name}</option>`).join('');
@@ -3380,21 +3407,37 @@ function openSupplyModal(idx=null){
   el('supply-modal').classList.remove('hidden');
 }
 function closeSupplyModal(){ el('supply-modal').classList.add('hidden'); }
-function saveSupply(){
+async function saveSupply(){
   const vendor=el('s-vendor').value;
   const item=el('s-item').value.trim();
   if(!vendor||!item){ toast('Vendor and item are required','error'); return; }
   const supply={vendor,date:el('s-date').value,item,category:el('s-category').value,
     qty:parseInt(el('s-qty').value)||1,amount:parseFloat(el('s-amount').value)||0,
     notes:el('s-notes').value.trim()};
-  const wasEditing=editingSupplyIdx!==null;
-  if(wasEditing) supplies[editingSupplyIdx]=supply; else supplies.push(supply);
-  sSave(); closeSupplyModal(); renderVendors();
-  toast(wasEditing?'Supply updated':'Supply logged','success'); editingSupplyIdx=null;
+  const wasEditing=editingSupplyId!==null;
+  try {
+    if(wasEditing){
+      const { supply: saved } = await bizFetch('supplies', { method:'PUT', id:editingSupplyId, body:supply });
+      supplies[supplies.findIndex(x=>x._id===editingSupplyId)] = saved;
+    } else {
+      const { supply: saved } = await bizFetch('supplies', { method:'POST', body:supply });
+      supplies.push(saved);
+    }
+    closeSupplyModal(); renderVendors();
+    toast(wasEditing?'Supply updated':'Supply logged','success'); editingSupplyId=null;
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save supply — '+e.message,'error');
+  }
 }
-function deleteSupply(idx){
+async function deleteSupply(id){
   if(!confirm('Delete this supply record?')) return;
-  supplies.splice(idx,1); sSave(); renderVendors(); toast('Supply record deleted');
+  try {
+    await bizFetch('supplies', { method:'DELETE', id });
+    supplies = supplies.filter(x=>x._id!==id);
+    renderVendors(); toast('Supply record deleted');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete supply — '+e.message,'error');
+  }
 }
 
 // ============================================================
@@ -4090,9 +4133,15 @@ checkMobile();
 // ============================================================
 document.addEventListener('DOMContentLoaded', checkBizAuth);
 
-function bootApp(){
+async function bootApp(){
   initDB();
   addPetRow();
+  try {
+    await Promise.all([ loadVendors(), loadSupplies() ]);
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
+  }
+  renderVendors();
   renderTrackerDashboard();
   renderProducts();
   renderRequirements();
