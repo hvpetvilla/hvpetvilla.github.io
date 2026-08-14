@@ -3632,11 +3632,11 @@ async function downloadCataloguePDF(){
 // ============================================================
 //  PRODUCTS
 // ============================================================
-let products = JSON.parse(localStorage.getItem('hvp_products')||'[]');
-let editingProductIdx = null;
+let products = [];
+let editingProductId = null;
 let pendingProdPhotos = []; // base64 strings
 
-function pSave(){ localStorage.setItem('hvp_products', JSON.stringify(products)); }
+async function loadProducts(){ products = await bizFetch('products'); }
 
 function handleProdPhotos(input){
   const files = Array.from(input.files).slice(0, 3);
@@ -3675,10 +3675,10 @@ function removeProdPhoto(idx){
   });
 }
 
-function openProductModal(idx=null){
-  editingProductIdx = idx;
-  const p = idx!==null ? products[idx] : null;
-  el('product-modal-title').textContent = idx!==null ? 'Edit Product' : 'Add Product';
+function openProductModal(id=null){
+  editingProductId = id;
+  const p = id!==null ? products.find(x=>x._id===id) : null;
+  el('product-modal-title').textContent = id!==null ? 'Edit Product' : 'Add Product';
   el('p-name').value = p?p.name:'';
   el('p-category').value = p?(p.category||'Birds'):'Birds';
   el('p-breed').value = p?p.breed||'':'';
@@ -3706,27 +3706,44 @@ function openProductModal(idx=null){
 }
 function closeProductModal(){ el('product-modal').classList.add('hidden'); pendingProdPhotos=[]; }
 
-function saveProduct(){
+async function saveProduct(){
   const name = el('p-name').value.trim();
   const price = parseFloat(el('p-price').value)||0;
   if(!name){ toast('Product name is required','error'); return; }
   if(!price){ toast('Selling price is required','error'); return; }
+  const editing = editingProductId!==null ? products.find(x=>x._id===editingProductId) : null;
   const product = {
     name, category: el('p-category').value, breed: el('p-breed').value.trim(),
     mrp: parseFloat(el('p-mrp').value)||0, price, cost: parseFloat(el('p-cost').value)||0,
     stock: parseInt(el('p-stock').value)||0, avail: el('p-avail').value,
     age: el('p-age').value.trim(), gender: el('p-gender').value,
     desc: el('p-desc').value.trim(), notes: el('p-notes').value.trim(),
-    photos: [...pendingProdPhotos], addedOn: editingProductIdx!==null?(products[editingProductIdx].addedOn||new Date().toISOString()):new Date().toISOString()
+    photos: [...pendingProdPhotos], addedOn: editing?(editing.addedOn||new Date().toISOString()):new Date().toISOString()
   };
-  if(editingProductIdx!==null) products[editingProductIdx]=product; else products.push(product);
-  pSave(); closeProductModal(); renderProducts();
-  toast(editingProductIdx!==null?'Product updated':'Product added','success'); editingProductIdx=null;
+  try {
+    if(editingProductId!==null){
+      const { product: saved } = await bizFetch('products', { method:'PUT', id:editingProductId, body:product });
+      products[products.findIndex(x=>x._id===editingProductId)] = saved;
+    } else {
+      const { product: saved } = await bizFetch('products', { method:'POST', body:product });
+      products.push(saved);
+    }
+    closeProductModal(); renderProducts();
+    toast(editingProductId!==null?'Product updated':'Product added','success'); editingProductId=null;
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save product — '+e.message,'error');
+  }
 }
 
-function deleteProduct(idx){
+async function deleteProduct(id){
   if(!confirm('Delete this product?')) return;
-  products.splice(idx,1); pSave(); renderProducts(); toast('Product deleted');
+  try {
+    await bizFetch('products', { method:'DELETE', id });
+    products = products.filter(x=>x._id!==id);
+    renderProducts(); toast('Product deleted');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete product — '+e.message,'error');
+  }
 }
 
 function clearProductFilters(){
@@ -3754,8 +3771,7 @@ function renderProducts(){
   if(!filtered.length){
     grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">No products found. Click "Add Product" to get started.</div>`;
   } else {
-    grid.innerHTML=filtered.map((p,i)=>{
-      const realIdx=products.indexOf(p);
+    grid.innerHTML=filtered.map(p=>{
       const photo=p.photos&&p.photos[0]?`<img src="${p.photos[0]}" style="width:100%;height:160px;object-fit:cover">`:`<div style="width:100%;height:160px;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:36px">🐾</div>`;
       const margin=p.cost&&p.price?Math.round(((p.price-p.cost)/p.price)*100):null;
       return`<div class="card" style="overflow:hidden;margin-bottom:0">
@@ -3786,8 +3802,8 @@ function renderProducts(){
           </div>
           ${p.desc?`<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;border-top:1px solid var(--border);padding-top:8px">${p.desc.slice(0,100)}${p.desc.length>100?'…':''}</div>`:''}
           <div style="display:flex;gap:6px">
-            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openProductModal(${realIdx})">✏️ Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${realIdx})">🗑</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openProductModal(${escapeHtml(JSON.stringify(p._id))})">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${escapeHtml(JSON.stringify(p._id))})">🗑</button>
           </div>
         </div>
       </div>`;
@@ -3801,7 +3817,6 @@ function renderProducts(){
     tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text3)">No products match the current filters.</td></tr>`;
   } else {
     tbody.innerHTML=filtered.map(p=>{
-      const realIdx=products.indexOf(p);
       const photo=p.photos&&p.photos[0]?`<img src="${p.photos[0]}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">`:`<div style="width:40px;height:40px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px">🐾</div>`;
       return`<tr>
         <td>${photo}</td>
@@ -3814,8 +3829,8 @@ function renderProducts(){
         <td style="text-align:right" class="text-sm">${p.stock||0}</td>
         <td>
           <div class="flex gap-2">
-            <button class="btn btn-secondary btn-sm" onclick="openProductModal(${realIdx})">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${realIdx})">Del</button>
+            <button class="btn btn-secondary btn-sm" onclick="openProductModal(${escapeHtml(JSON.stringify(p._id))})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${escapeHtml(JSON.stringify(p._id))})">Del</button>
           </div>
         </td>
       </tr>`;
@@ -4153,7 +4168,7 @@ async function bootApp(){
   initDB();
   addPetRow();
   try {
-    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements() ]);
+    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts() ]);
   } catch(e) {
     if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
   }
