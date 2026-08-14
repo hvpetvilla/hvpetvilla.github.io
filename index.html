@@ -116,7 +116,22 @@
     .review-text { font-size:0.85rem; color:var(--ink); line-height:1.55; margin-bottom:10px; font-style:italic; }
     .review-author { font-size:0.8rem; font-weight:700; color:var(--teal); }
     .review-pet { font-size:0.75rem; color:var(--muted); }
-    .review-img { width:100%; border-radius:8px; object-fit:cover; max-height:120px; margin-bottom:10px; }
+    .review-img { width:100%; border-radius:8px; object-fit:cover; max-height:120px; margin-bottom:10px; cursor:zoom-in; transition:opacity .15s; }
+    .review-img:hover { opacity:.85; }
+
+    /* Review photo lightbox */
+    .lightbox-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.85);
+      z-index:900; align-items:center; justify-content:center; padding:24px; cursor:zoom-out;
+    }
+    .lightbox-overlay.open { display:flex; }
+    .lightbox-overlay img { max-width:92vw; max-height:92vh; border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,.5); }
+    .lightbox-close {
+      position:fixed; top:18px; right:24px; z-index:901;
+      background:none; border:none; color:#fff; font-size:2rem; line-height:1;
+      cursor:pointer; opacity:.85;
+    }
+    .lightbox-close:hover { opacity:1; }
 
     /* Write review */
     .write-review-btn {
@@ -264,6 +279,11 @@
   <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
   <div class="reviews-grid" id="reviewsGrid"></div>
 
+  <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="Full-size review photo"/>
+  </div>
+
   <div id="moreReviewsWrap"></div>
 
   <div style="text-align:center;margin-bottom:16px">
@@ -383,13 +403,6 @@ document.addEventListener('click',function(e){
 })();
 </script>
 <script>
-// ── SEED REVIEWS ──
-const SEED_REVIEWS = [
-  { name:'Anjali R.', pet:'Cockatiel', rating:5, text:'HV Petvilla took incredible care of my cockatiel while I was away for 10 days. Daily photo updates and she came back happy and healthy!', img:'' },
-  { name:'Karthik M.', pet:'Holland Lop Rabbit', rating:5, text:'Best boarding experience for my rabbit. The team clearly knows exotic pets — highly recommended for anyone in Hyderabad!', img:'' },
-  { name:'Sneha P.', pet:'Hamster', rating:5, text:'My hamster was in great hands. Very responsive on WhatsApp and affordable pricing. Will definitely book again!', img:'' },
-];
-
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 
 async function loadReviews() {
@@ -398,7 +411,7 @@ async function loadReviews() {
     if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     // Convert API format to site format
-    const apiReviews = data.map(r => ({
+    return data.map(r => ({
       id: r._id,
       name: r.name,
       pet: r.pet || '',
@@ -406,16 +419,15 @@ async function loadReviews() {
       text: r.message || r.text || '',
       img: r.img || ''
     }));
-    return [...apiReviews, ...SEED_REVIEWS];
   } catch(e) {
     console.error('Failed to load reviews:', e);
-    return [...SEED_REVIEWS];
+    return [];
   }
 }
 
 function reviewCard(r, isAdmin) {
   return `<div class="review-card">
-    ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo"/>` : ''}
+    ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo" onclick="openLightbox(${escapeHtml(JSON.stringify(r.img))})"/>` : ''}
     <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
     <div class="review-text">"${escapeHtml(r.text)}"</div>
     <div class="review-author">— ${escapeHtml(r.name)}</div>
@@ -457,6 +469,20 @@ function toggleMoreReviews(){
   const cnt = el.querySelectorAll('.review-card').length;
   btn.textContent = open ? `Show ${cnt} more review${cnt>1?'s':''}` : 'Show fewer reviews';
 }
+
+// ── REVIEW PHOTO LIGHTBOX ──
+function openLightbox(src){
+  const overlay=document.getElementById('lightboxOverlay');
+  const img=document.getElementById('lightboxImg');
+  if(!overlay||!img) return;
+  img.src=src;
+  overlay.classList.add('open');
+}
+function closeLightbox(){
+  const overlay=document.getElementById('lightboxOverlay');
+  if(overlay) overlay.classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
 
 // ── STAR RATING ──
 let selectedRating = 0;
