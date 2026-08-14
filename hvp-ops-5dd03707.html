@@ -2751,12 +2751,11 @@ function toast(msg,type='success'){
 // ══════════════════════════════════════════════════════════════
 //  TRACKER  (localStorage)
 // ══════════════════════════════════════════════════════════════
-let tEntries = JSON.parse(localStorage.getItem('hv_entries')||'null') || [];
-let tNextId  = Math.max(...tEntries.map(e=>e.id),99)+1; // supports 4+ digits automatically when entries exceed 999
-let editingEntryIdx = null;
+let tEntries = [];
+let editingEntryId = null;
 let tCharts = {};
 
-function tSave(){ localStorage.setItem('hv_entries', JSON.stringify(tEntries)); }
+async function loadEntries(){ tEntries = await bizFetch('entries'); }
 function fmtT(n){ return '₹'+Math.abs(Math.round(n)).toLocaleString('en-IN'); }
 function fmtSigned(n){ return (n>=0?'+':'-')+fmtT(n); }
 function statusBadge(s){
@@ -2835,7 +2834,7 @@ function renderTrackerDashboard(){
   el('t-recent').innerHTML=[...tEntries].reverse().slice(0,8).map(e=>{
     const net=e.revenue-e.amount;
     return`<tr>
-      <td style="font-size:11px;color:var(--text3)">${e.id}</td>
+      <td style="font-size:11px;color:var(--text3)">${(e._id||'').slice(-6)}</td>
       <td>${e.item}</td><td>${e.partner}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
       <td style="text-align:right">${e.revenue?fmtT(e.revenue):'—'}</td>
@@ -2847,12 +2846,12 @@ function renderTrackerDashboard(){
 // ============================================================
 //  QUICK SELL
 // ============================================================
-let qsEntryIdx=null;
+let qsEntryId=null;
 let qsProductIdx=0;
 
-function openQuickSell(idx){
-  qsEntryIdx=idx;
-  const e=tEntries[idx];
+function openQuickSell(id){
+  qsEntryId=id;
+  const e=tEntries.find(x=>x._id===id);
   el('qs-item-name').textContent=e.item;
   el('qs-qty').value=1;
   el('qs-price').value='';
@@ -2878,7 +2877,7 @@ function openQuickSell(idx){
 
 function onQsProductChange(){
   qsProductIdx=parseInt(el('qs-product-select')?.value||0);
-  const e=tEntries[qsEntryIdx];
+  const e=tEntries.find(x=>x._id===qsEntryId);
   let cpu=0,stockLeft=0;
   if(e.products&&e.products.length){
     const p=e.products[qsProductIdx]||e.products[0];
@@ -2895,7 +2894,7 @@ function onQsProductChange(){
 }
 
 function calcQsProfit(){
-  const qsEntry=tEntries[qsEntryIdx]; if(!qsEntry)return;
+  const qsEntry=tEntries.find(x=>x._id===qsEntryId); if(!qsEntry)return;
   const qty=parseFloat(el('qs-qty').value)||0;
   const price=parseFloat(el('qs-price').value)||0;
   let cpu=0;
@@ -2910,40 +2909,43 @@ function calcQsProfit(){
   el('qs-profit').style.color=profit>=0?'#16A34A':'#DC2626';
 }
 
-function saveQuickSell(){
-  const e=tEntries[qsEntryIdx]; if(!e)return;
+async function saveQuickSell(){
+  const e=tEntries.find(x=>x._id===qsEntryId); if(!e)return;
   const qty=parseFloat(el('qs-qty').value)||0;
   const price=parseFloat(el('qs-price').value)||0;
   if(!qty||!price){toast('Enter qty and selling price','error');return;}
 
-  if(e.products&&e.products.length){
-    const p=e.products[qsProductIdx]||e.products[0];
-    if(!p.sales)p.sales=[];
-    p.sales.push({qty,price});
-    // Recalc total revenue across all products
-    e.revenue=e.products.reduce((s,p)=>s+(p.sales||[]).reduce((ss,sl)=>ss+(sl.qty*sl.price),0),0);
-  } else {
-    // Legacy entry — just add to revenue
-    e.revenue=(e.revenue||0)+qty*price;
-  }
-
-  // Auto-update status if all stock sold
-  if(e.products&&e.products.length){
-    const allSold=e.products.every(p=>{
+  // Mutate a local copy first (excluding _id/__v -- this becomes a PUT
+  // body, not a document) so a failed save doesn't leave tEntries out of
+  // sync with what's actually persisted.
+  const { _id, __v, ...rest } = e;
+  const updated={...rest, products: e.products?e.products.map(p=>({...p})):e.products};
+  if(updated.products&&updated.products.length){
+    const p=updated.products[qsProductIdx]||updated.products[0];
+    p.sales=[...(p.sales||[]), {qty,price}];
+    updated.revenue=updated.products.reduce((s,p)=>s+(p.sales||[]).reduce((ss,sl)=>ss+(sl.qty*sl.price),0),0);
+    const allSold=updated.products.every(p=>{
       const soldSoFar=(p.sales||[]).reduce((s,sl)=>s+(sl.qty||0),0);
       return soldSoFar>=(p.qty||1);
     });
-    if(allSold) e.status='Sold';
-    else if(e.status==='On Sale') e.status='On Sale';
+    if(allSold) updated.status='Sold';
   } else {
-    e.status='Sold';
+    // Legacy entry — just add to revenue
+    updated.revenue=(updated.revenue||0)+qty*price;
+    updated.status='Sold';
   }
 
-  tSave(); closeQuickSell(); renderExpenseTable(); renderTrackerDashboard();
-  toast(`Sale recorded! Revenue: ₹${(qty*price).toLocaleString('en-IN')}`, 'success');
+  try {
+    const { entry: saved } = await bizFetch('entries', { method:'PUT', id:qsEntryId, body:updated });
+    tEntries[tEntries.findIndex(x=>x._id===qsEntryId)] = saved;
+    closeQuickSell(); renderExpenseTable(); renderTrackerDashboard();
+    toast(`Sale recorded! Revenue: ₹${(qty*price).toLocaleString('en-IN')}`, 'success');
+  } catch(err) {
+    if(err.message!=='auth') toast('Could not record sale — '+err.message,'error');
+  }
 }
 
-function closeQuickSell(){ el('quick-sell-modal').classList.add('hidden'); qsEntryIdx=null; }
+function closeQuickSell(){ el('quick-sell-modal').classList.add('hidden'); qsEntryId=null; }
 
 // -- Expenses --
 function clearFilters(){
@@ -2966,9 +2968,9 @@ function renderExpenseTable(){
   const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span>`;
   const tbody=el('t-exp-tbody'); if(!tbody)return;
   tbody.innerHTML=f.length?f.map(e=>{
-    const net=e.revenue-e.amount; const idx=tEntries.indexOf(e);
+    const net=e.revenue-e.amount;
     return`<tr>
-      <td style="font-size:11px;color:var(--text3)">${e.id}</td>
+      <td style="font-size:11px;color:var(--text3)">${(e._id||'').slice(-6)}</td>
       <td><div style="font-weight:500">${e.item}</div><div style="font-size:11px;color:var(--text3)">${e.category||''}</div></td>
       <td>${e.partner}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
@@ -2976,14 +2978,14 @@ function renderExpenseTable(){
       <td style="text-align:right;color:${net>=0?'#16A34A':'#DC2626'};font-weight:600">${fmtSigned(net)}</td>
       <td>${statusBadge(e.status)}</td>
       <td style="font-size:12px;color:var(--text3);max-width:130px">
-        ${e.products&&e.products.length>1?`<span class="badge badge-blue" style="font-size:10px;margin-bottom:2px;display:inline-block">${e.products.length} products</span><br>`:''} 
+        ${e.products&&e.products.length>1?`<span class="badge badge-blue" style="font-size:10px;margin-bottom:2px;display:inline-block">${e.products.length} products</span><br>`:''}
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${e.remarks||'—'}</span>
       </td>
       <td>
         <div style="display:flex;gap:4px;align-items:center">
-          ${e.status!=='Sold'&&e.status!=='Consumed'?`<button class="btn btn-sm" onclick="openQuickSell(${idx})" title="Record Sale" style="background:#DCFCE7;color:#15803D;border:1px solid #BBF7D0;padding:4px 9px;font-size:11px;font-weight:700">💰 Sold</button>`:''}
-          <button class="btn btn-ghost" onclick="openEntryModal(${idx})" title="Edit" style="padding:4px 6px">✏️</button>
-          <button class="btn btn-ghost" onclick="deleteEntry(${idx})" title="Delete" style="padding:4px 6px;color:#DC2626">🗑</button>
+          ${e.status!=='Sold'&&e.status!=='Consumed'?`<button class="btn btn-sm" onclick="openQuickSell(${escapeHtml(JSON.stringify(e._id))})" title="Record Sale" style="background:#DCFCE7;color:#15803D;border:1px solid #BBF7D0;padding:4px 9px;font-size:11px;font-weight:700">💰 Sold</button>`:''}
+          <button class="btn btn-ghost" onclick="openEntryModal(${escapeHtml(JSON.stringify(e._id))})" title="Edit" style="padding:4px 6px">✏️</button>
+          <button class="btn btn-ghost" onclick="deleteEntry(${escapeHtml(JSON.stringify(e._id))})" title="Delete" style="padding:4px 6px;color:#DC2626">🗑</button>
         </div>
       </td></tr>`;
   }).join(''):`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3)">No entries match your filters.</td></tr>`;
@@ -3121,11 +3123,11 @@ function collectProducts(){
   return products;
 }
 
-function openEntryModal(idx=null){
-  editingEntryIdx=idx;
+function openEntryModal(id=null){
+  editingEntryId=id;
   prodRowCount=0;
-  el('t-modal-title').textContent=idx!==null?'Edit entry':'Add entry';
-  const e=idx!==null?tEntries[idx]:null;
+  el('t-modal-title').textContent=id!==null?'Edit entry':'Add entry';
+  const e=id!==null?tEntries.find(x=>x._id===id):null;
   el('f-item').value=e?e.item:'';
   el('f-partner').value=e?e.partner:'Akshay';
   el('f-date').value=e?e.date:new Date().toISOString().split('T')[0];
@@ -3144,25 +3146,40 @@ function openEntryModal(idx=null){
   el('entry-modal').classList.remove('hidden');
 }
 function closeEntryModal(){ el('entry-modal').classList.add('hidden'); }
-function saveEntry(){
+async function saveEntry(){
   const item=el('f-item').value.trim();
   if(!item){toast('Purchase name is required','error');return;}
   const products=collectProducts();
   const amount=products.reduce((s,p)=>s+p.cost,0);
   const revenue=products.reduce((s,p)=>s+p.sales.reduce((ss,sl)=>ss+(sl.qty*sl.price),0),0);
   if(!amount){toast('Add at least one product with a cost','error');return;}
-  const entry={id:editingEntryIdx!==null?tEntries[editingEntryIdx].id:tNextId++,
-    item,partner:el('f-partner').value,date:el('f-date').value,
+  const entry={item,partner:el('f-partner').value,date:el('f-date').value,
     amount,revenue,products,
     status:el('f-status').value,category:el('f-cat').value,
     remarks:el('f-remarks').value.trim()};
-  if(editingEntryIdx!==null)tEntries[editingEntryIdx]=entry; else tEntries.push(entry);
-  tSave(); closeEntryModal(); renderExpenseTable();
-  toast(editingEntryIdx!==null?'Entry updated':'Entry saved'); editingEntryIdx=null;
+  try {
+    if(editingEntryId!==null){
+      const { entry: saved } = await bizFetch('entries', { method:'PUT', id:editingEntryId, body:entry });
+      tEntries[tEntries.findIndex(x=>x._id===editingEntryId)] = saved;
+    } else {
+      const { entry: saved } = await bizFetch('entries', { method:'POST', body:entry });
+      tEntries.push(saved);
+    }
+    closeEntryModal(); renderExpenseTable();
+    toast(editingEntryId!==null?'Entry updated':'Entry saved'); editingEntryId=null;
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save entry — '+e.message,'error');
+  }
 }
-function deleteEntry(idx){
+async function deleteEntry(id){
   if(!confirm('Delete this entry?'))return;
-  tEntries.splice(idx,1); tSave(); renderExpenseTable(); toast('Entry deleted');
+  try {
+    await bizFetch('entries', { method:'DELETE', id });
+    tEntries = tEntries.filter(x=>x._id!==id);
+    renderExpenseTable(); toast('Entry deleted');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete entry — '+e.message,'error');
+  }
 }
 
 // -- Partners --
@@ -4176,7 +4193,7 @@ async function bootApp(){
   initDB();
   addPetRow();
   try {
-    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts(), loadPriceCompare() ]);
+    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts(), loadPriceCompare(), loadEntries() ]);
   } catch(e) {
     if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
   }
