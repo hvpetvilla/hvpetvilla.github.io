@@ -2822,10 +2822,10 @@ function renderTrackerDashboard(){
     });
   }
 
-  el('t-recent').innerHTML=[...tEntries].reverse().slice(0,8).map(e=>{
+  el('t-recent').innerHTML=[...tEntries].reverse().slice(0,8).map((e,i)=>{
     const net=e.revenue-e.amount;
     return`<tr>
-      <td style="font-size:11px;color:var(--text3)">${(e._id||'').slice(-6)}</td>
+      <td style="font-size:11px;color:var(--text3)">${i+1}</td>
       <td>${e.item}</td><td>${e.partner}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
       <td style="text-align:right">${e.revenue?fmtT(e.revenue):'—'}</td>
@@ -2958,10 +2958,10 @@ function renderExpenseTable(){
   const fi=el('t-finfo'); if(fi) fi.textContent=`Showing ${f.length} entries`;
   const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span>`;
   const tbody=el('t-exp-tbody'); if(!tbody)return;
-  tbody.innerHTML=f.length?f.map(e=>{
+  tbody.innerHTML=f.length?f.map((e,i)=>{
     const net=e.revenue-e.amount;
     return`<tr>
-      <td style="font-size:11px;color:var(--text3)">${(e._id||'').slice(-6)}</td>
+      <td style="font-size:11px;color:var(--text3)">${i+1}</td>
       <td><div style="font-weight:500">${e.item}</div><div style="font-size:11px;color:var(--text3)">${e.category||''}</div></td>
       <td>${e.partner}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
