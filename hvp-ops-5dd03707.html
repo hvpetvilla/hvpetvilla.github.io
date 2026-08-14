@@ -1655,7 +1655,6 @@ select.form-control{cursor:pointer}
 // ============================================================
 //  STATE & DB
 // ============================================================
-let db;
 let settings = {
   name:'HV Petvilla', phone:'', email:'', website:'', instagram:'', address:'',
   gst:'', logo:'', footer:'Thank you for choosing HV Petvilla.',
@@ -1752,27 +1751,6 @@ async function checkBizAuth(){
   }
 }
 
-// Init IndexedDB
-function initDB(){
-  const req = indexedDB.open('HVPetvilla', 2);
-  req.onupgradeneeded = e => {
-    const d = e.target.result;
-    if(!d.objectStoreNames.contains('invoices')) d.createObjectStore('invoices',{keyPath:'id',autoIncrement:true});
-    if(!d.objectStoreNames.contains('settings')) d.createObjectStore('settings',{keyPath:'key'});
-  };
-  req.onsuccess = e => {
-    db = e.target.result;
-    loadSettings();
-    loadDashboard();
-    loadInvoiceHistory();
-  };
-  req.onerror = () => toast('IndexedDB error','error');
-}
-
-function dbGet(store,key){ return new Promise((res,rej)=>{ const t=db.transaction(store,'readonly'); const r=t.objectStore(store).get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(); }); }
-function dbPut(store,data){ return new Promise((res,rej)=>{ const t=db.transaction(store,'readwrite'); const r=t.objectStore(store).put(data); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(); }); }
-function dbDelete(store,key){ return new Promise((res,rej)=>{ const t=db.transaction(store,'readwrite'); const r=t.objectStore(store).delete(key); r.onsuccess=()=>res(); r.onerror=()=>rej(); }); }
-function dbGetAll(store){ return new Promise((res,rej)=>{ const t=db.transaction(store,'readonly'); const r=t.objectStore(store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(); }); }
 
 // ============================================================
 //  SETTINGS
@@ -2102,7 +2080,6 @@ function collectFormData(){
     notes:v('inv-notes'),
     createdAt:_editingCreatedAt || new Date().toISOString()
   };
-  if(editingInvoiceId) invoiceData.id = editingInvoiceId;
   return invoiceData;
 }
 
@@ -2226,12 +2203,17 @@ async function saveInvoice(){
   if(!v('cust-name')){ toast('Please enter customer name','error'); return; }
   try {
     currentInvoiceData = collectFormData();
-    const savedId = await dbPut('invoices', currentInvoiceData);
-    if(!editingInvoiceId){
-      settings.invCounter = (parseInt(settings.invCounter)||1)+1;
-      await dbPut('settings',{key:'config',data:settings});
+    const wasEditing = !!editingInvoiceId;
+    if(wasEditing){
+      const { invoice } = await bizFetch('invoices', { method:'PUT', id:editingInvoiceId, body:currentInvoiceData });
+      currentInvoiceData = invoice;
+    } else {
+      // invNumber is assigned atomically server-side (an incremented,
+      // race-free settings.invCounter), not the client-side preview value.
+      const { invoice } = await bizFetch('invoices', { method:'POST', body:currentInvoiceData });
+      currentInvoiceData = invoice;
+      await loadSettings(); // refresh so the *next* invoice's preview number is accurate
     }
-    const wasEditing = !!editingInvoiceId; // check before nulling
     editingInvoiceId = null;
     _editingCreatedAt = null;
     toast(wasEditing ? 'Invoice updated successfully!' : 'Invoice saved successfully!','success');
@@ -2239,7 +2221,7 @@ async function saveInvoice(){
     // Navigate to Invoice History so the user can see the saved/updated invoice
     showPage('invoices');
   } catch(err) {
-    toast('Failed to save invoice. Please try again.','error');
+    if(err.message!=='auth') toast('Failed to save invoice. Please try again.','error');
     console.error('Save invoice error:', err);
   }
 }
@@ -2249,7 +2231,7 @@ async function saveInvoice(){
 // ============================================================
 let allInvoices=[];
 async function loadInvoiceHistory(){
-  allInvoices = await dbGetAll('invoices');
+  allInvoices = await bizFetch('invoices');
   allInvoices.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
   renderInvoiceTable(allInvoices);
 }
@@ -2272,10 +2254,10 @@ function renderInvoiceTable(invoices){
       <td><span class="badge badge-${ordColors[inv.ordStatus]||'gray'}" style="font-size:10px">${inv.ordStatus||'-'}</span></td>
       <td>
         <div class="flex gap-2">
-          <button class="btn btn-secondary btn-sm" onclick="viewInvoice(${inv.id})">View</button>
-          <button class="btn btn-secondary btn-sm" onclick="editInvoice(${inv.id})">Edit</button>
-          <button class="btn btn-secondary btn-sm" onclick="duplicateInvoice(${inv.id})">Copy</button>
-          <button class="btn btn-danger btn-sm" onclick="confirmDelete(${inv.id})">Del</button>
+          <button class="btn btn-secondary btn-sm" onclick="viewInvoice(${escapeHtml(JSON.stringify(inv._id))})">View</button>
+          <button class="btn btn-secondary btn-sm" onclick="editInvoice(${escapeHtml(JSON.stringify(inv._id))})">Edit</button>
+          <button class="btn btn-secondary btn-sm" onclick="duplicateInvoice(${escapeHtml(JSON.stringify(inv._id))})">Copy</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDelete(${escapeHtml(JSON.stringify(inv._id))})">Del</button>
         </div>
       </td>
     </tr>`;
@@ -2300,7 +2282,7 @@ function globalSearch(q){
 }
 
 async function viewInvoice(id){
-  const inv=await dbGet('invoices',id);
+  const inv=await bizFetch('invoices',{id});
   const html=renderInvoiceHTML(inv);
   el('view-invoice-content').innerHTML=html;
   currentInvoiceData=inv;
@@ -2312,7 +2294,7 @@ async function viewInvoice(id){
 }
 
 async function editInvoice(id){
-  const inv=await dbGet('invoices',id);
+  const inv=await bizFetch('invoices',{id});
   editingInvoiceId=id;
   _editingCreatedAt=inv.createdAt||null;
   el('invoice-form-title').textContent='Edit Invoice — '+inv.invNumber;
@@ -2362,19 +2344,20 @@ async function editInvoice(id){
 }
 
 async function duplicateInvoice(id){
-  const inv=await dbGet('invoices',id);
-  const dup={...JSON.parse(JSON.stringify(inv))};
-  delete dup.id;
-  const now=new Date();
-  const dt=`${now.getFullYear()}${pad(now.getMonth()+1,2)}`;
-  dup.invNumber=(settings.invPrefix||'INV-')+dt+pad(settings.invCounter||1);
-  dup.ordNumber=(settings.ordPrefix||'ORD-')+pad(Math.floor(Math.random()*900000)+100000);
-  dup.createdAt=new Date().toISOString();
-  await dbPut('invoices',dup);
-  settings.invCounter=(parseInt(settings.invCounter)||1)+1;
-  await dbPut('settings',{key:'config',data:settings});
-  toast('Invoice duplicated!','success');
-  loadInvoiceHistory();
+  try {
+    const inv=await bizFetch('invoices',{id});
+    // invNumber assigned atomically server-side on POST, same as a fresh
+    // invoice -- no need to compute it client-side here either.
+    const { _id, __v, invNumber, ...dup } = JSON.parse(JSON.stringify(inv));
+    dup.ordNumber=(settings.ordPrefix||'ORD-')+pad(Math.floor(Math.random()*900000)+100000);
+    dup.createdAt=new Date().toISOString();
+    await bizFetch('invoices', { method:'POST', body:dup });
+    await loadSettings();
+    toast('Invoice duplicated!','success');
+    loadInvoiceHistory();
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not duplicate invoice — '+e.message,'error');
+  }
 }
 
 function confirmDelete(id){
@@ -2382,17 +2365,21 @@ function confirmDelete(id){
   el('confirm-delete-btn').onclick=()=>deleteInvoice(id);
 }
 async function deleteInvoice(id){
-  await dbDelete('invoices',id);
-  el('delete-modal').classList.add('hidden');
-  toast('Invoice deleted','success');
-  loadDashboard(); loadInvoiceHistory();
+  try {
+    await bizFetch('invoices', { method:'DELETE', id });
+    el('delete-modal').classList.add('hidden');
+    toast('Invoice deleted','success');
+    loadDashboard(); loadInvoiceHistory();
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not delete invoice — '+e.message,'error');
+  }
 }
 
 // ============================================================
 //  CUSTOMERS
 // ============================================================
 async function loadCustomers(){
-  const invoices=await dbGetAll('invoices');
+  const invoices=await bizFetch('invoices');
   const custMap={};
   invoices.forEach(inv=>{
     const key=inv.customer?.mobile||inv.customer?.name;
@@ -2425,7 +2412,7 @@ function searchByCustomer(q){ showPage('invoices'); el('inv-search').value=q; fi
 // ============================================================
 let _dashBEChart = null;
 async function loadDashboard(){
-  const invoices=await dbGetAll('invoices');
+  const invoices=await bizFetch('invoices');
   const today=new Date().toDateString();
   const thisMonth=new Date().toISOString().slice(0,7);
   const todayRev=invoices.filter(i=>new Date(i.createdAt).toDateString()===today).reduce((s,i)=>s+(i.charges?.grand||0),0);
@@ -2575,7 +2562,7 @@ async function loadDashboard(){
 //  ANALYTICS
 // ============================================================
 async function loadAnalytics(){
-  const invoices=await dbGetAll('invoices');
+  const invoices=await bizFetch('invoices');
   const today=new Date().toDateString();
   const thisMonth=new Date().toISOString().slice(0,7);
   const todayRev=invoices.filter(i=>new Date(i.createdAt).toDateString()===today).reduce((s,i)=>s+(i.charges?.grand||0),0);
@@ -2627,7 +2614,7 @@ let _acMatches = []; // store matches globally to avoid JSON-in-onclick issues
 async function customerAutocomplete(q){
   const list=el('cust-autocomplete'); if(!list) return;
   if(!q||q.length<2){ list.style.display='none'; return; }
-  const invoices=await dbGetAll('invoices');
+  const invoices=await bizFetch('invoices');
   const seen=new Set(); _acMatches=[];
   invoices.forEach(inv=>{
     const c=inv.customer; if(!c) return;
@@ -2701,7 +2688,7 @@ async function copyInvoiceLink(){
 //  EXCEL EXPORT / IMPORT
 // ============================================================
 async function exportAllExcel(){
-  const invoices=await dbGetAll('invoices');
+  const invoices=await bizFetch('invoices');
   if(!invoices.length){ toast('No invoices to export','error'); return; }
   const rows=invoices.map(inv=>({
     'Invoice #':inv.invNumber,'Order #':inv.ordNumber,
@@ -4190,10 +4177,12 @@ checkMobile();
 document.addEventListener('DOMContentLoaded', checkBizAuth);
 
 async function bootApp(){
-  initDB();
   addPetRow();
   try {
-    await Promise.all([ loadVendors(), loadSupplies(), loadRequirements(), loadProducts(), loadPriceCompare(), loadEntries() ]);
+    await Promise.all([
+      loadVendors(), loadSupplies(), loadRequirements(), loadProducts(), loadPriceCompare(), loadEntries(),
+      loadSettings(), loadDashboard(), loadInvoiceHistory()
+    ]);
   } catch(e) {
     if(e.message!=='auth') toast('Could not load business data — '+e.message,'error');
   }
