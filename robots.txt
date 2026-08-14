@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /hvp-ops-5dd03707.html
+Disallow: /hvp-admin-0ad76a1f.html
 
 Sitemap: https://hvpetvilla.github.io/sitemap.xml
