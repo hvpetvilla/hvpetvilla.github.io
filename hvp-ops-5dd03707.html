@@ -1778,26 +1778,29 @@ function dbGetAll(store){ return new Promise((res,rej)=>{ const t=db.transaction
 //  SETTINGS
 // ============================================================
 async function loadSettings(){
-  const s = await dbGet('settings','config');
-  if(s){ settings = {...settings,...s.data}; }
+  try {
+    const s = await bizFetch('settings');
+    settings = {...settings, ...s};
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not load settings — '+e.message,'error');
+  }
   applySettings();
 }
 async function saveSettings(){
-  settings.name = v('set-name');
-  settings.phone = v('set-phone');
-  settings.email = v('set-email');
-  settings.website = v('set-website');
-  settings.instagram = v('set-instagram');
-  settings.address = v('set-address');
-  settings.gst = v('set-gst');
-  settings.footer = v('set-footer');
-  settings.currency = v('set-currency');
-  settings.invPrefix = v('set-inv-prefix');
-  settings.ordPrefix = v('set-ord-prefix');
-  settings.invCounter = parseInt(v('set-inv-counter'))||1;
-  await dbPut('settings',{key:'config',data:settings});
-  applySettings();
-  toast('Settings saved!','success');
+  const updated = {...settings,
+    name: v('set-name'), phone: v('set-phone'), email: v('set-email'),
+    website: v('set-website'), instagram: v('set-instagram'), address: v('set-address'),
+    gst: v('set-gst'), footer: v('set-footer'), currency: v('set-currency'),
+    invPrefix: v('set-inv-prefix'), ordPrefix: v('set-ord-prefix'),
+    invCounter: parseInt(v('set-inv-counter'))||1
+  };
+  try {
+    settings = await bizFetch('settings', { method:'PUT', body: updated });
+    applySettings();
+    toast('Settings saved!','success');
+  } catch(e) {
+    if(e.message!=='auth') toast('Could not save settings — '+e.message,'error');
+  }
 }
 function applySettings(){
   el('set-name').value = settings.name||'';
