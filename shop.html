@@ -85,6 +85,16 @@
     .product-grid {
       display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;
     }
+    .products-loading {
+      grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:14px; padding:60px 0; color:var(--muted); font-size:.9rem;
+    }
+    .products-loading .spinner {
+      width:34px; height:34px; border-radius:50%;
+      border:3px solid var(--border); border-top-color:var(--teal);
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
     .product-card {
       background:var(--surface); border-radius:var(--radius);
       border:1.5px solid var(--border); overflow:hidden;
@@ -251,7 +261,9 @@
     </div>
   </div>
   <div class="chips" id="chips"></div>
-  <div class="product-grid" id="productGrid"></div>
+  <div class="product-grid" id="productGrid">
+    <div class="products-loading"><div class="spinner"></div>Loading products…</div>
+  </div>
 </div>
 
 <!-- Cart Button -->
