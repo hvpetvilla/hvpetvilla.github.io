@@ -106,6 +106,10 @@
     .reviews-section { max-width:860px; margin:48px auto; padding:0 20px 40px; }
     .reviews-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.45rem; color:var(--teal); text-align:center; margin-bottom:8px; }
     .reviews-sub { text-align:center; color:var(--muted); font-size:0.88rem; margin-bottom:28px; }
+    .overall-rating { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:28px; flex-wrap:wrap; }
+    .overall-rating .score { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:2.1rem; color:var(--teal); line-height:1; }
+    .overall-rating .stars { color:var(--green); font-size:1.3rem; letter-spacing:1px; }
+    .overall-rating .count { font-size:0.82rem; color:var(--muted); }
     .reviews-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:28px; }
     .review-card {
       background:var(--surface); border-radius:var(--radius);
@@ -277,6 +281,7 @@
 <div class="reviews-section">
   <div class="reviews-title">❤️ What Pet Parents Say</div>
   <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
+  <div class="overall-rating" id="overallRating" style="display:none"></div>
   <div class="reviews-grid" id="reviewsGrid"></div>
 
   <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
@@ -435,12 +440,26 @@ function reviewCard(r, isAdmin) {
     ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:rgba(193,68,58,.12);color:#A93326;border:none;border-radius:6px;cursor:pointer">🗑 Delete</button>` : ''}
   </div>`;
 }
+function renderOverallRating(all) {
+  const el = document.getElementById('overallRating');
+  if(!el) return;
+  if(!all.length){ el.style.display='none'; el.innerHTML=''; return; }
+  const avg = all.reduce((sum,r)=>sum+r.rating,0) / all.length;
+  const rounded = Math.round(avg);
+  const stars = '★'.repeat(rounded) + '☆'.repeat(5-rounded);
+  el.style.display='flex';
+  el.innerHTML = `
+    <span class="score">${avg.toFixed(1)}</span>
+    <span class="stars">${stars}</span>
+    <span class="count">based on ${all.length} review${all.length>1?'s':''}</span>`;
+}
 async function renderReviews() {
   const all = await loadReviews();
   const grid = document.getElementById('reviewsGrid');
   const moreWrap = document.getElementById('moreReviewsWrap');
   const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
   const SHOW = 3;
+  renderOverallRating(all);
   if(all.length === 0){
     grid.innerHTML='<p style="text-align:center;color:var(--muted)">No reviews yet. Be the first!</p>';
     if(moreWrap) moreWrap.innerHTML='';
