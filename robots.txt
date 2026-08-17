@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /admin/
-Disallow: /hvp-admin-0ad76a1f.html
 
 Sitemap: https://hvpetvilla.in/sitemap.xml
