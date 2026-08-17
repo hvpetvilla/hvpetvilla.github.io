@@ -12,15 +12,45 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HV Petvilla — Pet Boarding, Shop & Community · Hyderabad</title>
-  <meta name="description" content="HV Petvilla offers trusted pet boarding, a curated pet shop, and CommuniTree — a community for pet parents across Hyderabad, Telangana."/>
+  <meta name="description" content="HV Petvilla — Hyderabad's trusted pet boarding for hamsters, rabbits, sugar gliders & more. Visit our pet shop or join CommuniTree, our pet parent community."/>
   <meta name="keywords" content="pet boarding Hyderabad, exotic pets Hyderabad, pet shop Hyderabad, hamster boarding, rabbit boarding, sugar glider, HV Petvilla"/>
   <meta property="og:title" content="HV Petvilla — Pet Boarding & Shop, Hyderabad"/>
-  <meta property="og:description" content="Trusted pet boarding, curated pet shop, and CommuniTree for Hyderabad pet parents."/>
+  <meta property="og:description" content="Hyderabad's trusted pet boarding for hamsters, rabbits, sugar gliders & more. Visit our pet shop or join CommuniTree, our pet parent community."/>
   <meta property="og:image" content="https://hvpetvilla.in/images/logo.jpg"/>
   <link rel="canonical" href="https://hvpetvilla.in/"/>
   <link rel="icon" type="image/jpeg" href="images/logo.jpg"/>
   <link rel="apple-touch-icon" href="images/logo.jpg"/>
   <link rel="stylesheet" href="style.css"/>
+  <script type="application/ld+json" id="business-ldjson">
+  {
+    "@context": "https://schema.org",
+    "@type": "PetStore",
+    "@id": "https://hvpetvilla.in/#business",
+    "name": "HV Petvilla",
+    "image": "https://hvpetvilla.in/images/logo.jpg",
+    "url": "https://hvpetvilla.in/",
+    "telephone": "+91 94929 19527",
+    "email": "hv.petvilla@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Nizampet",
+      "addressLocality": "Hyderabad",
+      "addressRegion": "Telangana",
+      "postalCode": "500118",
+      "addressCountry": "IN"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "19:00",
+      "closes": "22:00"
+    },
+    "sameAs": [
+      "https://www.instagram.com/hv.petvilla",
+      "https://www.facebook.com/share/1BL7ABf5H9/"
+    ]
+  }
+  </script>
   <style>
     .home-hero {
       background: linear-gradient(135deg, var(--teal-dark) 0%, #5C3B22 45%, var(--teal) 100%);
@@ -446,6 +476,7 @@ function reviewCard(r, isAdmin) {
   </div>`;
 }
 function renderOverallRating(all) {
+  updateBusinessSchemaRating(all);
   const el = document.getElementById('overallRating');
   if(!el) return;
   if(!all.length){ el.style.display='none'; el.innerHTML=''; return; }
@@ -457,6 +488,22 @@ function renderOverallRating(all) {
     <span class="score">${avg.toFixed(1)}</span>
     <span class="stars">${stars}</span>
     <span class="count">based on ${all.length} review${all.length>1?'s':''}</span>`;
+}
+// Keeps the LocalBusiness JSON-LD's aggregateRating in sync with real,
+// live review data instead of a number hardcoded in the HTML source.
+function updateBusinessSchemaRating(all) {
+  const el = document.getElementById('business-ldjson');
+  if(!el) return;
+  try {
+    const data = JSON.parse(el.textContent);
+    if(all.length){
+      const avg = all.reduce((sum,r)=>sum+r.rating,0) / all.length;
+      data.aggregateRating = { "@type":"AggregateRating", "ratingValue": avg.toFixed(1), "reviewCount": all.length };
+    } else {
+      delete data.aggregateRating;
+    }
+    el.textContent = JSON.stringify(data);
+  } catch(e) {}
 }
 async function renderReviews() {
   const grid = document.getElementById('reviewsGrid');
