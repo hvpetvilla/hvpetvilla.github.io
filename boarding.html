@@ -85,13 +85,6 @@
       font-size:.82rem; color:#6B4A1E; margin-bottom:20px; line-height:1.5;
     }
     .setup-note strong { color:#4A3316; }
-    .spinner {
-      display:inline-block; width:18px; height:18px;
-      border:2.5px solid rgba(255,255,255,.4);
-      border-top-color:#fff; border-radius:50%;
-      animation: spin .7s linear infinite; vertical-align:middle; margin-right:6px;
-    }
-    @keyframes spin { to{transform:rotate(360deg)} }
   </style>
 </head>
 <body>
@@ -386,7 +379,7 @@ document.addEventListener('click',function(e){
     const finalPetType = petType==='Other'?document.getElementById('otherPet').value.trim():petType;
     const btn=document.getElementById('submitBtn');
     btn.disabled=true;
-    btn.innerHTML='<span class="spinner"></span> Sending…';
+    btn.innerHTML='<span class="bird-spinner sm">🐦</span> Sending…';
 
     if(EMAIL_CONFIGURED){
       // ── Send via EmailJS (no redirect, no page change) ──

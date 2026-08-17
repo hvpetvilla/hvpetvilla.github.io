@@ -362,3 +362,30 @@ footer a:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: reduce) {
   .word-reveal span { animation: none; opacity: 1; transform: none; }
 }
+
+/* ── Bird-flying loading indicator (shared across all pages) ── */
+.bird-loading {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 50px 0; color: var(--muted); font-size: .9rem;
+}
+.bird-spinner {
+  display: inline-block; font-size: 2.2rem; line-height: 1;
+  animation: bird-fly 1.6s ease-in-out infinite;
+}
+.bird-spinner.sm {
+  font-size: 1rem; margin-right: 6px; vertical-align: middle;
+  animation-duration: .9s;
+}
+@keyframes bird-fly {
+  0%   { transform: translate(-16px,0)    rotate(-6deg) scaleY(1);    }
+  15%  { transform: translate(-8px,-9px)  rotate(-2deg) scaleY(.78);  }
+  30%  { transform: translate(0,-13px)    rotate(0deg)  scaleY(1.08); }
+  45%  { transform: translate(8px,-9px)   rotate(2deg)  scaleY(.78);  }
+  60%  { transform: translate(16px,0)     rotate(6deg)  scaleY(1);    }
+  75%  { transform: translate(8px,7px)    rotate(2deg)  scaleY(.85);  }
+  90%  { transform: translate(-8px,7px)   rotate(-2deg) scaleY(.85);  }
+  100% { transform: translate(-16px,0)    rotate(-6deg) scaleY(1);    }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bird-spinner { animation: none; }
+}

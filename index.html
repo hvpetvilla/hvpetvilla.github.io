@@ -111,6 +111,7 @@
     .overall-rating .stars { color:var(--green); font-size:1.3rem; letter-spacing:1px; }
     .overall-rating .count { font-size:0.82rem; color:var(--muted); }
     .reviews-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:28px; }
+    .reviews-loading { grid-column:1/-1; }
     .review-card {
       background:var(--surface); border-radius:var(--radius);
       border:1.5px solid var(--border); padding:18px; position:relative;
@@ -282,7 +283,9 @@
   <div class="reviews-title">❤️ What Pet Parents Say</div>
   <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
   <div class="overall-rating" id="overallRating" style="display:none"></div>
-  <div class="reviews-grid" id="reviewsGrid"></div>
+  <div class="reviews-grid" id="reviewsGrid">
+    <div class="reviews-loading bird-loading"><span class="bird-spinner">🐦</span>Loading reviews…</div>
+  </div>
 
   <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -454,8 +457,9 @@ function renderOverallRating(all) {
     <span class="count">based on ${all.length} review${all.length>1?'s':''}</span>`;
 }
 async function renderReviews() {
-  const all = await loadReviews();
   const grid = document.getElementById('reviewsGrid');
+  grid.innerHTML = '<div class="reviews-loading bird-loading"><span class="bird-spinner">🐦</span>Loading reviews…</div>';
+  const all = await loadReviews();
   const moreWrap = document.getElementById('moreReviewsWrap');
   const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
   const SHOW = 3;
