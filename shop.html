@@ -257,12 +257,12 @@
   -->
 
   <div class="admin-toggle">
-    <button onclick="showAdminLogin()">⚙️ Admin</button>
-    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;margin-left:8px;">🚪 Logout</button>
+    <button onclick="showAdminLogin()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</button>
+    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;margin-left:8px;"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</button>
   </div>
 
   <div class="admin-panel" id="adminPanel">
-    <h3>➕ Add / Edit Product</h3>
+    <h3><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add / Edit Product</h3>
     <input type="hidden" id="ap-edit-id"/>
     <div class="admin-grid">
       <div><label>Product Name *</label><input id="ap-name" placeholder="e.g. Premium Bird Seed Mix"/></div>
@@ -275,9 +275,9 @@
         </select>
       </div>
       <div><label>Price (₹) *</label><input id="ap-price" type="number" min="1" placeholder="350"/></div>
-      <div><label>Emoji / Icon</label><input id="ap-emoji" placeholder="🌾" maxlength="4"/></div>
+      <div><label>Emoji / Icon (optional)</label><input id="ap-emoji" placeholder="Leave blank for the default paw icon" maxlength="4"/></div>
       <div style="grid-column:1/-1"><label>Description</label><input id="ap-desc" placeholder="Short product description"/></div>
-      <div style="grid-column:1/-1"><label>Product Image URL (optional)</label><input id="ap-img" placeholder="https://…/product.jpg  or leave blank to use emoji"/></div>
+      <div style="grid-column:1/-1"><label>Product Image URL (optional)</label><input id="ap-img" placeholder="https://…/product.jpg  or leave blank to use icon"/></div>
       <div style="grid-column:1/-1">
         <label>Or Upload Product Photo (optional)</label>
         <input type="file" id="ap-imgfile" accept="image/*" onchange="previewProductImg(event)"/>
@@ -285,9 +285,9 @@
       </div>
     </div>
     <div class="admin-actions">
-      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()">💾 Save Product</button>
+      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Product</button>
       <button class="btn" style="background:var(--teal-light);color:var(--teal);" onclick="clearAdminForm()">Clear</button>
-      <button class="btn" style="background:rgba(193,68,58,.12);color:#A93326;" onclick="exportProducts()">📋 Export JSON</button>
+      <button class="btn" style="background:rgba(193,68,58,.12);color:#A93326;" onclick="exportProducts()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Export JSON</button>
     </div>
     <div style="margin-top:14px;font-size:.78rem;color:var(--muted);">
       Products added here are stored in the database and visible to every visitor immediately.
@@ -296,12 +296,12 @@
 
   <div class="shop-bar">
     <div class="search-wrap">
-      🔍 <input type="text" id="searchInput" placeholder="Search products…" oninput="renderProducts()"/>
+      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> <input type="text" id="searchInput" placeholder="Search products…" oninput="renderProducts()"/>
     </div>
   </div>
   <div class="chips" id="chips"></div>
   <div class="product-grid" id="productGrid">
-    <div class="products-loading bird-loading"><span class="bird-spinner">🐦</span>Loading products…</div>
+    <div class="products-loading bird-loading"><span class="bird-spinner"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22 11l-6-1-3-6-3 6-6 1 4.5 4-1.5 6 6-3.5L19 21l-1.5-6z"/></svg></span>Loading products…</div>
   </div>
 </div>
 
@@ -315,10 +315,10 @@
   <div class="modal">
     <div class="modal-head">
       <h2><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Your Cart</h2>
-      <button class="close-x" onclick="closeCart()">✕</button>
+      <button class="close-x" onclick="closeCart()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div id="cartBody"></div>
-    <div id="cartEmptyMsg" class="empty-cart"><div style="font-size:2.5rem;margin-bottom:8px;">🛒</div><p>Your cart is empty</p></div>
+    <div id="cartEmptyMsg" class="empty-cart"><div style="margin-bottom:8px;color:var(--teal);"><svg viewBox="0 0 24 24" width="2.5rem" height="2.5rem" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><p>Your cart is empty</p></div>
     <div id="cartFooterBlock" style="display:none;">
       <div class="cart-total"><span>Total</span><span id="cartTotalAmt"></span></div>
       <div class="buyer-details">
@@ -326,7 +326,7 @@
         <div><label>Phone Number *</label><input id="cb-phone" type="tel" placeholder="10-digit mobile number" maxlength="15"/></div>
         <div><label>Delivery Address *</label><textarea id="cb-address" rows="2" placeholder="House no, street, area, city, pincode"></textarea></div>
       </div>
-      <button class="btn btn-green btn-block" style="margin-top:16px;" onclick="checkoutViaWhatsApp()">Checkout via WhatsApp 🟢</button>
+      <button class="btn btn-green btn-block" style="margin-top:16px;" onclick="checkoutViaWhatsApp()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.12em"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z"/></svg> Checkout via WhatsApp</button>
       <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:8px;">We'll confirm your order & send a payment QR on WhatsApp</p>
     </div>
   </div>
@@ -337,7 +337,7 @@
   <div class="modal">
     <div class="modal-head">
       <h2>Product Details</h2>
-      <button class="close-x" onclick="closeProductDetail()">✕</button>
+      <button class="close-x" onclick="closeProductDetail()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div id="productDetailBody"></div>
   </div>
@@ -374,10 +374,18 @@ document.addEventListener('click',function(e){
 
 <script>
 const CATS=['all','food','accessories','cages','other'];
-const CAT_LABELS={all:'All Products 🐾',food:'Food & Treats 🍖',accessories:'Accessories 🎀',cages:'Cages & Habitats 🏡',other:'Other'};
+const CAT_LABELS={
+  all:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="currentColor" style="vertical-align:-0.1em"><circle cx="6" cy="10" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><path d="M12 12c-3 0-6 2-6 5.5A2.5 2.5 0 0 0 8.5 20c1 0 1.5-.5 3.5-.5s2.5.5 3.5.5A2.5 2.5 0 0 0 18 17.5c0-3.5-3-5.5-6-5.5z"/></svg> All Products',
+  food:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M3 11h18a1 1 0 0 1 1 1 8 8 0 0 1-8 8H10a8 8 0 0 1-8-8 1 1 0 0 1 1-1z"/><path d="M7 11V9a5 5 0 0 1 10 0v2"/></svg> Food & Treats',
+  accessories:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M20.59 13.41L13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Accessories',
+  cages:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Cages & Habitats',
+  other:'Other'
+};
 const BESTSELLER_NAMES=['Sugar Glider Nectar Blend','Bird Cage (Medium)'];
 const NEW_ARRIVAL_NAMES=['Natural Bedding (5 L)'];
 let activecat='all', cart=[], adminOpen=false;
+const SAVE_ICON='<svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+const PAW_ICON='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-0.1em"><ellipse cx="12" cy="16.5" rx="5.4" ry="4.4"/><ellipse cx="5.4" cy="9" rx="2.1" ry="2.7"/><ellipse cx="10.1" cy="5.3" rx="2" ry="2.6"/><ellipse cx="15.4" cy="5.5" rx="2" ry="2.6"/><ellipse cx="19" cy="9.2" rx="2" ry="2.5"/></svg>';
 
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 let apiProducts = [];
@@ -407,7 +415,7 @@ function getAllProducts(){
 // into the onerror string itself, since HTML-escaping alone doesn't
 // stop a quote in that string from breaking out into the handler's JS.
 function showFallbackEmoji(img){
-  img.parentElement.textContent = img.dataset.emoji || '🐾';
+  img.parentElement.innerHTML = img.dataset.emoji ? escapeHtml(img.dataset.emoji) : PAW_ICON;
 }
 
 // Build chips
@@ -417,7 +425,7 @@ function buildChips(){
   cats.forEach(c=>{
     const btn=document.createElement('button');
     btn.className='chip'+(c===activecat?' on':'');
-    btn.textContent=CAT_LABELS[c]||c;
+    btn.innerHTML=CAT_LABELS[c]||c;
     btn.onclick=()=>{activecat=c;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));btn.classList.add('on');renderProducts();};
     el.appendChild(btn);
   });
@@ -432,9 +440,9 @@ function renderProducts(){
   grid.className='product-grid'+(isAdmin?' admin-mode':'');
   grid.innerHTML=filtered.length?filtered.map(p=>`
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
-      ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best">🔥 Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new">✨ New</span>':'')}
+      ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New</span>':'')}
       <div class="product-thumb">
-        ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'🐾')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:escapeHtml(p.emoji||'🐾')}
+        ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:(p.emoji?escapeHtml(p.emoji):PAW_ICON)}
       </div>
       <div class="product-body">
         <div class="product-cat">${escapeHtml(p.cat)}</div>
@@ -446,8 +454,8 @@ function renderProducts(){
         </div>
       </div>
       <div class="admin-card-actions">
-        <button class="edit-prod" onclick="event.stopPropagation();editProduct(${escapeHtml(JSON.stringify(p.id))})">✎ Edit</button>
-        <button class="delete-prod" onclick="event.stopPropagation();deleteProduct(${escapeHtml(JSON.stringify(p.id))})">✕ Delete</button>
+        <button class="edit-prod" onclick="event.stopPropagation();editProduct(${escapeHtml(JSON.stringify(p.id))})"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> Edit</button>
+        <button class="delete-prod" onclick="event.stopPropagation();deleteProduct(${escapeHtml(JSON.stringify(p.id))})"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
       </div>
     </div>
   `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
@@ -493,7 +501,7 @@ function logoutAdmin(){
   document.getElementById('adminPanel').style.display='none';
   updateAdminLogoutVisibility();
   renderProducts();
-  showToast('👋 Logged out');
+  showToast('Logged out');
 }
 // A 401 here means the session token expired or is stale (e.g. logged in
 // before a backend deploy rotated auth) — surface it clearly and force a
@@ -506,7 +514,7 @@ function handleAdminAuthFailure(){
   document.getElementById('adminPanel').style.display='none';
   updateAdminLogoutVisibility();
   renderProducts();
-  alert('Your admin session expired. Please click ⚙️ Admin and log in again.');
+  alert('Your admin session expired. Please click Admin and log in again.');
 }
 function toggleAdmin(){ showAdminLogin(); }
 function previewProductImg(e){
@@ -540,7 +548,7 @@ function clearAdminForm(){
   const preview=document.getElementById('ap-img-preview');
   preview.style.display='none'; preview.src='';
   const saveBtn=document.getElementById('saveProductBtn');
-  if(saveBtn) saveBtn.textContent='💾 Save Product';
+  if(saveBtn) saveBtn.innerHTML=SAVE_ICON+' Save Product';
 }
 function editProduct(id){
   const p = apiProducts.find(x=>x.id===id); if(!p) return;
@@ -555,7 +563,7 @@ function editProduct(id){
   const preview=document.getElementById('ap-img-preview');
   preview.style.display='none'; preview.src='';
   const saveBtn=document.getElementById('saveProductBtn');
-  if(saveBtn) saveBtn.textContent='💾 Update Product';
+  if(saveBtn) saveBtn.innerHTML=SAVE_ICON+' Update Product';
   document.getElementById('adminPanel').scrollIntoView({behavior:'smooth', block:'start'});
 }
 let isSavingProduct = false;
@@ -565,9 +573,9 @@ async function saveProduct(){
   const name=document.getElementById('ap-name').value.trim();
   const price=parseInt(document.getElementById('ap-price').value)||0;
   const cat=document.getElementById('ap-cat').value;
-  const emoji=document.getElementById('ap-emoji').value.trim()||'🐾';
+  const emoji=document.getElementById('ap-emoji').value.trim();
   const desc=document.getElementById('ap-desc').value.trim();
-  if(!name||!price) return showToast('⚠️ Name and Price are required');
+  if(!name||!price) return showToast('Name and Price are required');
   const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
   const saveBtn = document.getElementById('saveProductBtn');
   isSavingProduct = true;
@@ -589,15 +597,15 @@ async function saveProduct(){
     if(!res.ok) throw new Error('API error ' + res.status);
     await loadProducts();
     clearAdminForm(); renderProducts();
-    showToast(editId ? '✅ Product updated!' : '✅ Product saved!');
+    showToast(editId ? 'Product updated!' : 'Product saved!');
   } catch(e) {
     console.error('Failed to save product:', e);
-    showToast('⚠️ Could not save product — please try again later');
+    showToast('Could not save product — please try again later');
   } finally {
     isSavingProduct = false;
     if(saveBtn){
       saveBtn.disabled = false;
-      saveBtn.textContent = document.getElementById('ap-edit-id').value.trim() ? '💾 Update Product' : '💾 Save Product';
+      saveBtn.innerHTML = SAVE_ICON+(document.getElementById('ap-edit-id').value.trim() ? ' Update Product' : ' Save Product');
     }
   }
 }
@@ -612,17 +620,17 @@ async function deleteProduct(id){
     if(!res.ok) throw new Error('API error ' + res.status);
   } catch(e) {
     console.error('Failed to delete product:', e);
-    return showToast('⚠️ Could not delete product — please try again later');
+    return showToast('Could not delete product — please try again later');
   }
   await loadProducts();
-  renderProducts(); showToast('🗑️ Product deleted');
+  renderProducts(); showToast('Product deleted');
 }
 function exportProducts(){
   const json=JSON.stringify(apiProducts,null,2);
-  navigator.clipboard.writeText(json).then(()=>showToast('📋 JSON copied to clipboard!')).catch(()=>{
+  navigator.clipboard.writeText(json).then(()=>showToast('JSON copied to clipboard!')).catch(()=>{
     const ta=document.createElement('textarea'); ta.value=json;
     document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); showToast('📋 JSON copied!');
+    document.body.removeChild(ta); showToast('JSON copied!');
   });
 }
 
@@ -632,7 +640,7 @@ function addToCart(id){
   const p=all.find(x=>x.id===id); if(!p) return;
   const ex=cart.find(x=>x.id===id);
   if(ex) ex.qty++; else cart.push({...p,qty:1});
-  updateCartUI(); showToast('✅ '+p.name+' added to cart!');
+  updateCartUI(); showToast(p.name+' added to cart!');
 }
 function updateCartUI(){
   const total=cart.reduce((a,b)=>a+b.qty,0);
@@ -650,7 +658,7 @@ function renderCartModal(){
   const totalAmt=cart.reduce((a,b)=>a+b.price*b.qty,0);
   body.innerHTML=cart.map(item=>`
     <div class="cart-item">
-      <div class="cart-item-icon">${item.emoji||'🐾'}</div>
+      <div class="cart-item-icon">${item.emoji||PAW_ICON}</div>
       <div class="cart-item-info"><strong>${item.name}</strong><span>₹${item.price} each</span></div>
       <div class="qty-controls">
         <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},-1)">−</button>
@@ -675,7 +683,7 @@ function openProductDetail(id){
   const p=getAllProducts().find(x=>x.id===id); if(!p) return;
   document.getElementById('productDetailBody').innerHTML=`
     <div class="pd-thumb">
-      ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'🐾')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:escapeHtml(p.emoji||'🐾')}
+      ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:(p.emoji?escapeHtml(p.emoji):PAW_ICON)}
     </div>
     <div class="pd-cat">${escapeHtml(p.cat)}</div>
     <div class="pd-name">${escapeHtml(p.name)}</div>
@@ -705,12 +713,12 @@ function checkoutViaWhatsApp(){
   const name=document.getElementById('cb-name').value.trim();
   const phone=document.getElementById('cb-phone').value.trim();
   const address=document.getElementById('cb-address').value.trim();
-  if(!name||!phone||!address) return showToast('⚠️ Please add your name, phone & address to checkout');
+  if(!name||!phone||!address) return showToast('Please add your name, phone & address to checkout');
   localStorage.setItem('hvpv_buyer_info', JSON.stringify({name,phone,address}));
   const totalAmt=cart.reduce((a,b)=>a+b.price*b.qty,0);
   const lines=cart.map((item,i)=>`${i+1}. ${item.name} x${item.qty} - ₹${item.price*item.qty}`);
   const message=[
-    'Hi HV Petvilla! 🐾 I\'d like to order:',
+    'Hi HV Petvilla! I\'d like to order:',
     '',
     ...lines,
     '',
@@ -724,7 +732,7 @@ function checkoutViaWhatsApp(){
   ].join('\n');
   window.open('https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(message), '_blank');
   closeCart(); cart=[]; updateCartUI();
-  showToast('🟢 Redirecting to WhatsApp to confirm your order…');
+  showToast('Redirecting to WhatsApp to confirm your order…');
 }
 
 function showToast(msg){
