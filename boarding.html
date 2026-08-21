@@ -119,6 +119,53 @@
       font-size:.82rem; color:#6B4A1E; margin-bottom:20px; line-height:1.5;
     }
     .setup-note strong { color:#4A3316; }
+
+    /* Pricing */
+    .price-table { width:100%; border-collapse:collapse; margin-top:6px; }
+    .price-table th, .price-table td { text-align:left; padding:10px 8px; border-bottom:1.5px solid var(--border); font-size:.88rem; }
+    .price-table th { color:var(--teal); font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
+    .price-table td.price-label { font-weight:700; color:var(--ink); }
+    .price-table td.price-amt { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; color:var(--teal); }
+    .price-note { font-size:.78rem; color:var(--muted); margin-top:2px; }
+    .price-foot-note { font-size:.8rem; color:var(--muted); margin-top:14px; line-height:1.5; }
+
+    /* Admin button (mirrors shop.html) */
+    .admin-toggle { margin-top:16px; text-align:right; }
+    .admin-toggle button {
+      background:none; border:1.5px solid var(--border); padding:7px 14px;
+      border-radius:var(--radius-sm); font-size:.78rem; font-weight:600;
+      cursor:pointer; color:var(--muted); transition:.15s;
+    }
+    .admin-toggle button:hover { border-color:var(--teal); color:var(--teal); }
+    .admin-panel {
+      background:var(--surface); border:2px solid var(--teal-light);
+      border-radius:var(--radius); padding:24px; margin-top:16px;
+      display:none;
+    }
+    .admin-panel h3 {
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal);
+      margin-bottom:16px; font-size:1rem;
+    }
+    .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .admin-panel input {
+      width:100%; padding:9px 12px; border:1.5px solid var(--border);
+      border-radius:var(--radius-sm); font-size:.85rem;
+      font-family:'Inter',sans-serif; outline:none;
+    }
+    .admin-panel input:focus { border-color:var(--teal); }
+    .admin-panel label {
+      display:block; font-size:.78rem; font-weight:600;
+      color:var(--teal); margin-bottom:4px;
+    }
+    .admin-actions { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .price-row-actions { white-space:nowrap; }
+    .price-row-actions button {
+      color:#fff; border:none; border-radius:6px; padding:4px 8px;
+      font-size:.72rem; cursor:pointer; margin-right:6px;
+    }
+    .edit-tier { background:rgba(58,141,193,.85); }
+    .delete-tier { background:rgba(231,76,60,.85); }
+    @media(max-width:640px){ .admin-grid{grid-template-columns:1fr;} .price-table{font-size:.8rem;} }
   </style>
 </head>
 <body>
@@ -132,6 +179,7 @@
     <a href="boarding.html" class="active"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
     <a href="shop.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
     <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
+    <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
     <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
   </div>
   <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
@@ -142,6 +190,7 @@
   <a href="boarding.html" class="active"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
   <a href="shop.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
   <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
+  <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
   <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
 </div>
 
@@ -284,6 +333,39 @@
       <li style="display:flex;gap:10px;"><span class="hvp-li-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span><span>Any medications with clear dosage instructions</span></li>
       <li style="display:flex;gap:10px;"><span class="hvp-li-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span><span>Vaccination records (if applicable)</span></li>
     </ul>
+  </div>
+
+  <!-- Pricing -->
+  <div class="card hoverable reveal reveal-3" id="pricing">
+    <h2><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Boarding Pricing</h2>
+    <div id="pricingTableWrap">
+      <p style="color:var(--muted);font-size:.88rem;">Loading pricing…</p>
+    </div>
+    <p class="price-foot-note">Rates depend on your pet's species and care needs — WhatsApp us with details for an exact quote. <a href="https://wa.me/919492919527" target="_blank" style="color:var(--teal);font-weight:700;">Chat with us →</a></p>
+
+    <div class="admin-toggle">
+      <button onclick="showPricingAdminLogin()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</button>
+      <button id="pricingAdminLogoutBtn" onclick="logoutPricingAdmin()" style="display:none;margin-left:8px;"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</button>
+    </div>
+
+    <div class="admin-panel" id="pricingAdminPanel">
+      <h3><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add / Edit Pricing Tier</h3>
+      <input type="hidden" id="pt-edit-id"/>
+      <div class="admin-grid">
+        <div><label>Label *</label><input id="pt-label" placeholder="e.g. Hamster / Mice / Rat / Guinea Pig"/></div>
+        <div><label>Sort Order</label><input id="pt-order" type="number" placeholder="0"/></div>
+        <div><label>Per Night — Without Food (₹) *</label><input id="pt-withoutfood" type="number" min="0" placeholder="150"/></div>
+        <div><label>Per Night — With Food (₹) *</label><input id="pt-withfood" type="number" min="0" placeholder="200"/></div>
+        <div style="grid-column:1/-1"><label>Note (optional)</label><input id="pt-note" placeholder="e.g. Includes daily cage cleaning"/></div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="savePricingBtn" onclick="savePricingTier()">Save Tier</button>
+        <button class="btn" style="background:var(--teal-light);color:var(--teal);" onclick="clearPricingForm()">Clear</button>
+      </div>
+      <div style="margin-top:14px;font-size:.78rem;color:var(--muted);">
+        Tiers saved here are stored in the database and visible to every visitor immediately.
+      </div>
+    </div>
   </div>
 </div>
 
@@ -466,6 +548,185 @@ document.addEventListener('click',function(e){
     document.getElementById('successBox').style.display='block';
     window.scrollTo({top:0,behavior:'smooth'});
   }
+
+  // ── PRICING ──
+  const PRICING_API = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
+  // Shown only until real tiers are added via Admin below — replace with
+  // your actual rates there; this placeholder disappears automatically
+  // once at least one real tier is saved.
+  const FALLBACK_PRICING = [
+    { label:'Hamster / Mice / Rat / Guinea Pig', withoutFood:150, withFood:200, note:'' },
+    { label:'Rabbit', withoutFood:200, withFood:260, note:'' },
+    { label:'Birds', withoutFood:180, withFood:230, note:'' },
+    { label:'Turtle / Tortoise', withoutFood:170, withFood:220, note:'' },
+    { label:'Iguana / Spiders', withoutFood:220, withFood:280, note:'' }
+  ];
+  let pricingTiers = [];
+  let pricingIsFallback = false;
+  let pricingAdminOpen = false;
+
+  async function loadPricing(){
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing');
+      if(!res.ok) throw new Error('API error ' + res.status);
+      const data = await res.json();
+      if(data.length){
+        pricingTiers = data.map(t => ({ id:t._id, label:t.label, withoutFood:t.withoutFood, withFood:t.withFood, note:t.note||'' }));
+        pricingIsFallback = false;
+      } else {
+        pricingTiers = FALLBACK_PRICING;
+        pricingIsFallback = true;
+      }
+    } catch(e) {
+      console.error('Failed to load pricing:', e);
+      pricingTiers = FALLBACK_PRICING;
+      pricingIsFallback = true;
+    }
+    renderPricing();
+  }
+
+  function renderPricing(){
+    const wrap = document.getElementById('pricingTableWrap');
+    if(!pricingTiers.length){
+      wrap.innerHTML = '<p style="color:var(--muted);font-size:.88rem;">Pricing coming soon — WhatsApp us for a quote.</p>';
+      return;
+    }
+    const rows = pricingTiers.map(t => `
+      <tr>
+        <td class="price-label">${escapeHtml(t.label)}${t.note?`<div class="price-note">${escapeHtml(t.note)}</div>`:''}</td>
+        <td class="price-amt">₹${t.withoutFood}</td>
+        <td class="price-amt">₹${t.withFood}</td>
+        ${pricingAdminOpen && !pricingIsFallback ? `<td class="price-row-actions">
+          <button class="edit-tier" onclick="editPricingTier(${escapeHtml(JSON.stringify(t.id))})">Edit</button>
+          <button class="delete-tier" onclick="deletePricingTier(${escapeHtml(JSON.stringify(t.id))})">Delete</button>
+        </td>` : ''}
+      </tr>`).join('');
+    wrap.innerHTML = `
+      <table class="price-table">
+        <thead><tr><th>Pet</th><th>Without food /night</th><th>With food /night</th>${pricingAdminOpen && !pricingIsFallback ? '<th></th>' : ''}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${pricingIsFallback ? '<p class="price-note" style="margin-top:10px;">Sample rates shown — add your real pricing via Admin below.</p>' : ''}
+    `;
+  }
+
+  function updatePricingAdminLogoutVisibility(){
+    const btn = document.getElementById('pricingAdminLogoutBtn');
+    if(btn) btn.style.display = sessionStorage.getItem('hvpv_boarding_admin')==='1' ? 'inline-block' : 'none';
+  }
+  async function showPricingAdminLogin(){
+    if(sessionStorage.getItem('hvpv_boarding_admin')==='1'){
+      pricingAdminOpen = !pricingAdminOpen;
+      document.getElementById('pricingAdminPanel').style.display = pricingAdminOpen ? 'block' : 'none';
+      renderPricing();
+      return;
+    }
+    const pw = prompt('Enter admin passcode:');
+    if(pw === null) return;
+    try {
+      const res = await fetch(PRICING_API + '/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode: pw })
+      });
+      if(!res.ok) throw new Error('bad passcode');
+      const { token } = await res.json();
+      sessionStorage.setItem('hvpv_boarding_admin','1');
+      sessionStorage.setItem('hvpv_boarding_admin_key', token);
+      pricingAdminOpen = true;
+      document.getElementById('pricingAdminPanel').style.display='block';
+      updatePricingAdminLogoutVisibility();
+      renderPricing();
+    } catch(e) {
+      alert('Incorrect passcode. Access denied.');
+    }
+  }
+  function logoutPricingAdmin(){
+    sessionStorage.removeItem('hvpv_boarding_admin');
+    sessionStorage.removeItem('hvpv_boarding_admin_key');
+    pricingAdminOpen = false;
+    document.getElementById('pricingAdminPanel').style.display='none';
+    updatePricingAdminLogoutVisibility();
+    renderPricing();
+    showToast('Logged out');
+  }
+  function handlePricingAdminAuthFailure(){
+    sessionStorage.removeItem('hvpv_boarding_admin');
+    sessionStorage.removeItem('hvpv_boarding_admin_key');
+    pricingAdminOpen = false;
+    document.getElementById('pricingAdminPanel').style.display='none';
+    updatePricingAdminLogoutVisibility();
+    renderPricing();
+    alert('Your admin session expired. Please click Admin and log in again.');
+  }
+  function clearPricingForm(){
+    ['pt-edit-id','pt-label','pt-order','pt-withoutfood','pt-withfood','pt-note'].forEach(id=>document.getElementById(id).value='');
+    const saveBtn=document.getElementById('savePricingBtn');
+    if(saveBtn) saveBtn.textContent='Save Tier';
+  }
+  function editPricingTier(id){
+    const t = pricingTiers.find(x=>x.id===id); if(!t) return;
+    document.getElementById('pt-edit-id').value = t.id;
+    document.getElementById('pt-label').value = t.label;
+    document.getElementById('pt-withoutfood').value = t.withoutFood;
+    document.getElementById('pt-withfood').value = t.withFood;
+    document.getElementById('pt-note').value = t.note || '';
+    const saveBtn=document.getElementById('savePricingBtn');
+    if(saveBtn) saveBtn.textContent='Update Tier';
+    document.getElementById('pricingAdminPanel').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  let isSavingPricing = false;
+  async function savePricingTier(){
+    if(isSavingPricing) return;
+    const editId = document.getElementById('pt-edit-id').value.trim();
+    const label = document.getElementById('pt-label').value.trim();
+    const order = parseInt(document.getElementById('pt-order').value)||0;
+    const withoutFood = parseInt(document.getElementById('pt-withoutfood').value);
+    const withFood = parseInt(document.getElementById('pt-withfood').value);
+    const note = document.getElementById('pt-note').value.trim();
+    if(!label || isNaN(withoutFood) || isNaN(withFood)) return showToast('Label and both prices are required');
+    const adminKey = sessionStorage.getItem('hvpv_boarding_admin_key');
+    const saveBtn = document.getElementById('savePricingBtn');
+    isSavingPricing = true;
+    if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = editId ? 'Updating…' : 'Saving…'; }
+    try {
+      const url = PRICING_API + '/api/pricing' + (editId ? '?id=' + encodeURIComponent(editId) : '');
+      const res = await fetch(url, {
+        method: editId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
+        body: JSON.stringify({ label, withoutFood, withFood, note, order })
+      });
+      if(res.status === 401) return handlePricingAdminAuthFailure();
+      if(!res.ok) throw new Error('API error ' + res.status);
+      await loadPricing();
+      clearPricingForm();
+      showToast(editId ? 'Pricing tier updated' : 'Pricing tier added');
+    } catch(e) {
+      console.error('Failed to save pricing tier:', e);
+      showToast('Could not save — please try again later');
+    } finally {
+      isSavingPricing = false;
+      if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = editId ? 'Update Tier' : 'Save Tier'; }
+    }
+  }
+  async function deletePricingTier(id){
+    const adminKey = sessionStorage.getItem('hvpv_boarding_admin_key');
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing?id=' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: { 'X-Admin-Key': adminKey || '' }
+      });
+      if(res.status === 401) return handlePricingAdminAuthFailure();
+      if(!res.ok) throw new Error('API error ' + res.status);
+    } catch(e) {
+      console.error('Failed to delete pricing tier:', e);
+      return showToast('Could not delete — please try again later');
+    }
+    await loadPricing();
+    showToast('Pricing tier deleted');
+  }
+  updatePricingAdminLogoutVisibility();
+  loadPricing();
 </script>
 </body>
 </html>
