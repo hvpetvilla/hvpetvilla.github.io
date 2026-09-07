@@ -2883,10 +2883,11 @@ function computeBizStats(invoices){
   const pendingAmt=pendingList.reduce((s,i)=>s+(i.payment?.remaining||0),0);
   const custSet=new Set(invoices.map(i=>i.customer?.mobile||i.customer?.name).filter(Boolean));
 
-  // Investment = every expense recorded — tracker purchases + vendor supplies
+  // Investment = every expense recorded in the Expense Tracker only.
+  // Vendor Supplies are tracked separately and deliberately excluded here.
   const totalExpensesInvested=tEntries.reduce((a,e)=>a+e.amount,0);
   const totalSupplyInvested=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
-  const totalInvested=totalExpensesInvested+totalSupplyInvested;
+  const totalInvested=totalExpensesInvested;
 
   // Revenue = every invoice raised + direct sales recorded in the tracker
   const trackerRevenue=tEntries.reduce((a,e)=>a+e.revenue,0);
@@ -2898,15 +2899,13 @@ function computeBizStats(invoices){
   const gap=totalRevenueAll-breakeven;
 
   const monthTrackerRev=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.revenue,0);
-  const monthExpenses=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.amount,0)
-    + supplies.filter(s=>(s.date||'').startsWith(thisMonth)).reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
+  const monthExpenses=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.amount,0);
   const monthProfit=monthRev+monthTrackerRev-monthExpenses;
 
   // Month-on-month series (last 12 months seen in the data)
   const monthSet=new Set();
   invoices.forEach(i=>{const m=(i.createdAt||'').slice(0,7); if(m) monthSet.add(m);});
   tEntries.forEach(e=>{const m=(e.date||'').slice(0,7); if(m) monthSet.add(m);});
-  supplies.forEach(s=>{const m=(s.date||'').slice(0,7); if(m) monthSet.add(m);});
   const months=[...monthSet].sort().slice(-12);
   const custFirstSeen={};
   [...invoices].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).forEach(i=>{
@@ -2919,8 +2918,7 @@ function computeBizStats(invoices){
   const series=months.map(m=>{
     const rev=invoices.filter(i=>(i.createdAt||'').startsWith(m)).reduce((s,i)=>s+(i.charges?.grand||0),0)
       + tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.revenue,0);
-    const exp=tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.amount,0)
-      + supplies.filter(s=>(s.date||'').startsWith(m)).reduce((s2,s)=>s2+(parseFloat(s.amount)||0),0);
+    const exp=tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.amount,0);
     const profit=rev-exp;
     const newInv=invoices.filter(i=>(i.createdAt||'').startsWith(m)).length;
     const newCust=firstSeenMonths.filter(mm=>mm===m).length;
@@ -2928,17 +2926,13 @@ function computeBizStats(invoices){
     return {month:m,label:new Date(m+'-01').toLocaleString('default',{month:'short',year:'2-digit'}),rev,exp,profit,newInv,cumInv,newCust,cumCust};
   });
 
-  // Partner split across every expense (tracker entries + vendor supplies).
-  // Revenue is attributed to a partner in the same ratio as the expense it funded.
+  // Partner split across every Expense Tracker entry (Vendor Supplies excluded,
+  // matching Total Invested). Revenue is attributed in the same ratio as the
+  // expense it funded.
   const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
   tEntries.forEach(e=>{
     const sp=getSplit(e);
     ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=e.amount*f; byPartner[p].revenue+=e.revenue*f; });
-  });
-  supplies.forEach(s=>{
-    const sp=getSplit(s);
-    const amt=parseFloat(s.amount)||0;
-    ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=amt*f; });
   });
 
   return {todayRev,monthRev,totalRev,totalInv,paidList,pendingList,partialList,pendingAmt,custSet,
@@ -2952,10 +2946,10 @@ const INFO = {
   todayRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised today.',
   monthlyRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised this calendar month.',
   totalRevenue:'<strong>Formula:</strong> (Sum of Grand Total on every invoice raised) + (revenue recorded on Expense Tracker sales). Every invoice raised is revenue received — this is the same number used on the Dashboard and in the Expense Tracker.',
-  monthProfit:'<strong>Formula:</strong> This month\'s revenue (invoices + tracker sales) − this month\'s expenses (tracker purchases + vendor supplies).',
+  monthProfit:'<strong>Formula:</strong> This month\'s revenue (invoices + tracker sales) − this month\'s expenses (Expense Tracker purchases only).',
   pendingPayments:'<strong>Formula:</strong> Sum of the remaining balance on invoices whose payment status is "Pending".',
-  totalInvested:'<strong>Formula:</strong> Every expense recorded is treated as money invested — Σ Expense Tracker purchase amounts + Σ Vendor Supply amounts.',
-  totalProfit:'<strong>Formula:</strong> Total Revenue − Total Invested. Revenue = all invoices raised + tracker sales. Investment = all expenses recorded. This exact formula is used on every tab.',
+  totalInvested:'<strong>Formula:</strong> Σ Expense Tracker purchase amounts. Every expense recorded there is treated as money invested. Vendor Supplies are tracked separately on the Vendors page and are not included in this figure.',
+  totalProfit:'<strong>Formula:</strong> Total Revenue − Total Invested. Revenue = all invoices raised + tracker sales. Investment = Expense Tracker entries only (Vendor Supplies excluded). This exact formula is used on every tab.',
   breakeven:'<strong>Formula:</strong> Breakeven target = Total Invested. Breakeven Gap = Total Revenue − Total Invested. Positive means you\'re above breakeven (in profit); negative means you\'re still below it.',
   totalCustomers:'<strong>Formula:</strong> Count of unique customers across all invoices, identified by mobile number (or name if no mobile was recorded).',
   totalInvoices:'<strong>Formula:</strong> Count of every invoice raised, regardless of payment status.',
@@ -3033,7 +3027,7 @@ async function loadDashboard(){
   const gapCls = st.gap>=0?'green':'red';
   const gapIcon = st.gap>=0?ICONS.check:ICONS.trendDown;
   renderStatCards('biz-stats-grid',[
-    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Expenses + Supplies spent',icon:ICONS.wallet,cls:'purple',icls:'purple',desc:INFO.totalInvested},
+    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Expense Tracker entries only',icon:ICONS.wallet,cls:'purple',icls:'purple',desc:INFO.totalInvested},
     {label:'Total Profit / Loss',val:(st.totalProfit>=0?'+':'')+fmt(Math.abs(st.totalProfit)),sub:'Revenue minus all expenses',icon:st.totalProfit>=0?ICONS.heart:ICONS.trendDown,cls:st.totalProfit>=0?'green':'red',icls:st.totalProfit>=0?'green':'red',desc:INFO.totalProfit},
     {label:'Breakeven Gap',val:(st.gap>=0?'+':'')+fmt(Math.abs(st.gap)),sub:st.gap>=0?'Above breakeven':'Below breakeven',icon:gapIcon,cls:gapCls,icls:gapCls,desc:INFO.breakeven},
     {label:'Total Customers',val:st.custSet.size,sub:`${st.totalInv} invoices · ${vendors.length} vendors`,icon:ICONS.users,cls:'blue',icls:'blue',desc:INFO.totalCustomers},
@@ -3120,7 +3114,7 @@ function partnerAnalyticsCardHTML(pd,totalInvested){
     <div class="stat-card ${net>=0?'green':'red'}" style="padding:12px"><div class="stat-label">Net P/L</div><div class="stat-value" style="font-size:17px;color:${net>=0?'#16A34A':'#DC2626'}">${(net>=0?'+':'-')+fmt(Math.abs(net))}</div></div>
     <div class="stat-card teal" style="padding:12px"><div class="stat-label">ROI</div><div class="stat-value" style="font-size:17px;color:${parseFloat(roi)>=0?'#16A34A':'#DC2626'}">${roi}%</div></div>
   </div>
-  <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">Based on the contributor split tagged on each expense (Expense Tracker purchases + Vendor supplies). Revenue is attributed in the same ratio as the expense it funded.</p>`;
+  <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">Based on the contributor split tagged on each Expense Tracker entry. Revenue is attributed in the same ratio as the expense it funded. (Vendor Supplies are tracked separately and not included here.)</p>`;
 }
 
 let _anaRepChart=null,_anaCustChart=null,_anaInvChart=null;
@@ -3130,7 +3124,7 @@ async function loadAnalytics(){
 
   renderStatCards('analytics-stats',[
     {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'All invoices + tracker sales',cls:'purple',icls:'purple',icon:ICONS.dollar,desc:INFO.totalRevenue},
-    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Every expense recorded',cls:'blue',icls:'blue',icon:ICONS.wallet,desc:INFO.totalInvested},
+    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Expense Tracker entries only',cls:'blue',icls:'blue',icon:ICONS.wallet,desc:INFO.totalInvested},
     {label:'Total Profit / Loss',val:(st.totalProfit>=0?'+':'-')+fmt(Math.abs(st.totalProfit)),sub:'Revenue minus invested',cls:st.totalProfit>=0?'green':'red',icls:st.totalProfit>=0?'green':'red',icon:st.totalProfit>=0?ICONS.heart:ICONS.trendDown,desc:INFO.totalProfit},
     {label:'Breakeven Gap',val:(st.gap>=0?'+':'-')+fmt(Math.abs(st.gap)),sub:st.gap>=0?'Above breakeven':'Below breakeven',cls:st.gap>=0?'green':'red',icls:st.gap>=0?'green':'red',icon:st.gap>=0?ICONS.check:ICONS.trendDown,desc:INFO.breakeven},
     {label:'Monthly Revenue',val:fmt(st.monthRev),sub:new Date().toLocaleString('default',{month:'long',year:'numeric'}),cls:'blue',icls:'blue',icon:ICONS.calendar,desc:INFO.monthlyRevenue},
@@ -3414,7 +3408,7 @@ function switchTrackerTab(id){
 function renderTrackerDashboard(){
   const s=calcSummary();
   const roi=s.invested>0?((s.profit/s.invested)*100).toFixed(1):'0.0';
-  const scopeNote=' Scope: Expense Tracker entries only — does not include Vendor Supplies. For the whole-business figure see the Dashboard/Analytics tabs.';
+  const scopeNote=' Vendor Supplies are tracked separately and are not included — this matches the Dashboard/Analytics "Total Invested" figure exactly.';
   renderStatCards('t-kpis',[
     {label:'Total Invested',val:fmtT(s.invested),cls:'green',icls:'green',icon:ICONS.wallet,desc:'<strong>Formula:</strong> Σ amount of every Expense Tracker entry.'+scopeNote},
     {label:'Total Revenue',val:fmtT(s.revenue),cls:'blue',icls:'blue',icon:ICONS.trendUp,desc:'<strong>Formula:</strong> Σ revenue recorded on Expense Tracker sales (Quick Sell).'+scopeNote},
@@ -3591,7 +3585,7 @@ function renderExpenseTable(){
   const tA=f.reduce((a,e)=>a+e.amount,0),tR=f.reduce((a,e)=>a+e.revenue,0),tN=tR-tA;
   const fc=el('t-fcount'); if(fc) fc.textContent=`${f.length} of ${tEntries.length}`;
   const fi=el('t-finfo'); if(fi) fi.textContent=`Showing ${f.length} entries`;
-  const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span> <span style="color:var(--text3);font-weight:400;font-size:11px">(Expense Tracker only — Dashboard/Analytics "Total Invested" also adds Vendor Supplies)</span>`;
+  const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span> <span style="color:var(--text3);font-weight:400;font-size:11px">(matches Dashboard/Analytics "Total Invested" when no filters are applied — Vendor Supplies are tracked separately)</span>`;
   const tbody=el('t-exp-tbody'); if(!tbody)return;
   tbody.innerHTML=f.length?f.map((e,i)=>{
     const net=e.revenue-e.amount;
@@ -3924,7 +3918,7 @@ function renderVendors(){
   renderStatCards('vendor-stats',[
     {label:'Total Vendors',val:vendors.length,cls:'blue',icls:'blue',icon:ICONS.store},
     {label:'Active Vendors',val:active,cls:'green',icls:'green',icon:ICONS.check},
-    {label:'Total Supply Spend',val:'₹'+Math.round(totalSpend).toLocaleString('en-IN'),cls:'purple',icls:'purple',icon:ICONS.wallet,desc:'<strong>Formula:</strong> Σ Amount Paid across every Vendor Supply record. This is only one part of "Total Invested" on the Dashboard/Analytics tabs — that figure also adds Expense Tracker purchase amounts.'},
+    {label:'Total Supply Spend',val:'₹'+Math.round(totalSpend).toLocaleString('en-IN'),cls:'purple',icls:'purple',icon:ICONS.wallet,desc:'<strong>Formula:</strong> Σ Amount Paid across every Vendor Supply record. Tracked separately — this is not included in the "Total Invested" figure on the Dashboard/Analytics tabs, which only counts Expense Tracker entries.'},
   ]);
 
   // Vendor table
@@ -3980,7 +3974,7 @@ function renderVendors(){
       </td>
     </tr>`).join('');
     const tot=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
-    el('supply-total').innerHTML=`<span style="font-weight:600">Total Supply Spend: ₹${Math.round(tot).toLocaleString('en-IN')}</span>&nbsp;<span style="color:var(--text3);font-weight:400;font-size:11px">(Vendor Supplies only — see Dashboard/Analytics for combined "Total Invested")</span>`;
+    el('supply-total').innerHTML=`<span style="font-weight:600">Total Supply Spend: ₹${Math.round(tot).toLocaleString('en-IN')}</span>&nbsp;<span style="color:var(--text3);font-weight:400;font-size:11px">(tracked separately — not included in the Dashboard/Analytics "Total Invested" figure)</span>`;
   }
 }
 
