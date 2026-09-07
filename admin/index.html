@@ -2927,12 +2927,24 @@ function computeBizStats(invoices){
   });
 
   // Partner split across every Expense Tracker entry (Vendor Supplies excluded,
-  // matching Total Invested). Revenue is attributed in the same ratio as the
-  // expense it funded.
+  // matching Total Invested). Revenue here is only the revenue collected from
+  // THOSE SPECIFIC items (Quick Sell) — it does NOT include invoice revenue,
+  // because invoices aren't tagged to a partner. That's why this item-level
+  // P&L can show a loss (unsold stock) even while the whole business is
+  // profitable overall — most revenue comes from invoices, split below.
   const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
   tEntries.forEach(e=>{
     const sp=getSplit(e);
     ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=e.amount*f; byPartner[p].revenue+=e.revenue*f; });
+  });
+  // Ownership-weighted share of the WHOLE business profit (all invoices +
+  // tracker sales, minus all investment), proportional to how much of the
+  // total money invested each partner funded. This is the figure that
+  // reconciles with the overall Total Profit/Loss shown elsewhere.
+  ['Akshay','Hemanth'].forEach(p=>{
+    const pct=totalInvested>0?byPartner[p].invested/totalInvested:0.5;
+    byPartner[p].investedPct=pct;
+    byPartner[p].shareOfProfit=totalProfit*pct;
   });
 
   return {todayRev,monthRev,totalRev,totalInv,paidList,pendingList,partialList,pendingAmt,custSet,
@@ -3107,14 +3119,20 @@ async function loadDashboard(){
 function partnerAnalyticsCardHTML(pd,totalInvested){
   const net=pd.revenue-pd.invested;
   const roi=pd.invested>0?((net/pd.invested)*100).toFixed(1):'0.0';
-  const pct=totalInvested>0?Math.round((pd.invested/totalInvested)*100):0;
-  return `<div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-    <div class="stat-card purple" style="padding:12px"><div class="stat-label">Invested</div><div class="stat-value" style="font-size:17px">${fmt(pd.invested)}</div><div class="stat-sub">${pct}% of total invested</div></div>
-    <div class="stat-card blue" style="padding:12px"><div class="stat-label">Revenue Share</div><div class="stat-value" style="font-size:17px;color:var(--green)">${fmt(pd.revenue)}</div></div>
-    <div class="stat-card ${net>=0?'green':'red'}" style="padding:12px"><div class="stat-label">Net P/L</div><div class="stat-value" style="font-size:17px;color:${net>=0?'#16A34A':'#DC2626'}">${(net>=0?'+':'-')+fmt(Math.abs(net))}</div></div>
-    <div class="stat-card teal" style="padding:12px"><div class="stat-label">ROI</div><div class="stat-value" style="font-size:17px;color:${parseFloat(roi)>=0?'#16A34A':'#DC2626'}">${roi}%</div></div>
+  const pct=totalInvested>0?Math.round(pd.investedPct*100):0;
+  const share=pd.shareOfProfit||0;
+  return `<div class="stat-card ${share>=0?'green':'red'}" style="padding:14px;margin-bottom:12px">
+    <div class="stat-label">Your Share of Total Business Profit</div>
+    <div class="stat-value" style="font-size:22px;color:${share>=0?'#16A34A':'#DC2626'}">${(share>=0?'+':'-')+fmt(Math.abs(share))}</div>
+    <div class="stat-sub">${pct}% of all money invested × company-wide Total Profit/Loss (includes every invoice raised, not just this partner's items)</div>
   </div>
-  <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">Based on the contributor split tagged on each Expense Tracker entry. Revenue is attributed in the same ratio as the expense it funded. (Vendor Supplies are tracked separately and not included here.)</p>`;
+  <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+    <div class="stat-card purple" style="padding:12px"><div class="stat-label">Invested</div><div class="stat-value" style="font-size:17px">${fmt(pd.invested)}</div><div class="stat-sub">${pct}% of total invested</div></div>
+    <div class="stat-card blue" style="padding:12px"><div class="stat-label">Item Sales Revenue</div><div class="stat-value" style="font-size:17px;color:var(--green)">${fmt(pd.revenue)}</div></div>
+    <div class="stat-card ${net>=0?'green':'red'}" style="padding:12px"><div class="stat-label">Item-Level P&amp;L</div><div class="stat-value" style="font-size:17px;color:${net>=0?'#16A34A':'#DC2626'}">${(net>=0?'+':'-')+fmt(Math.abs(net))}</div></div>
+    <div class="stat-card teal" style="padding:12px"><div class="stat-label">Item-Level ROI</div><div class="stat-value" style="font-size:17px;color:${parseFloat(roi)>=0?'#16A34A':'#DC2626'}">${roi}%</div></div>
+  </div>
+  <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5"><strong>Item-Level P&amp;L</strong> only counts revenue already collected from selling the specific Expense Tracker items this partner funded — it can show a loss simply because that stock hasn't sold yet, even while the business overall is profitable. <strong>Your Share of Total Business Profit</strong> (above) is the number that reconciles with the Dashboard/Analytics totals: it applies this partner's % of all money invested to the company-wide profit, which includes invoice revenue that isn't tied to any specific item.</p>`;
 }
 
 let _anaRepChart=null,_anaCustChart=null,_anaInvChart=null;
