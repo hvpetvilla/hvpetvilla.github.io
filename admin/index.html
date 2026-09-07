@@ -145,6 +145,20 @@ select.form-control{cursor:pointer}
 .stat-icon.red{background:#FEE2E2}
 .stat-icon.teal{background:#CCFBF1}
 
+/* Info popover (formula explainer on stat tiles) */
+.info-btn{position:absolute;top:12px;right:12px;width:17px;height:17px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--text3);font-size:10.5px;font-style:italic;font-family:Georgia,'Times New Roman',serif;line-height:15px;text-align:center;cursor:pointer;padding:0;z-index:2}
+.info-btn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+#global-info-pop{display:none;position:fixed;width:250px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11.5px;line-height:1.55;color:var(--text2);box-shadow:0 12px 32px rgba(0,0,0,.25);z-index:9999;font-weight:400}
+#global-info-pop strong{color:var(--text)}
+
+/* Contributor split widget (expense partner tagging) */
+.contrib-widget{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:var(--bg2)}
+.contrib-chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);margin-right:18px;cursor:pointer}
+.contrib-chk input{width:15px;height:15px;cursor:pointer}
+.contrib-split-row{margin-top:10px}
+.contrib-split-row input[type=range]{width:100%;accent-color:var(--green)}
+.contrib-split-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px;font-weight:600}
+
 /* Invoice table */
 .table{width:100%;border-collapse:collapse}
 .table th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);text-align:left}
@@ -792,7 +806,7 @@ select.form-control{cursor:pointer}
           <table class="table" style="min-width:700px">
             <thead><tr>
               <th>Date</th><th>Vendor</th><th>Item / Description</th><th>Category</th>
-              <th style="text-align:right">Qty</th><th style="text-align:right">Amount (₹)</th><th>Notes</th><th></th>
+              <th style="text-align:right">Qty</th><th style="text-align:right">Amount (₹)</th><th>Contributed By</th><th>Notes</th><th></th>
             </tr></thead>
             <tbody id="supply-tbody"></tbody>
           </table>
@@ -803,19 +817,42 @@ select.form-control{cursor:pointer}
 
     <!-- ===== ANALYTICS ===== -->
     <div class="page" id="page-analytics">
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:20px">Analytics Dashboard</h2>
-      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)" id="analytics-stats"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+        <h2 style="font-size:18px;font-weight:700;margin:0">Analytics Dashboard</h2>
+        <span style="font-size:11.5px;color:var(--text3);max-width:420px;text-align:right">Every figure here uses the exact same formulas as the main Dashboard. Tap the <span style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:9px;font-style:italic;font-family:Georgia,serif;vertical-align:-2px">i</span> on any card to see how it's calculated.</span>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)" id="analytics-stats"></div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
         <div class="card">
-          <div class="card-header"><span class="card-title">Monthly Revenue</span></div>
-          <div class="card-body" id="monthly-chart-container">
-            <canvas id="monthly-chart" height="200"></canvas>
-          </div>
+          <div class="card-header"><span class="card-title">Akshay — Investment &amp; Return</span></div>
+          <div class="card-body" id="ana-partner-akshay"></div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Payment Status Breakdown</span></div>
-          <div class="card-body" id="status-chart-container"></div>
+          <div class="card-header"><span class="card-title">Hemanth — Investment &amp; Return</span></div>
+          <div class="card-body" id="ana-partner-hemanth"></div>
         </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <div class="card-header"><span class="card-title">Revenue, Expenses &amp; Profit — Month on Month</span></div>
+        <div class="card-body" style="position:relative;height:280px"><canvas id="ana-rep-chart"></canvas></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Customer Growth — Month on Month</span></div>
+          <div class="card-body" style="position:relative;height:220px"><canvas id="ana-cust-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Invoice Growth — Month on Month</span></div>
+          <div class="card-body" style="position:relative;height:220px"><canvas id="ana-inv-chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <div class="card-header"><span class="card-title">Payment Status Breakdown</span></div>
+        <div class="card-body" id="status-chart-container"></div>
       </div>
     </div>
 
@@ -928,7 +965,7 @@ select.form-control{cursor:pointer}
         <div class="card">
           <div class="card-header"><span class="card-title">Recent Entries</span><button class="btn btn-secondary btn-sm" onclick="switchTrackerTab('expenses')">View All</button></div>
           <div style="overflow-x:auto"><table class="table" style="min-width:600px">
-            <thead><tr><th>#</th><th>Item</th><th>Partner</th><th style="text-align:right">Amount</th><th style="text-align:right">Revenue</th><th style="text-align:right">Net P/L</th><th>Status</th></tr></thead>
+            <thead><tr><th>#</th><th>Item</th><th>Contributed By</th><th style="text-align:right">Amount</th><th style="text-align:right">Revenue</th><th style="text-align:right">Net P/L</th><th>Status</th></tr></thead>
             <tbody id="t-recent"></tbody>
           </table></div>
         </div>
@@ -957,7 +994,7 @@ select.form-control{cursor:pointer}
             </div>
           </div>
           <div style="overflow-x:auto"><table class="table" style="min-width:700px">
-            <thead><tr><th>#</th><th>Item</th><th>Partner</th><th style="text-align:right">Amount</th><th style="text-align:right">Revenue</th><th style="text-align:right">Net P/L</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
+            <thead><tr><th>#</th><th>Item</th><th>Contributed By</th><th style="text-align:right">Amount</th><th style="text-align:right">Revenue</th><th style="text-align:right">Net P/L</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
             <tbody id="t-exp-tbody"></tbody>
           </table></div>
           <div style="display:flex;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--border);font-size:13px">
@@ -1625,7 +1662,17 @@ select.form-control{cursor:pointer}
     <div class="card-body" style="max-height:75vh;overflow-y:auto">
       <div class="form-grid form-grid-2" style="gap:12px;margin-bottom:16px">
         <div class="form-group" style="grid-column:1/-1"><label class="form-label">Item / Purchase name *</label><input id="f-item" class="form-control" type="text" placeholder="e.g. Jan Bird Purchase, Feed Stock"></div>
-        <div class="form-group"><label class="form-label">Partner</label><select id="f-partner" class="form-control"><option>Akshay</option><option>Hemanth</option></select></div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Contributed By <span>*</span></label>
+          <div class="contrib-widget" id="f-contrib-wrap">
+            <label class="contrib-chk"><input type="checkbox" id="f-c-akshay" checked onchange="onContribChange('f')"> Akshay</label>
+            <label class="contrib-chk"><input type="checkbox" id="f-c-hemanth" onchange="onContribChange('f')"> Hemanth</label>
+            <div class="contrib-split-row" id="f-contrib-split" style="display:none">
+              <input type="range" id="f-c-pct" min="0" max="100" value="50" oninput="onContribSplitInput('f')">
+              <div class="contrib-split-labels"><span id="f-c-akshay-pct">Akshay: 50%</span><span id="f-c-hemanth-pct">Hemanth: 50%</span></div>
+            </div>
+          </div>
+        </div>
         <div class="form-group"><label class="form-label">Date</label><input id="f-date" class="form-control" type="date"></div>
         <div class="form-group"><label class="form-label">Status</label><select id="f-status" class="form-control"><option>On Sale</option><option>Sold</option><option>Consumed</option><option>Breeding</option></select></div>
         <div class="form-group"><label class="form-label">Category</label><select id="f-cat" class="form-control">
@@ -1956,6 +2003,17 @@ select.form-control{cursor:pointer}
         <div class="form-group">
           <label class="form-label">Amount Paid (₹)</label>
           <input class="form-control" id="s-amount" type="number" min="0" placeholder="0">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Contributed By <span>*</span></label>
+          <div class="contrib-widget" id="s-contrib-wrap">
+            <label class="contrib-chk"><input type="checkbox" id="s-c-akshay" checked onchange="onContribChange('s')"> Akshay</label>
+            <label class="contrib-chk"><input type="checkbox" id="s-c-hemanth" onchange="onContribChange('s')"> Hemanth</label>
+            <div class="contrib-split-row" id="s-contrib-split" style="display:none">
+              <input type="range" id="s-c-pct" min="0" max="100" value="50" oninput="onContribSplitInput('s')">
+              <div class="contrib-split-labels"><span id="s-c-akshay-pct">Akshay: 50%</span><span id="s-c-hemanth-pct">Hemanth: 50%</span></div>
+            </div>
+          </div>
         </div>
         <div class="form-group" style="grid-column:1/-1">
           <label class="form-label">Notes</label>
@@ -2792,96 +2850,203 @@ function filterCustomers(q){
 function searchByCustomer(q){ showPage('invoices'); el('inv-search').value=q; filterInvoices(q); }
 
 // ============================================================
-//  DASHBOARD
+//  SHARED BUSINESS CALCULATIONS
+//  One source of truth for revenue / investment / profit / breakeven
+//  so the Dashboard, Analytics page, and Expense Tracker never disagree.
 // ============================================================
-let _dashBEChart = null;
-async function loadDashboard(){
-  const invoices=await bizFetch('invoices');
+
+// Contributor split helper — works on both tracker entries (tEntries) and
+// vendor supplies. Understands the new {Akshay:%,Hemanth:%} `split` field
+// and falls back to the legacy single `partner` string for older records.
+function getSplit(rec){
+  if(rec && rec.split && ((rec.split.Akshay||0)>0 || (rec.split.Hemanth||0)>0)) return rec.split;
+  if(rec && rec.partner==='Hemanth') return {Akshay:0,Hemanth:100};
+  return {Akshay:100,Hemanth:0};
+}
+function contribLabel(rec){
+  const sp=getSplit(rec);
+  const a=sp.Akshay||0, h=sp.Hemanth||0;
+  if(a>0&&h>0) return `Akshay ${a}% · Hemanth ${h}%`;
+  return a>0?'Akshay':'Hemanth';
+}
+
+function computeBizStats(invoices){
   const today=new Date().toDateString();
   const thisMonth=new Date().toISOString().slice(0,7);
   const todayRev=invoices.filter(i=>new Date(i.createdAt).toDateString()===today).reduce((s,i)=>s+(i.charges?.grand||0),0);
   const monthRev=invoices.filter(i=>(i.createdAt||'').startsWith(thisMonth)).reduce((s,i)=>s+(i.charges?.grand||0),0);
   const totalRev=invoices.reduce((s,i)=>s+(i.charges?.grand||0),0);
   const totalInv=invoices.length;
-  const paid=invoices.filter(i=>i.payment?.status==='Paid').length;
-  const pending=invoices.filter(i=>i.payment?.status==='Pending');
-  const pendingAmt=pending.reduce((s,i)=>s+(i.payment?.remaining||0),0);
+  const paidList=invoices.filter(i=>i.payment?.status==='Paid');
+  const pendingList=invoices.filter(i=>i.payment?.status==='Pending');
+  const partialList=invoices.filter(i=>i.payment?.status==='Partial');
+  const pendingAmt=pendingList.reduce((s,i)=>s+(i.payment?.remaining||0),0);
   const custSet=new Set(invoices.map(i=>i.customer?.mobile||i.customer?.name).filter(Boolean));
 
-  // --- Total Invested = total expenses spent (tracker entries amount + vendor supplies) ---
-  const totalExpensesInvested = tEntries.reduce((a,e)=>a+e.amount,0);
-  const totalSupplyInvested = supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
-  const totalInvested = totalExpensesInvested + totalSupplyInvested;
+  // Investment = every expense recorded — tracker purchases + vendor supplies
+  const totalExpensesInvested=tEntries.reduce((a,e)=>a+e.amount,0);
+  const totalSupplyInvested=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
+  const totalInvested=totalExpensesInvested+totalSupplyInvested;
 
-  // Tracker revenue (from sales recorded in expense tracker)
-  const trackerRevenue = tEntries.reduce((a,e)=>a+e.revenue,0);
+  // Revenue = every invoice raised + direct sales recorded in the tracker
+  const trackerRevenue=tEntries.reduce((a,e)=>a+e.revenue,0);
+  const totalRevenueAll=totalRev+trackerRevenue;
 
-  // Total profit = (invoice revenue + tracker revenue) - total invested
-  const totalProfit = (totalRev + trackerRevenue) - totalInvested;
+  // Profit = Revenue - Investment. Breakeven target = total invested.
+  const totalProfit=totalRevenueAll-totalInvested;
+  const breakeven=totalInvested;
+  const gap=totalRevenueAll-breakeven;
 
-  // This month's profit = month invoice revenue + month tracker revenue - month expenses
-  const monthTrackerRev = tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.revenue,0);
-  const monthExpenses = tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.amount,0)
+  const monthTrackerRev=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.revenue,0);
+  const monthExpenses=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.amount,0)
     + supplies.filter(s=>(s.date||'').startsWith(thisMonth)).reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
-  const monthProfit = monthRev + monthTrackerRev - monthExpenses;
+  const monthProfit=monthRev+monthTrackerRev-monthExpenses;
 
-  // Breakeven = total invested
-  const breakeven = totalInvested;
-  const gap = (totalRev + trackerRevenue) - breakeven;
+  // Month-on-month series (last 12 months seen in the data)
+  const monthSet=new Set();
+  invoices.forEach(i=>{const m=(i.createdAt||'').slice(0,7); if(m) monthSet.add(m);});
+  tEntries.forEach(e=>{const m=(e.date||'').slice(0,7); if(m) monthSet.add(m);});
+  supplies.forEach(s=>{const m=(s.date||'').slice(0,7); if(m) monthSet.add(m);});
+  const months=[...monthSet].sort().slice(-12);
+  const custFirstSeen={};
+  [...invoices].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).forEach(i=>{
+    const key=i.customer?.mobile||i.customer?.name; if(!key) return;
+    const m=(i.createdAt||'').slice(0,7);
+    if(!custFirstSeen[key]) custFirstSeen[key]=m;
+  });
+  const firstSeenMonths=Object.values(custFirstSeen);
+  let cumCust=0, cumInv=0;
+  const series=months.map(m=>{
+    const rev=invoices.filter(i=>(i.createdAt||'').startsWith(m)).reduce((s,i)=>s+(i.charges?.grand||0),0)
+      + tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.revenue,0);
+    const exp=tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.amount,0)
+      + supplies.filter(s=>(s.date||'').startsWith(m)).reduce((s2,s)=>s2+(parseFloat(s.amount)||0),0);
+    const profit=rev-exp;
+    const newInv=invoices.filter(i=>(i.createdAt||'').startsWith(m)).length;
+    const newCust=firstSeenMonths.filter(mm=>mm===m).length;
+    cumCust+=newCust; cumInv+=newInv;
+    return {month:m,label:new Date(m+'-01').toLocaleString('default',{month:'short',year:'2-digit'}),rev,exp,profit,newInv,cumInv,newCust,cumCust};
+  });
 
-  // Row 1 — Revenue + Profit cards (5 cards)
-  el('stats-grid').innerHTML=[
-    {label:'Monthly Revenue',val:fmt(monthRev),sub:new Date().toLocaleString('default',{month:'long',year:'numeric'}),icon:ICONS.calendar,cls:'blue',icls:'blue'},
-    {label:'Total Revenue',val:fmt(totalRev),sub:'All time invoices',icon:ICONS.dollar,cls:'green',icls:'green'},
-    {label:"Today's Revenue",val:fmt(todayRev),sub:'Today',icon:ICONS.bolt,cls:'teal',icls:'teal'},
-    {label:'This Month Profit',val:(monthProfit>=0?'+':'')+fmt(Math.abs(monthProfit)),sub:new Date().toLocaleString('default',{month:'long'}),icon:ICONS.calendar,cls:monthProfit>=0?'green':'red',icls:monthProfit>=0?'green':'red'},
-    {label:'Pending Payments',val:fmt(pendingAmt),sub:`${pending.length} invoices`,icon:ICONS.hourglass,cls:'orange',icls:'orange'},
-  ].map(s=>`<div class="stat-card ${s.cls}">
-    <div class="stat-icon ${s.icls}" style="font-size:18px">${s.icon}</div>
+  // Partner split across every expense (tracker entries + vendor supplies).
+  // Revenue is attributed to a partner in the same ratio as the expense it funded.
+  const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
+  tEntries.forEach(e=>{
+    const sp=getSplit(e);
+    ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=e.amount*f; byPartner[p].revenue+=e.revenue*f; });
+  });
+  supplies.forEach(s=>{
+    const sp=getSplit(s);
+    const amt=parseFloat(s.amount)||0;
+    ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=amt*f; });
+  });
+
+  return {todayRev,monthRev,totalRev,totalInv,paidList,pendingList,partialList,pendingAmt,custSet,
+    totalExpensesInvested,totalSupplyInvested,totalInvested,trackerRevenue,totalRevenueAll,totalProfit,
+    breakeven,gap,monthProfit,months,series,byPartner,thisMonth};
+}
+
+// Formula text shown by the (i) info button — identical wording wherever a
+// tile appears so Dashboard, Analytics and Tracker never imply different math.
+const INFO = {
+  todayRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised today.',
+  monthlyRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised this calendar month.',
+  totalRevenue:'<strong>Formula:</strong> (Sum of Grand Total on every invoice raised) + (revenue recorded on Expense Tracker sales). Every invoice raised is revenue received — this is the same number used on the Dashboard and in the Expense Tracker.',
+  monthProfit:'<strong>Formula:</strong> This month\'s revenue (invoices + tracker sales) − this month\'s expenses (tracker purchases + vendor supplies).',
+  pendingPayments:'<strong>Formula:</strong> Sum of the remaining balance on invoices whose payment status is "Pending".',
+  totalInvested:'<strong>Formula:</strong> Every expense recorded is treated as money invested — Σ Expense Tracker purchase amounts + Σ Vendor Supply amounts.',
+  totalProfit:'<strong>Formula:</strong> Total Revenue − Total Invested. Revenue = all invoices raised + tracker sales. Investment = all expenses recorded. This exact formula is used on every tab.',
+  breakeven:'<strong>Formula:</strong> Breakeven target = Total Invested. Breakeven Gap = Total Revenue − Total Invested. Positive means you\'re above breakeven (in profit); negative means you\'re still below it.',
+  totalCustomers:'<strong>Formula:</strong> Count of unique customers across all invoices, identified by mobile number (or name if no mobile was recorded).',
+  totalInvoices:'<strong>Formula:</strong> Count of every invoice raised, regardless of payment status.',
+};
+
+// -- Global info popover (a single fixed-position card shared by every tile,
+//    positioned via JS so it always escapes each card's overflow:hidden) --
+let _infoTexts={}, _infoCounter=0;
+function infoBtn(desc){
+  if(!desc) return '';
+  const id='ib'+(_infoCounter++);
+  _infoTexts[id]=desc;
+  return `<button type="button" class="info-btn" onclick="toggleInfoPop(event,'${id}')" aria-label="How is this calculated">i</button>`;
+}
+function ensureInfoPop(){
+  let p=document.getElementById('global-info-pop');
+  if(!p){ p=document.createElement('div'); p.id='global-info-pop'; document.body.appendChild(p); }
+  return p;
+}
+function toggleInfoPop(e,id){
+  e.stopPropagation();
+  const pop=ensureInfoPop();
+  const wasOpenForThis=pop.style.display==='block'&&pop.dataset.forId===id;
+  pop.style.display='none';
+  if(wasOpenForThis) return;
+  pop.innerHTML=_infoTexts[id]||'';
+  pop.dataset.forId=id;
+  const r=e.currentTarget.getBoundingClientRect();
+  let left=r.right-250; if(left<8) left=8;
+  pop.style.left=left+'px';
+  pop.style.top=(r.bottom+6)+'px';
+  pop.style.display='block';
+  requestAnimationFrame(()=>{
+    const pr=pop.getBoundingClientRect();
+    if(pr.bottom>window.innerHeight-8) pop.style.top=Math.max(8,r.top-pr.height-6)+'px';
+  });
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#global-info-pop')&&!e.target.closest('.info-btn')){
+    const p=document.getElementById('global-info-pop'); if(p) p.style.display='none';
+  }
+});
+window.addEventListener('scroll',()=>{ const p=document.getElementById('global-info-pop'); if(p) p.style.display='none'; },true);
+
+// Renders a row of .stat-card tiles; each entry may include `desc` (formula text for the info button)
+function renderStatCards(containerId,cards){
+  const c=el(containerId); if(!c) return;
+  c.innerHTML=cards.map(s=>`<div class="stat-card ${s.cls}">
+    ${infoBtn(s.desc)}
+    <div class="stat-icon ${s.icls||s.cls}" style="font-size:18px">${s.icon||''}</div>
     <div class="stat-label">${s.label}</div>
     <div class="stat-value" style="${s.cls==='green'?'color:var(--green)':s.cls==='red'?'color:#DC2626':''}">${s.val}</div>
-    <div class="stat-sub">${s.sub}</div>
+    <div class="stat-sub">${s.sub||''}</div>
   </div>`).join('');
+}
 
-  // Row 2 — Business health cards (4 cards, updated invested label)
-  const gapCls = gap>=0?'green':'red';
-  const gapIcon = gap>=0?ICONS.check:ICONS.trendDown;
-  el('biz-stats-grid').innerHTML=[
-    {label:'Total Invested',val:fmt(totalInvested),sub:'Expenses + Supplies spent',icon:ICONS.wallet,cls:'purple',icls:'purple'},
-    {label:'Total Profit / Loss',val:(totalProfit>=0?'+':'')+fmt(Math.abs(totalProfit)),sub:'Revenue minus all expenses',icon:totalProfit>=0?ICONS.heart:ICONS.trendDown,cls:totalProfit>=0?'green':'red',icls:totalProfit>=0?'green':'red'},
-    {label:'Breakeven Gap',val:(gap>=0?'+':'')+fmt(Math.abs(gap)),sub:gap>=0?'Above breakeven':'Below breakeven',icon:gapIcon,cls:gapCls,icls:gapCls},
-    {label:'Total Customers',val:custSet.size,sub:`${totalInv} invoices · ${vendors.length} vendors`,icon:ICONS.users,cls:'blue',icls:'blue'},
-  ].map(s=>`<div class="stat-card ${s.cls}">
-    <div class="stat-icon ${s.icls}" style="font-size:18px">${s.icon}</div>
-    <div class="stat-label">${s.label}</div>
-    <div class="stat-value" style="${s.cls==='green'?'color:var(--green)':s.cls==='red'?'color:#DC2626':''}">${s.val}</div>
-    <div class="stat-sub">${s.sub}</div>
-  </div>`).join('');
+// ============================================================
+//  DASHBOARD
+// ============================================================
+let _dashBEChart = null;
+async function loadDashboard(){
+  const invoices=await bizFetch('invoices');
+  const st=computeBizStats(invoices);
+
+  // Row 1 — Revenue + Profit cards
+  renderStatCards('stats-grid',[
+    {label:'Monthly Revenue',val:fmt(st.monthRev),sub:new Date().toLocaleString('default',{month:'long',year:'numeric'}),icon:ICONS.calendar,cls:'blue',icls:'blue',desc:INFO.monthlyRevenue},
+    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'All invoices + tracker sales',icon:ICONS.dollar,cls:'green',icls:'green',desc:INFO.totalRevenue},
+    {label:"Today's Revenue",val:fmt(st.todayRev),sub:'Today',icon:ICONS.bolt,cls:'teal',icls:'teal',desc:INFO.todayRevenue},
+    {label:'This Month Profit',val:(st.monthProfit>=0?'+':'')+fmt(Math.abs(st.monthProfit)),sub:new Date().toLocaleString('default',{month:'long'}),icon:ICONS.calendar,cls:st.monthProfit>=0?'green':'red',icls:st.monthProfit>=0?'green':'red',desc:INFO.monthProfit},
+    {label:'Pending Payments',val:fmt(st.pendingAmt),sub:`${st.pendingList.length} invoices`,icon:ICONS.hourglass,cls:'orange',icls:'orange',desc:INFO.pendingPayments},
+  ]);
+
+  // Row 2 — Business health cards
+  const gapCls = st.gap>=0?'green':'red';
+  const gapIcon = st.gap>=0?ICONS.check:ICONS.trendDown;
+  renderStatCards('biz-stats-grid',[
+    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Expenses + Supplies spent',icon:ICONS.wallet,cls:'purple',icls:'purple',desc:INFO.totalInvested},
+    {label:'Total Profit / Loss',val:(st.totalProfit>=0?'+':'')+fmt(Math.abs(st.totalProfit)),sub:'Revenue minus all expenses',icon:st.totalProfit>=0?ICONS.heart:ICONS.trendDown,cls:st.totalProfit>=0?'green':'red',icls:st.totalProfit>=0?'green':'red',desc:INFO.totalProfit},
+    {label:'Breakeven Gap',val:(st.gap>=0?'+':'')+fmt(Math.abs(st.gap)),sub:st.gap>=0?'Above breakeven':'Below breakeven',icon:gapIcon,cls:gapCls,icls:gapCls,desc:INFO.breakeven},
+    {label:'Total Customers',val:st.custSet.size,sub:`${st.totalInv} invoices · ${vendors.length} vendors`,icon:ICONS.users,cls:'blue',icls:'blue',desc:INFO.totalCustomers},
+  ]);
 
   // Breakeven bar chart — monthly revenue vs monthly invested vs breakeven line
-  const monthMap={};
-  invoices.forEach(i=>{
-    const m=(i.createdAt||'').slice(0,7);
-    if(m) monthMap[m]=(monthMap[m]||{rev:0,inv:0});
-    monthMap[m].rev+=(i.charges?.grand||0);
-  });
-  // Add supply spend by month
-  supplies.forEach(s=>{
-    const m=(s.date||'').slice(0,7);
-    if(!m) return;
-    if(!monthMap[m]) monthMap[m]={rev:0,inv:0};
-    monthMap[m].inv+=(parseFloat(s.amount)||0);
-  });
-  tEntries.forEach(e=>{
-    const m=(e.date||'').slice(0,7);
-    if(!m) return;
-    if(!monthMap[m]) monthMap[m]={rev:0,inv:0};
-    monthMap[m].inv+=e.amount;
-  });
-  const months=Object.keys(monthMap).sort().slice(-8);
-  const revVals=months.map(m=>monthMap[m]?.rev||0);
-  const invVals=months.map(m=>monthMap[m]?.inv||0);
-  const labels=months.map(m=>{const d=new Date(m+'-01');return d.toLocaleString('default',{month:'short',year:'2-digit'});});
+  // (uses the same month-on-month series as the Analytics page)
+  const months=st.series.map(s=>s.month).slice(-8);
+  const series8=st.series.slice(-8);
+  const revVals=series8.map(s=>s.rev);
+  const invVals=series8.map(s=>s.exp);
+  const labels=series8.map(s=>s.label);
+  const breakeven=st.breakeven, totalRev=st.totalRevenueAll, totalInvested=st.totalInvested, gap=st.gap;
 
   const ctx=el('dash-breakeven-chart');
   if(ctx){
@@ -2945,49 +3110,98 @@ async function loadDashboard(){
 // ============================================================
 //  ANALYTICS
 // ============================================================
+function partnerAnalyticsCardHTML(pd,totalInvested){
+  const net=pd.revenue-pd.invested;
+  const roi=pd.invested>0?((net/pd.invested)*100).toFixed(1):'0.0';
+  const pct=totalInvested>0?Math.round((pd.invested/totalInvested)*100):0;
+  return `<div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+    <div class="stat-card purple" style="padding:12px"><div class="stat-label">Invested</div><div class="stat-value" style="font-size:17px">${fmt(pd.invested)}</div><div class="stat-sub">${pct}% of total invested</div></div>
+    <div class="stat-card blue" style="padding:12px"><div class="stat-label">Revenue Share</div><div class="stat-value" style="font-size:17px;color:var(--green)">${fmt(pd.revenue)}</div></div>
+    <div class="stat-card ${net>=0?'green':'red'}" style="padding:12px"><div class="stat-label">Net P/L</div><div class="stat-value" style="font-size:17px;color:${net>=0?'#16A34A':'#DC2626'}">${(net>=0?'+':'-')+fmt(Math.abs(net))}</div></div>
+    <div class="stat-card teal" style="padding:12px"><div class="stat-label">ROI</div><div class="stat-value" style="font-size:17px;color:${parseFloat(roi)>=0?'#16A34A':'#DC2626'}">${roi}%</div></div>
+  </div>
+  <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">Based on the contributor split tagged on each expense (Expense Tracker purchases + Vendor supplies). Revenue is attributed in the same ratio as the expense it funded.</p>`;
+}
+
+let _anaRepChart=null,_anaCustChart=null,_anaInvChart=null;
 async function loadAnalytics(){
   const invoices=await bizFetch('invoices');
-  const today=new Date().toDateString();
-  const thisMonth=new Date().toISOString().slice(0,7);
-  const todayRev=invoices.filter(i=>new Date(i.createdAt).toDateString()===today).reduce((s,i)=>s+(i.charges?.grand||0),0);
-  const monthRev=invoices.filter(i=>(i.createdAt||'').startsWith(thisMonth)).reduce((s,i)=>s+(i.charges?.grand||0),0);
-  const totalRev=invoices.reduce((s,i)=>s+(i.charges?.grand||0),0);
-  const paid=invoices.filter(i=>i.payment?.status==='Paid');
-  const pending=invoices.filter(i=>i.payment?.status==='Pending');
-  const partial=invoices.filter(i=>i.payment?.status==='Partial');
-  el('analytics-stats').innerHTML=[
-    {label:"Today's Revenue",val:fmt(todayRev),cls:'green'},
-    {label:'Monthly Revenue',val:fmt(monthRev),cls:'blue'},
-    {label:'Total Revenue',val:fmt(totalRev),cls:'purple'},
-    {label:'Paid',val:paid.length,cls:'green'},
-    {label:'Pending',val:pending.length,cls:'orange'},
-    {label:'Partial',val:partial.length,cls:'blue'},
-  ].map(s=>`<div class="stat-card ${s.cls}"><div class="stat-label">${s.label}</div><div class="stat-value">${s.val}</div></div>`).join('');
+  const st=computeBizStats(invoices);
 
-  // Monthly bar chart
-  const monthMap={};
-  invoices.forEach(i=>{ const m=(i.createdAt||'').slice(0,7); if(m) monthMap[m]=(monthMap[m]||0)+(i.charges?.grand||0); });
-  const months=Object.keys(monthMap).sort().slice(-6);
-  const vals=months.map(m=>monthMap[m]);
-  const maxVal=Math.max(...vals,1);
+  renderStatCards('analytics-stats',[
+    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'All invoices + tracker sales',cls:'purple',icls:'purple',icon:ICONS.dollar,desc:INFO.totalRevenue},
+    {label:'Total Invested',val:fmt(st.totalInvested),sub:'Every expense recorded',cls:'blue',icls:'blue',icon:ICONS.wallet,desc:INFO.totalInvested},
+    {label:'Total Profit / Loss',val:(st.totalProfit>=0?'+':'-')+fmt(Math.abs(st.totalProfit)),sub:'Revenue minus invested',cls:st.totalProfit>=0?'green':'red',icls:st.totalProfit>=0?'green':'red',icon:st.totalProfit>=0?ICONS.heart:ICONS.trendDown,desc:INFO.totalProfit},
+    {label:'Breakeven Gap',val:(st.gap>=0?'+':'-')+fmt(Math.abs(st.gap)),sub:st.gap>=0?'Above breakeven':'Below breakeven',cls:st.gap>=0?'green':'red',icls:st.gap>=0?'green':'red',icon:st.gap>=0?ICONS.check:ICONS.trendDown,desc:INFO.breakeven},
+    {label:'Monthly Revenue',val:fmt(st.monthRev),sub:new Date().toLocaleString('default',{month:'long',year:'numeric'}),cls:'blue',icls:'blue',icon:ICONS.calendar,desc:INFO.monthlyRevenue},
+    {label:'This Month Profit',val:(st.monthProfit>=0?'+':'-')+fmt(Math.abs(st.monthProfit)),sub:new Date().toLocaleString('default',{month:'long'}),cls:st.monthProfit>=0?'green':'red',icls:st.monthProfit>=0?'green':'red',icon:ICONS.calendar,desc:INFO.monthProfit},
+    {label:'Total Invoices',val:st.totalInv,sub:`${st.paidList.length} paid · ${st.pendingList.length} pending · ${st.partialList.length} partial`,cls:'teal',icls:'teal',icon:ICONS.list,desc:INFO.totalInvoices},
+    {label:'Total Customers',val:st.custSet.size,sub:'Unique by mobile/name',cls:'orange',icls:'orange',icon:ICONS.users,desc:INFO.totalCustomers},
+  ]);
+
+  const akEl=el('ana-partner-akshay'); if(akEl) akEl.innerHTML=partnerAnalyticsCardHTML(st.byPartner.Akshay,st.totalInvested);
+  const hmEl=el('ana-partner-hemanth'); if(hmEl) hmEl.innerHTML=partnerAnalyticsCardHTML(st.byPartner.Hemanth,st.totalInvested);
+
+  // Revenue / Expenses / Profit — month on month
+  if(_anaRepChart){_anaRepChart.destroy();_anaRepChart=null;}
+  const repCtx=el('ana-rep-chart');
+  if(repCtx){
+    _anaRepChart=new Chart(repCtx.getContext('2d'),{
+      data:{labels:st.series.map(s=>s.label),datasets:[
+        {type:'bar',label:'Revenue',data:st.series.map(s=>s.rev),backgroundColor:'#16A34A99',borderColor:'#16A34A',borderWidth:1.5,borderRadius:5},
+        {type:'bar',label:'Expenses',data:st.series.map(s=>s.exp),backgroundColor:'#3B82F699',borderColor:'#2563EB',borderWidth:1.5,borderRadius:5},
+        {type:'line',label:'Profit',data:st.series.map(s=>s.profit),borderColor:'#F59E0B',backgroundColor:'#F59E0B',tension:.3},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{callback:v=>fmt(v),font:{size:10}}}}}
+    });
+  }
+
+  // Customer growth — new per month (bars) + cumulative total (line)
+  if(_anaCustChart){_anaCustChart.destroy();_anaCustChart=null;}
+  const custCtx=el('ana-cust-chart');
+  if(custCtx){
+    _anaCustChart=new Chart(custCtx.getContext('2d'),{
+      data:{labels:st.series.map(s=>s.label),datasets:[
+        {type:'bar',label:'New customers',data:st.series.map(s=>s.newCust),backgroundColor:'#8B5CF699',borderColor:'#8B5CF6',borderWidth:1.5,borderRadius:5,yAxisID:'y'},
+        {type:'line',label:'Total customers',data:st.series.map(s=>s.cumCust),borderColor:'#16A34A',backgroundColor:'#16A34A',tension:.3,yAxisID:'y1'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+          y:{position:'left',grid:{color:'rgba(0,0,0,.06)'},ticks:{font:{size:10},precision:0}},
+          y1:{position:'right',grid:{display:false},ticks:{font:{size:10},precision:0}}}}
+    });
+  }
+
+  // Invoice growth — new per month (bars) + cumulative total (line)
+  if(_anaInvChart){_anaInvChart.destroy();_anaInvChart=null;}
+  const invCtx=el('ana-inv-chart');
+  if(invCtx){
+    _anaInvChart=new Chart(invCtx.getContext('2d'),{
+      data:{labels:st.series.map(s=>s.label),datasets:[
+        {type:'bar',label:'New invoices',data:st.series.map(s=>s.newInv),backgroundColor:'#F9731699',borderColor:'#F97316',borderWidth:1.5,borderRadius:5,yAxisID:'y'},
+        {type:'line',label:'Total invoices',data:st.series.map(s=>s.cumInv),borderColor:'#2563EB',backgroundColor:'#2563EB',tension:.3,yAxisID:'y1'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+          y:{position:'left',grid:{color:'rgba(0,0,0,.06)'},ticks:{font:{size:10},precision:0}},
+          y1:{position:'right',grid:{display:false},ticks:{font:{size:10},precision:0}}}}
+    });
+  }
+
+  // Payment status breakdown
   el('status-chart-container').innerHTML=`
-    <div style="display:flex;justify-content:space-around;align-items:center;padding:20px;gap:16px">
-      ${[{l:'Paid',n:paid.length,c:'#16A34A'},{l:'Pending',n:pending.length,c:'#D97706'},{l:'Partial',n:partial.length,c:'#7C3AED'}]
+    <div style="display:flex;justify-content:space-around;align-items:center;padding:20px;gap:16px;flex-wrap:wrap">
+      ${[{l:'Paid',n:st.paidList.length,c:'#16A34A'},{l:'Pending',n:st.pendingList.length,c:'#D97706'},{l:'Partial',n:st.partialList.length,c:'#7C3AED'}]
         .map(s=>`<div style="text-align:center">
           <div style="width:80px;height:80px;border-radius:50%;border:8px solid ${s.c};display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
             <strong style="font-size:20px;color:${s.c}">${s.n}</strong>
           </div>
           <span style="font-size:12px;color:var(--text2)">${s.l}</span>
         </div>`).join('')}
-    </div>`;
-  el('monthly-chart-container').innerHTML=`
-    <div style="display:flex;align-items:flex-end;gap:8px;height:180px;padding:0 8px">
-      ${months.map((m,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:9px;color:var(--text3)">${fmt(vals[i]).replace('.00','')}</span>
-        <div style="width:100%;background:var(--green);border-radius:4px 4px 0 0;height:${Math.max(4,(vals[i]/maxVal)*140)}px;opacity:.85"></div>
-        <span style="font-size:9px;color:var(--text3)">${m.slice(5)}</span>
-      </div>`).join('')}
-      ${!months.length?'<div style="text-align:center;width:100%;color:var(--text3);font-size:13px;padding:40px 0">No data yet</div>':''}
     </div>`;
 }
 
@@ -3137,15 +3351,50 @@ function calcSummary(){
   const invested=tEntries.reduce((a,e)=>a+e.amount,0);
   const revenue=tEntries.reduce((a,e)=>a+e.revenue,0);
   const profit=revenue-invested;
-  const byPartner={};
+  // Split-aware: an entry contributed to by both partners attributes each
+  // partner their percentage share of the amount/revenue, not the whole entry.
+  const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
   tEntries.forEach(e=>{
-    if(!byPartner[e.partner])byPartner[e.partner]={invested:0,revenue:0};
-    byPartner[e.partner].invested+=e.amount;
-    byPartner[e.partner].revenue+=e.revenue;
+    const sp=getSplit(e);
+    ['Akshay','Hemanth'].forEach(p=>{
+      const f=(sp[p]||0)/100;
+      byPartner[p].invested+=e.amount*f;
+      byPartner[p].revenue+=e.revenue*f;
+    });
   });
   return{invested,revenue,profit,byPartner};
 }
 function dChart(k){ if(tCharts[k]){tCharts[k].destroy();delete tCharts[k];} }
+
+// -- Contributor split widget (shared by the Entry modal ['f'] and Supply modal ['s']) --
+function onContribChange(prefix){
+  const a=el(prefix+'-c-akshay'), h=el(prefix+'-c-hemanth');
+  if(!a.checked&&!h.checked){ a.checked=true; }
+  const box=el(prefix+'-contrib-split');
+  if(a.checked&&h.checked){ box.style.display='block'; onContribSplitInput(prefix); }
+  else { box.style.display='none'; }
+}
+function onContribSplitInput(prefix){
+  const pct=parseInt(el(prefix+'-c-pct').value)||0;
+  el(prefix+'-c-akshay-pct').textContent=`Akshay: ${pct}%`;
+  el(prefix+'-c-hemanth-pct').textContent=`Hemanth: ${100-pct}%`;
+}
+function getContribSplit(prefix){
+  const a=el(prefix+'-c-akshay').checked, h=el(prefix+'-c-hemanth').checked;
+  if(a&&h){ const pct=parseInt(el(prefix+'-c-pct').value)||50; return {Akshay:pct,Hemanth:100-pct}; }
+  if(h) return {Akshay:0,Hemanth:100};
+  return {Akshay:100,Hemanth:0};
+}
+function setContribSplit(prefix,split){
+  let sp=split;
+  if(typeof sp==='string') sp = sp==='Hemanth'?{Akshay:0,Hemanth:100}:{Akshay:100,Hemanth:0};
+  if(!sp) sp={Akshay:100,Hemanth:0};
+  const a=(sp.Akshay||0)>0, h=(sp.Hemanth||0)>0;
+  el(prefix+'-c-akshay').checked=a||!h;
+  el(prefix+'-c-hemanth').checked=h;
+  if(a&&h) el(prefix+'-c-pct').value=Math.round(sp.Akshay);
+  onContribChange(prefix);
+}
 
 // -- Tracker nav tabs --
 function switchTrackerTab(id){
@@ -3165,14 +3414,15 @@ function switchTrackerTab(id){
 function renderTrackerDashboard(){
   const s=calcSummary();
   const roi=s.invested>0?((s.profit/s.invested)*100).toFixed(1):'0.0';
-  el('t-kpis').innerHTML=`
-    <div class="stat-card green"><div class="stat-icon">${ICONS.wallet}</div><div class="stat-label">Total Invested</div><div class="stat-value">${fmtT(s.invested)}</div></div>
-    <div class="stat-card blue"><div class="stat-icon">${ICONS.trendUp}</div><div class="stat-label">Total Revenue</div><div class="stat-value" style="color:#16A34A">${fmtT(s.revenue)}</div></div>
-    <div class="stat-card ${s.profit>=0?'green':'red'}"><div class="stat-icon">${s.profit>=0?ICONS.check:ICONS.trendDown}</div><div class="stat-label">Net Profit/Loss</div><div class="stat-value" style="color:${s.profit>=0?'#16A34A':'#DC2626'}">${fmtSigned(s.profit)}</div></div>
-    <div class="stat-card purple"><div class="stat-icon">${ICONS.target}</div><div class="stat-label">ROI</div><div class="stat-value" style="color:${parseFloat(roi)>=0?'#16A34A':'#DC2626'}">${roi}%</div></div>
-    <div class="stat-card blue"><div class="stat-icon">${ICONS.list}</div><div class="stat-label">Total Entries</div><div class="stat-value">${tEntries.length}</div></div>
-    <div class="stat-card teal"><div class="stat-icon">${ICONS.tag}</div><div class="stat-label">On Sale</div><div class="stat-value">${tEntries.filter(e=>e.status==='On Sale').length}</div></div>
-  `;
+  const scopeNote=' Scope: Expense Tracker entries only — does not include Vendor Supplies. For the whole-business figure see the Dashboard/Analytics tabs.';
+  renderStatCards('t-kpis',[
+    {label:'Total Invested',val:fmtT(s.invested),cls:'green',icls:'green',icon:ICONS.wallet,desc:'<strong>Formula:</strong> Σ amount of every Expense Tracker entry.'+scopeNote},
+    {label:'Total Revenue',val:fmtT(s.revenue),cls:'blue',icls:'blue',icon:ICONS.trendUp,desc:'<strong>Formula:</strong> Σ revenue recorded on Expense Tracker sales (Quick Sell).'+scopeNote},
+    {label:'Net Profit/Loss',val:fmtSigned(s.profit),cls:s.profit>=0?'green':'red',icls:s.profit>=0?'green':'red',icon:s.profit>=0?ICONS.check:ICONS.trendDown,desc:'<strong>Formula:</strong> Tracker Revenue − Tracker Invested.'+scopeNote},
+    {label:'ROI',val:roi+'%',cls:'purple',icls:'purple',icon:ICONS.target,desc:'<strong>Formula:</strong> Net Profit/Loss ÷ Total Invested × 100.'+scopeNote},
+    {label:'Total Entries',val:tEntries.length,cls:'blue',icls:'blue',icon:ICONS.list},
+    {label:'On Sale',val:tEntries.filter(e=>e.status==='On Sale').length,cls:'teal',icls:'teal',icon:ICONS.tag},
+  ]);
   const partners=['Akshay','Hemanth'];
   const colors=['#2a78d6','#1baf7a'];
   const bgC=['#e8f1fb','#e6f5ec'];
@@ -3206,7 +3456,7 @@ function renderTrackerDashboard(){
     const net=e.revenue-e.amount;
     return`<tr>
       <td style="font-size:11px;color:var(--text3)">${i+1}</td>
-      <td>${e.item}</td><td>${e.partner}</td>
+      <td>${e.item}</td><td style="font-size:12px">${contribLabel(e)}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
       <td style="text-align:right">${e.revenue?fmtT(e.revenue):'—'}</td>
       <td style="text-align:right;color:${net>=0?'#16A34A':'#DC2626'};font-weight:600">${fmtSigned(net)}</td>
@@ -3241,7 +3491,7 @@ function openQuickSell(id){
     qsProductIdx=0;
   }
 
-  el('qs-item-meta').textContent=`Partner: ${e.partner} · ${e.date||''}`;
+  el('qs-item-meta').textContent=`Contributed by: ${contribLabel(e)} · ${e.date||''}`;
   onQsProductChange();
   el('quick-sell-modal').classList.remove('hidden');
 }
@@ -3332,7 +3582,7 @@ function renderExpenseTable(){
   const dateTo=el('t-fdate-to')?.value||'';
   let f=tEntries.filter(e=>{
     if(search&&!e.item.toLowerCase().includes(search)&&!(e.remarks||'').toLowerCase().includes(search))return false;
-    if(partner&&e.partner!==partner)return false;
+    if(partner&&!(getSplit(e)[partner]>0))return false;
     if(status&&e.status!==status)return false;
     if(dateFrom&&(e.date||'')<dateFrom)return false;
     if(dateTo&&(e.date||'')>dateTo)return false;
@@ -3341,14 +3591,14 @@ function renderExpenseTable(){
   const tA=f.reduce((a,e)=>a+e.amount,0),tR=f.reduce((a,e)=>a+e.revenue,0),tN=tR-tA;
   const fc=el('t-fcount'); if(fc) fc.textContent=`${f.length} of ${tEntries.length}`;
   const fi=el('t-finfo'); if(fi) fi.textContent=`Showing ${f.length} entries`;
-  const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span>`;
+  const ft=el('t-ftotal'); if(ft) ft.innerHTML=`Invested: ${fmtT(tA)} &nbsp;|&nbsp; Revenue: ${fmtT(tR)} &nbsp;|&nbsp; Net: <span style="color:${tN>=0?'#16A34A':'#DC2626'}">${fmtSigned(tN)}</span> <span style="color:var(--text3);font-weight:400;font-size:11px">(Expense Tracker only — Dashboard/Analytics "Total Invested" also adds Vendor Supplies)</span>`;
   const tbody=el('t-exp-tbody'); if(!tbody)return;
   tbody.innerHTML=f.length?f.map((e,i)=>{
     const net=e.revenue-e.amount;
     return`<tr>
       <td style="font-size:11px;color:var(--text3)">${i+1}</td>
       <td><div style="font-weight:500">${e.item}</div><div style="font-size:11px;color:var(--text3)">${e.category||''}</div></td>
-      <td>${e.partner}</td>
+      <td style="font-size:12px">${contribLabel(e)}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
       <td style="text-align:right">${e.revenue?fmtT(e.revenue):'—'}</td>
       <td style="text-align:right;color:${net>=0?'#16A34A':'#DC2626'};font-weight:600">${fmtSigned(net)}</td>
@@ -3505,7 +3755,7 @@ function openEntryModal(id=null){
   el('t-modal-title').textContent=id!==null?'Edit entry':'Add entry';
   const e=id!==null?tEntries.find(x=>x._id===id):null;
   el('f-item').value=e?e.item:'';
-  el('f-partner').value=e?e.partner:'Akshay';
+  setContribSplit('f', e?(e.split||e.partner):'Akshay');
   el('f-date').value=e?e.date:new Date().toISOString().split('T')[0];
   el('f-status').value=e?e.status:'On Sale';
   el('f-cat').value=e?(e.category||'Birds'):'Birds';
@@ -3529,7 +3779,8 @@ async function saveEntry(){
   const amount=products.reduce((s,p)=>s+p.cost,0);
   const revenue=products.reduce((s,p)=>s+p.sales.reduce((ss,sl)=>ss+(sl.qty*sl.price),0),0);
   if(!amount){toast('Add at least one product with a cost','error');return;}
-  const entry={item,partner:el('f-partner').value,date:el('f-date').value,
+  const split=getContribSplit('f');
+  const entry={item,partner:split.Akshay>=split.Hemanth?'Akshay':'Hemanth',split,date:el('f-date').value,
     amount,revenue,products,
     status:el('f-status').value,category:el('f-cat').value,
     remarks:el('f-remarks').value.trim()};
@@ -3567,7 +3818,7 @@ function renderPartners(){
     const pd=s.byPartner[p]||{invested:0,revenue:0};
     const net=pd.revenue-pd.invested;
     const roi=pd.invested>0?((net/pd.invested)*100).toFixed(1):'0.0';
-    const pe=tEntries.filter(e=>e.partner===p);
+    const pe=tEntries.filter(e=>getSplit(e)[p]>0);
     const card=el('t-p-'+p.toLowerCase());
     if(!card)return;
     card.innerHTML=`
@@ -3591,9 +3842,9 @@ function renderPartners(){
     ['Total Revenue',...partners.map(p=>fmtT((s.byPartner[p]||{}).revenue||0)),fmtT(s.revenue)],
     ['Net P/L',...partners.map(p=>{const pd=s.byPartner[p]||{invested:0,revenue:0};const n=pd.revenue-pd.invested;return`<span style="color:${n>=0?'#16A34A':'#DC2626'}">${fmtSigned(n)}</span>`;}),`<span style="color:${s.profit>=0?'#16A34A':'#DC2626'}">${fmtSigned(s.profit)}</span>`],
     ['ROI',...partners.map(p=>{const pd=s.byPartner[p]||{invested:0,revenue:0};const r=pd.invested>0?(((pd.revenue-pd.invested)/pd.invested)*100).toFixed(1):0;return`${r}%`;}),s.invested>0?((s.profit/s.invested)*100).toFixed(1)+'%':'—'],
-    ['Entries',...partners.map(p=>tEntries.filter(e=>e.partner===p).length),tEntries.length],
-    ['Sold',...partners.map(p=>tEntries.filter(e=>e.partner===p&&e.status==='Sold').length),tEntries.filter(e=>e.status==='Sold').length],
-    ['On Sale',...partners.map(p=>tEntries.filter(e=>e.partner===p&&e.status==='On Sale').length),tEntries.filter(e=>e.status==='On Sale').length],
+    ['Entries',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0).length),tEntries.length],
+    ['Sold',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0&&e.status==='Sold').length),tEntries.filter(e=>e.status==='Sold').length],
+    ['On Sale',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0&&e.status==='On Sale').length),tEntries.filter(e=>e.status==='On Sale').length],
   ];
   const tb=el('t-compare-tbody'); if(!tb)return;
   tb.innerHTML=rows.map(r=>`<tr><td style="font-weight:600">${r[0]}</td>${r.slice(1).map(v=>`<td style="text-align:right">${v}</td>`).join('')}</tr>`).join('');
@@ -3670,15 +3921,11 @@ function renderVendors(){
   const active=vendors.filter(v=>v.status==='Active').length;
   const totalSpend=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
   const uniqueCats=[...new Set(vendors.map(v=>v.category))].length;
-  el('vendor-stats').innerHTML=[
-    {label:'Total Vendors',val:vendors.length,cls:'blue',icon:ICONS.store},
-    {label:'Active Vendors',val:active,cls:'green',icon:ICONS.check},
-    {label:'Total Supply Spend',val:'₹'+Math.round(totalSpend).toLocaleString('en-IN'),cls:'purple',icon:ICONS.wallet},
-  ].map(s=>`<div class="stat-card ${s.cls}">
-    <div class="stat-icon" style="font-size:18px">${s.icon}</div>
-    <div class="stat-label">${s.label}</div>
-    <div class="stat-value">${s.val}</div>
-  </div>`).join('');
+  renderStatCards('vendor-stats',[
+    {label:'Total Vendors',val:vendors.length,cls:'blue',icls:'blue',icon:ICONS.store},
+    {label:'Active Vendors',val:active,cls:'green',icls:'green',icon:ICONS.check},
+    {label:'Total Supply Spend',val:'₹'+Math.round(totalSpend).toLocaleString('en-IN'),cls:'purple',icls:'purple',icon:ICONS.wallet,desc:'<strong>Formula:</strong> Σ Amount Paid across every Vendor Supply record. This is only one part of "Total Invested" on the Dashboard/Analytics tabs — that figure also adds Expense Tracker purchase amounts.'},
+  ]);
 
   // Vendor table
   const tbody=el('vendor-tbody'); if(!tbody) return;
@@ -3712,7 +3959,7 @@ function renderVendors(){
   // Supply table
   const sbody=el('supply-tbody'); if(!sbody) return;
   if(!supplies.length){
-    sbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No supply records yet. Click "+ Log Supply" to track incoming goods.</td></tr>`;
+    sbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3)">No supply records yet. Click "+ Log Supply" to track incoming goods.</td></tr>`;
     el('supply-total').innerHTML='';
   } else {
     const sorted=[...supplies].sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -3723,6 +3970,7 @@ function renderVendors(){
       <td><span class="badge badge-blue" style="font-size:10px">${s.category||'—'}</span></td>
       <td style="text-align:right" class="text-sm">${s.qty||1}</td>
       <td style="text-align:right" class="font-bold text-sm">₹${(parseFloat(s.amount)||0).toLocaleString('en-IN')}</td>
+      <td style="font-size:12px">${contribLabel(s)}</td>
       <td style="font-size:12px;color:var(--text3)">${s.notes||'—'}</td>
       <td>
         <div class="flex gap-2">
@@ -3732,7 +3980,7 @@ function renderVendors(){
       </td>
     </tr>`).join('');
     const tot=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
-    el('supply-total').innerHTML=`<span style="font-weight:600">Total Supply Spend: ₹${Math.round(tot).toLocaleString('en-IN')}</span>`;
+    el('supply-total').innerHTML=`<span style="font-weight:600">Total Supply Spend: ₹${Math.round(tot).toLocaleString('en-IN')}</span>&nbsp;<span style="color:var(--text3);font-weight:400;font-size:11px">(Vendor Supplies only — see Dashboard/Analytics for combined "Total Invested")</span>`;
   }
 }
 
@@ -3800,6 +4048,7 @@ function openSupplyModal(id=null){
   el('s-qty').value=s?s.qty:1;
   el('s-amount').value=s?s.amount:'';
   el('s-notes').value=s?s.notes:'';
+  setContribSplit('s', s?(s.split||s.partner):'Akshay');
   el('supply-modal').classList.remove('hidden');
 }
 function closeSupplyModal(){ el('supply-modal').classList.add('hidden'); }
@@ -3807,8 +4056,10 @@ async function saveSupply(){
   const vendor=el('s-vendor').value;
   const item=el('s-item').value.trim();
   if(!vendor||!item){ toast('Vendor and item are required','error'); return; }
+  const split=getContribSplit('s');
   const supply={vendor,date:el('s-date').value,item,category:el('s-category').value,
     qty:parseInt(el('s-qty').value)||1,amount:parseFloat(el('s-amount').value)||0,
+    partner:split.Akshay>=split.Hemanth?'Akshay':'Hemanth',split,
     notes:el('s-notes').value.trim()};
   const wasEditing=editingSupplyId!==null;
   try {
