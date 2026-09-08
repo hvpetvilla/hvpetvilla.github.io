@@ -310,7 +310,7 @@ select.form-control{cursor:pointer}
 .entry-modal-backdrop{display:flex}
 /* Product rows */
 .prod-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;position:relative}
-.prod-row-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:end}
+.prod-row-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:8px;align-items:end}
 .sale-row{background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius-sm);padding:8px;margin-top:6px}
 .sale-row-grid{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end}
 [data-theme="dark"] .sale-row{background:#8A5A3422;border-color:#8A5A3444}
@@ -1662,17 +1662,6 @@ select.form-control{cursor:pointer}
     <div class="card-body" style="max-height:75vh;overflow-y:auto">
       <div class="form-grid form-grid-2" style="gap:12px;margin-bottom:16px">
         <div class="form-group" style="grid-column:1/-1"><label class="form-label">Item / Purchase name *</label><input id="f-item" class="form-control" type="text" placeholder="e.g. Jan Bird Purchase, Feed Stock"></div>
-        <div class="form-group" style="grid-column:1/-1">
-          <label class="form-label">Contributed By <span>*</span></label>
-          <div class="contrib-widget" id="f-contrib-wrap">
-            <label class="contrib-chk"><input type="checkbox" id="f-c-akshay" checked onchange="onContribChange('f')"> Akshay</label>
-            <label class="contrib-chk"><input type="checkbox" id="f-c-hemanth" onchange="onContribChange('f')"> Hemanth</label>
-            <div class="contrib-split-row" id="f-contrib-split" style="display:none">
-              <input type="range" id="f-c-pct" min="0" max="100" value="50" oninput="onContribSplitInput('f')">
-              <div class="contrib-split-labels"><span id="f-c-akshay-pct">Akshay: 50%</span><span id="f-c-hemanth-pct">Hemanth: 50%</span></div>
-            </div>
-          </div>
-        </div>
         <div class="form-group"><label class="form-label">Date</label><input id="f-date" class="form-control" type="date"></div>
         <div class="form-group"><label class="form-label">Status</label><select id="f-status" class="form-control"><option>On Sale</option><option>Sold</option><option>Consumed</option><option>Breeding</option></select></div>
         <div class="form-group"><label class="form-label">Category</label><select id="f-cat" class="form-control">
@@ -1752,11 +1741,12 @@ select.form-control{cursor:pointer}
           <div class="section-heading" style="margin-bottom:0"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:-0.1em"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3.3 7.3L12 12l8.7-4.7"/><line x1="12" y1="22" x2="12" y2="12"/></svg> Products in this purchase</div>
           <button class="btn btn-secondary btn-sm" onclick="addProdRow()">+ Add Product</button>
         </div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:6px;padding:0 2px;margin-bottom:4px">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:6px;padding:0 2px;margin-bottom:4px">
           <span style="font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase">Product Name</span>
           <span style="font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase">Qty Bought</span>
           <span style="font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase">Total Cost (₹)</span>
           <span style="font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase">Cost/Unit</span>
+          <span style="font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase">Tagged To</span>
           <span></span>
         </div>
         <div id="f-prod-rows"></div>
@@ -2856,18 +2846,67 @@ function searchByCustomer(q){ showPage('invoices'); el('inv-search').value=q; fi
 // ============================================================
 
 // Contributor split helper — works on both tracker entries (tEntries) and
-// vendor supplies. Understands the new {Akshay:%,Hemanth:%} `split` field
-// and falls back to the legacy single `partner` string for older records.
+// vendor supplies. Tracker entries with line-item products are tagged
+// per-product (products[].partner) — the split here is the cost-weighted
+// aggregate across those tags. Vendor supplies (no products[]) and older
+// records fall back to the legacy single {Akshay:%,Hemanth:%} `split` field
+// or the single `partner` string.
 function getSplit(rec){
+  if(rec && rec.products && rec.products.length){
+    let a=0,h=0;
+    rec.products.forEach(p=>{
+      if((p.partner||rec.partner)==='Hemanth') h+=(p.cost||0); else a+=(p.cost||0);
+    });
+    const total=a+h;
+    if(total>0) return {Akshay:Math.round(a/total*100), Hemanth:Math.round(h/total*100)};
+  }
   if(rec && rec.split && ((rec.split.Akshay||0)>0 || (rec.split.Hemanth||0)>0)) return rec.split;
   if(rec && rec.partner==='Hemanth') return {Akshay:0,Hemanth:100};
   return {Akshay:100,Hemanth:0};
 }
+// Exact membership check (no rounding) — used by the partner filter so a
+// small-cost item in a mixed multi-item entry is never dropped by rounding.
+function entryHasPartner(rec,partner){
+  if(rec && rec.products && rec.products.length){
+    return rec.products.some(p=>((p.partner||rec.partner)==='Hemanth'?'Hemanth':'Akshay')===partner);
+  }
+  return getSplit(rec)[partner]>0;
+}
 function contribLabel(rec){
+  if(rec && rec.products && rec.products.length){
+    const tags=new Set(rec.products.map(p=>p.partner||rec.partner||'Akshay'));
+    if(tags.size>1) return 'Akshay + Hemanth';
+    return [...tags][0];
+  }
   const sp=getSplit(rec);
   const a=sp.Akshay||0, h=sp.Hemanth||0;
   if(a>0&&h>0) return `Akshay ${a}% · Hemanth ${h}%`;
   return a>0?'Akshay':'Hemanth';
+}
+// Exact per-partner invested/revenue across a list of tracker entries.
+// Uses per-product tags + per-product sales when available (accurate),
+// falling back to the entry-level split applied to entry totals otherwise
+// (vendor supplies, or tracker entries with no products[]).
+function partnerBreakdown(entries){
+  const bp={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
+  entries.forEach(e=>{
+    if(e.products && e.products.length){
+      e.products.forEach(p=>{
+        const partner=(p.partner||e.partner)==='Hemanth'?'Hemanth':'Akshay';
+        const rev=(p.sales||[]).reduce((s,sl)=>s+(sl.qty*sl.price),0);
+        bp[partner].invested+=(p.cost||0);
+        bp[partner].revenue+=rev;
+      });
+    } else {
+      const sp=getSplit(e);
+      ['Akshay','Hemanth'].forEach(p=>{
+        const f=(sp[p]||0)/100;
+        bp[p].invested+=(e.amount||0)*f;
+        bp[p].revenue+=(e.revenue||0)*f;
+      });
+    }
+  });
+  return bp;
 }
 
 function computeBizStats(invoices){
@@ -2932,11 +2971,7 @@ function computeBizStats(invoices){
   // because invoices aren't tagged to a partner. That's why this item-level
   // P&L can show a loss (unsold stock) even while the whole business is
   // profitable overall — most revenue comes from invoices, split below.
-  const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
-  tEntries.forEach(e=>{
-    const sp=getSplit(e);
-    ['Akshay','Hemanth'].forEach(p=>{ const f=(sp[p]||0)/100; byPartner[p].invested+=e.amount*f; byPartner[p].revenue+=e.revenue*f; });
-  });
+  const byPartner=partnerBreakdown(tEntries);
   // Ownership-weighted share of the WHOLE business profit (all invoices +
   // tracker sales, minus all investment), proportional to how much of the
   // total money invested each partner funded. This is the figure that
@@ -3363,17 +3398,9 @@ function calcSummary(){
   const invested=tEntries.reduce((a,e)=>a+e.amount,0);
   const revenue=tEntries.reduce((a,e)=>a+e.revenue,0);
   const profit=revenue-invested;
-  // Split-aware: an entry contributed to by both partners attributes each
-  // partner their percentage share of the amount/revenue, not the whole entry.
-  const byPartner={Akshay:{invested:0,revenue:0},Hemanth:{invested:0,revenue:0}};
-  tEntries.forEach(e=>{
-    const sp=getSplit(e);
-    ['Akshay','Hemanth'].forEach(p=>{
-      const f=(sp[p]||0)/100;
-      byPartner[p].invested+=e.amount*f;
-      byPartner[p].revenue+=e.revenue*f;
-    });
-  });
+  // Tag-aware: each product line item attributes its own cost/revenue to
+  // whichever partner it's tagged to, not the whole entry.
+  const byPartner=partnerBreakdown(tEntries);
   return{invested,revenue,profit,byPartner};
 }
 function dChart(k){ if(tCharts[k]){tCharts[k].destroy();delete tCharts[k];} }
@@ -3494,7 +3521,7 @@ function openQuickSell(id){
   const sel=el('qs-product-select');
   if(e.products&&e.products.length>1){
     sel.innerHTML=e.products.map((p,i)=>
-      `<option value="${i}">${p.name||'Product '+(i+1)} — cost/unit ₹${(p.cpu||(p.qty>0?p.cost/p.qty:0)).toFixed(2)} — ${p.qty} bought</option>`
+      `<option value="${i}">${p.name||'Product '+(i+1)} — ${(p.partner||e.partner)==='Hemanth'?'Hemanth':'Akshay'} — cost/unit ₹${(p.cpu||(p.qty>0?p.cost/p.qty:0)).toFixed(2)} — ${p.qty} bought</option>`
     ).join('');
     picker.style.display='block';
     qsProductIdx=0;
@@ -3594,7 +3621,7 @@ function renderExpenseTable(){
   const dateTo=el('t-fdate-to')?.value||'';
   let f=tEntries.filter(e=>{
     if(search&&!e.item.toLowerCase().includes(search)&&!(e.remarks||'').toLowerCase().includes(search))return false;
-    if(partner&&!(getSplit(e)[partner]>0))return false;
+    if(partner&&!entryHasPartner(e,partner))return false;
     if(status&&e.status!==status)return false;
     if(dateFrom&&(e.date||'')<dateFrom)return false;
     if(dateTo&&(e.date||'')>dateTo)return false;
@@ -3607,16 +3634,35 @@ function renderExpenseTable(){
   const tbody=el('t-exp-tbody'); if(!tbody)return;
   tbody.innerHTML=f.length?f.map((e,i)=>{
     const net=e.revenue-e.amount;
+    const multi=e.products&&e.products.length>1;
+    const detailRows=multi?e.products.map(p=>{
+      const partner=(p.partner||e.partner)==='Hemanth'?'Hemanth':'Akshay';
+      const rev=(p.sales||[]).reduce((s,sl)=>s+(sl.qty*sl.price),0);
+      const pnet=rev-(p.cost||0);
+      return`<tr class="hidden exp-detail-${i}">
+        <td style="width:36px"></td>
+        <td style="padding-left:12px;font-size:12.5px;color:var(--text2)">↳ ${p.name||'Item'}</td>
+        <td style="font-size:12px">${partner}</td>
+        <td style="text-align:right;font-size:12.5px">${fmtT(p.cost||0)}</td>
+        <td style="text-align:right;font-size:12.5px">${rev?fmtT(rev):'—'}</td>
+        <td style="text-align:right;font-size:12.5px;color:${pnet>=0?'#16A34A':'#DC2626'}">${fmtSigned(pnet)}</td>
+        <td colspan="3"></td>
+      </tr>`;
+    }).join(''):'';
     return`<tr>
       <td style="font-size:11px;color:var(--text3)">${i+1}</td>
-      <td><div style="font-weight:500">${e.item}</div><div style="font-size:11px;color:var(--text3)">${e.category||''}</div></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${multi?`<button class="btn btn-ghost" id="exp-chev-${i}" onclick="toggleExpenseDetail(${i})" title="Show items" style="padding:2px 5px;font-size:11px;transition:transform .15s;flex-shrink:0">▸</button>`:''}
+          <div><div style="font-weight:500">${e.item}</div><div style="font-size:11px;color:var(--text3)">${e.category||''}${multi?` · ${e.products.length} items`:''}</div></div>
+        </div>
+      </td>
       <td style="font-size:12px">${contribLabel(e)}</td>
       <td style="text-align:right">${fmtT(e.amount)}</td>
       <td style="text-align:right">${e.revenue?fmtT(e.revenue):'—'}</td>
       <td style="text-align:right;color:${net>=0?'#16A34A':'#DC2626'};font-weight:600">${fmtSigned(net)}</td>
       <td>${statusBadge(e.status)}</td>
       <td style="font-size:12px;color:var(--text3);max-width:130px">
-        ${e.products&&e.products.length>1?`<span class="badge badge-blue" style="font-size:10px;margin-bottom:2px;display:inline-block">${e.products.length} products</span><br>`:''}
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${e.remarks||'—'}</span>
       </td>
       <td>
@@ -3625,8 +3671,15 @@ function renderExpenseTable(){
           <button class="btn btn-ghost" onclick="openEntryModal(${escapeHtml(JSON.stringify(e._id))})" title="Edit" style="padding:4px 6px">${ICONS.edit}</button>
           <button class="btn btn-ghost" onclick="deleteEntry(${escapeHtml(JSON.stringify(e._id))})" title="Delete" style="padding:4px 6px;color:#DC2626">${ICONS.trash}</button>
         </div>
-      </td></tr>`;
+      </td></tr>${detailRows}`;
   }).join(''):`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3)">No entries match your filters.</td></tr>`;
+}
+function toggleExpenseDetail(i){
+  const rows=document.querySelectorAll('.exp-detail-'+i); if(!rows.length)return;
+  const nowHidden=rows[0].classList.toggle('hidden');
+  rows.forEach((r,idx)=>{ if(idx>0) r.classList.toggle('hidden',nowHidden); });
+  const chev=el('exp-chev-'+i);
+  if(chev) chev.style.transform=nowHidden?'rotate(0deg)':'rotate(90deg)';
 }
 
 let prodRowCount=0;
@@ -3637,6 +3690,7 @@ function addProdRow(prodData=null){
   const qty=prodData?prodData.qty:1;
   const cost=prodData?prodData.cost:0;
   const name=prodData?prodData.name:'';
+  const partner=prodData&&prodData.partner==='Hemanth'?'Hemanth':'Akshay';
   const cpuDisplay=qty>0?'₹'+(cost/qty).toFixed(2):'₹0';
   const row=document.createElement('div');
   row.className='prod-row'; row.id='prod-row-'+rid;
@@ -3653,6 +3707,7 @@ function addProdRow(prodData=null){
       <div class="form-group" style="margin:0"><input class="form-control prod-qty" type="number" min="1" value="${qty}" oninput="recalcEntry(${rid})"></div>
       <div class="form-group" style="margin:0"><input class="form-control prod-cost" type="number" min="0" value="${cost}" oninput="recalcEntry(${rid})" placeholder="0"></div>
       <div style="padding:9px 12px;background:var(--bg3);border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:var(--green)" id="cpu-${rid}">${cpuDisplay}</div>
+      <div class="form-group" style="margin:0"><select class="form-control prod-partner"><option ${partner==='Akshay'?'selected':''}>Akshay</option><option ${partner==='Hemanth'?'selected':''}>Hemanth</option></select></div>
       <button class="btn btn-ghost" onclick="removeProdRow(${rid})" style="padding:6px 8px;color:#DC2626">✕</button>
     </div>
     <div style="margin-top:8px">
@@ -3750,13 +3805,14 @@ function collectProducts(){
     const qty=parseFloat(row.querySelector('.prod-qty')?.value)||1;
     const cost=parseFloat(row.querySelector('.prod-cost')?.value)||0;
     const cpu=qty>0?(cost/qty):0;
+    const partner=row.querySelector('.prod-partner')?.value==='Hemanth'?'Hemanth':'Akshay';
     const sales=[];
     row.querySelectorAll('.sale-row').forEach(srow=>{
       const sqty=parseFloat(srow.querySelector('.sale-qty')?.value)||0;
       const sprice=parseFloat(srow.querySelector('.sale-price')?.value)||0;
       if(sqty>0||sprice>0) sales.push({qty:sqty,price:sprice});
     });
-    if(name||cost>0) products.push({name,qty,cost,cpu,sales});
+    if(name||cost>0) products.push({name,qty,cost,cpu,partner,sales});
   });
   return products;
 }
@@ -3767,7 +3823,6 @@ function openEntryModal(id=null){
   el('t-modal-title').textContent=id!==null?'Edit entry':'Add entry';
   const e=id!==null?tEntries.find(x=>x._id===id):null;
   el('f-item').value=e?e.item:'';
-  setContribSplit('f', e?(e.split||e.partner):'Akshay');
   el('f-date').value=e?e.date:new Date().toISOString().split('T')[0];
   el('f-status').value=e?e.status:'On Sale';
   el('f-cat').value=e?(e.category||'Birds'):'Birds';
@@ -3776,10 +3831,10 @@ function openEntryModal(id=null){
   el('f-prod-rows').innerHTML='';
   // Load existing products or create default row
   if(e&&e.products&&e.products.length){
-    e.products.forEach(p=>addProdRow(p));
+    e.products.forEach(p=>addProdRow({...p, partner:p.partner||e.partner||'Akshay'}));
   } else {
     // For old entries without products, create one row with legacy amount/revenue
-    addProdRow(e?{name:e.item||'',qty:1,cost:e.amount||0,cpu:e.amount||0,sales:e.revenue>0?[{qty:1,price:e.revenue}]:[]}:null);
+    addProdRow(e?{name:e.item||'',qty:1,cost:e.amount||0,cpu:e.amount||0,partner:e.partner||'Akshay',sales:e.revenue>0?[{qty:1,price:e.revenue}]:[]}:null);
   }
   el('entry-modal').classList.remove('hidden');
 }
@@ -3791,8 +3846,11 @@ async function saveEntry(){
   const amount=products.reduce((s,p)=>s+p.cost,0);
   const revenue=products.reduce((s,p)=>s+p.sales.reduce((ss,sl)=>ss+(sl.qty*sl.price),0),0);
   if(!amount){toast('Add at least one product with a cost','error');return;}
-  const split=getContribSplit('f');
-  const entry={item,partner:split.Akshay>=split.Hemanth?'Akshay':'Hemanth',split,date:el('f-date').value,
+  // entry.partner is a majority-cost fallback for legacy code paths — the
+  // real, accurate tagging lives per-product in `products[].partner`.
+  let aInv=0,hInv=0;
+  products.forEach(p=>{ if(p.partner==='Hemanth') hInv+=p.cost; else aInv+=p.cost; });
+  const entry={item,partner:hInv>aInv?'Hemanth':'Akshay',date:el('f-date').value,
     amount,revenue,products,
     status:el('f-status').value,category:el('f-cat').value,
     remarks:el('f-remarks').value.trim()};
@@ -3830,7 +3888,7 @@ function renderPartners(){
     const pd=s.byPartner[p]||{invested:0,revenue:0};
     const net=pd.revenue-pd.invested;
     const roi=pd.invested>0?((net/pd.invested)*100).toFixed(1):'0.0';
-    const pe=tEntries.filter(e=>getSplit(e)[p]>0);
+    const pe=tEntries.filter(e=>entryHasPartner(e,p));
     const card=el('t-p-'+p.toLowerCase());
     if(!card)return;
     card.innerHTML=`
@@ -3854,9 +3912,9 @@ function renderPartners(){
     ['Total Revenue',...partners.map(p=>fmtT((s.byPartner[p]||{}).revenue||0)),fmtT(s.revenue)],
     ['Net P/L',...partners.map(p=>{const pd=s.byPartner[p]||{invested:0,revenue:0};const n=pd.revenue-pd.invested;return`<span style="color:${n>=0?'#16A34A':'#DC2626'}">${fmtSigned(n)}</span>`;}),`<span style="color:${s.profit>=0?'#16A34A':'#DC2626'}">${fmtSigned(s.profit)}</span>`],
     ['ROI',...partners.map(p=>{const pd=s.byPartner[p]||{invested:0,revenue:0};const r=pd.invested>0?(((pd.revenue-pd.invested)/pd.invested)*100).toFixed(1):0;return`${r}%`;}),s.invested>0?((s.profit/s.invested)*100).toFixed(1)+'%':'—'],
-    ['Entries',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0).length),tEntries.length],
-    ['Sold',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0&&e.status==='Sold').length),tEntries.filter(e=>e.status==='Sold').length],
-    ['On Sale',...partners.map(p=>tEntries.filter(e=>getSplit(e)[p]>0&&e.status==='On Sale').length),tEntries.filter(e=>e.status==='On Sale').length],
+    ['Entries',...partners.map(p=>tEntries.filter(e=>entryHasPartner(e,p)).length),tEntries.length],
+    ['Sold',...partners.map(p=>tEntries.filter(e=>entryHasPartner(e,p)&&e.status==='Sold').length),tEntries.filter(e=>e.status==='Sold').length],
+    ['On Sale',...partners.map(p=>tEntries.filter(e=>entryHasPartner(e,p)&&e.status==='On Sale').length),tEntries.filter(e=>e.status==='On Sale').length],
   ];
   const tb=el('t-compare-tbody'); if(!tb)return;
   tb.innerHTML=rows.map(r=>`<tr><td style="font-weight:600">${r[0]}</td>${r.slice(1).map(v=>`<td style="text-align:right">${v}</td>`).join('')}</tr>`).join('');
