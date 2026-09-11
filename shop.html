@@ -341,7 +341,7 @@ async function loadProducts(){
       id: p._id, name: p.name, category: p.category, section: p.section,
       breed: p.breed||'', age: p.age||'', gender: p.gender||'',
       photos: Array.isArray(p.photos)?p.photos:[], desc: p.desc || '',
-      price: p.price
+      price: p.price, mrp: p.mrp
     }));
   } catch(e) {
     console.error('Failed to load products:', e);
@@ -389,6 +389,7 @@ function badgeHTML(name){
 
 function shopCardHTML(p){
   const photo=p.photos&&p.photos[0];
+  const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-weight:600;font-size:.85rem;margin-right:6px">₹${p.mrp}</span>`:'';
   return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
       ${badgeHTML(p.name)}
@@ -400,7 +401,7 @@ function shopCardHTML(p){
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-desc">${escapeHtml(p.desc||'')}</div>
         <div class="product-foot">
-          <div class="product-price">₹${p.price}</div>
+          <div class="product-price">${mrpHtml}₹${p.price}</div>
           <button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>
         </div>
       </div>
