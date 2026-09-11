@@ -1059,7 +1059,7 @@ select.form-control{cursor:pointer}
           </button>
         </div>
       </div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">This catalogue is also what powers the hvpetvilla.in website: mark an item's Availability as "Available" and it appears there automatically — in the Shop section for food/equipment/accessories categories, or in Live Pets for Birds/Reptiles/Small Mammals/Aquatics/Exotic. Cost Price is never shown publicly.</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">This catalogue is also what powers the hvpetvilla.in website — every item here appears there automatically, in the Shop section for food/equipment/accessories categories or in Live Pets for Birds/Reptiles/Small Mammals/Aquatics/Exotic. Availability controls what visitors see and can do: <strong>Available</strong> shows the normal buy/enquire action, <strong>Display</strong> and <strong>Out of Stock - Raise Order Request</strong> show a status badge with a WhatsApp button instead, and <strong>Sold</strong> shows a "Sold" badge with no action. Cost Price is never shown publicly.</div>
       <!-- Filter bar -->
       <div class="card" style="margin-bottom:16px">
         <div class="card-body" style="padding:12px 16px">
@@ -1080,11 +1080,12 @@ select.form-control{cursor:pointer}
               <option>Accessories</option>
               <option>Other</option>
             </select>
-            <select class="form-control" id="prod-filter-avail" onchange="renderProducts()" style="width:140px">
+            <select class="form-control" id="prod-filter-avail" onchange="renderProducts()" style="width:180px">
               <option value="">All Availability</option>
               <option>Available</option>
-              <option>Out of Stock</option>
-              <option>Discontinued</option>
+              <option>Display</option>
+              <option>Out of Stock - Raise Order Request</option>
+              <option>Sold</option>
             </select>
             <button class="btn btn-secondary btn-sm" onclick="clearProductFilters()">Clear</button>
             <span id="prod-count" style="margin-left:auto;font-size:12px;color:var(--text3)"></span>
@@ -1354,9 +1355,8 @@ select.form-control{cursor:pointer}
     <div style="padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <label style="font-size:12px;font-weight:600;color:var(--text2)">Filter:</label>
       <select class="form-control" id="cat-filter-avail" onchange="refreshCataloguePreview()" style="width:150px;padding:6px 10px;font-size:12px">
-        <option value="">All Products</option>
+        <option value="">All Listed Products</option>
         <option value="Available">Available Only</option>
-        <option value="Out of Stock">Include Out of Stock</option>
       </select>
       <select class="form-control" id="cat-filter-cat" onchange="refreshCataloguePreview()" style="width:150px;padding:6px 10px;font-size:12px">
         <option value="">All Categories</option>
@@ -1511,8 +1511,9 @@ select.form-control{cursor:pointer}
           <label class="form-label">Availability</label>
           <select class="form-control" id="p-avail">
             <option>Available</option>
-            <option>Out of Stock</option>
-            <option>Discontinued</option>
+            <option>Display</option>
+            <option>Out of Stock - Raise Order Request</option>
+            <option>Sold</option>
           </select>
         </div>
         <div class="form-group">
@@ -4249,11 +4250,11 @@ function getCatalogueProducts(){
   const favail=el('cat-filter-avail')?.value||'';
   const fcat=el('cat-filter-cat')?.value||'';
   return products.filter(p=>{
-    const matchA=!favail||p.avail===favail||favail==='Out of Stock'; // "include OOS" shows all
+    const matchA=!favail||p.avail===favail;
     const matchC=!fcat||p.category===fcat;
-    // never show Discontinued in catalogue
-    const notDisc=p.avail!=='Discontinued';
-    return notDisc&&matchA&&matchC;
+    // never print Sold items in a catalogue meant to be shared with customers
+    const notSold=p.avail!=='Sold';
+    return notSold&&matchA&&matchC;
   });
 }
 
@@ -4303,8 +4304,8 @@ function refreshCataloguePreview(){
           const photo=p.photos&&p.photos[0]
             ?`<img src="${p.photos[0]}" style="width:100%;height:130px;object-fit:cover">`
             :`<div style="width:100%;height:130px;background:#F6EFE0;display:flex;align-items:center;justify-content:center;color:#8A5A34;font-size:40px">${ICONS.paw}</div>`;
-          const availColor=p.avail==='Available'?'#16A34A':p.avail==='Out of Stock'?'#DC2626':'#94A3B8';
-          const availBg=p.avail==='Available'?'#F0FDF4':p.avail==='Out of Stock'?'#FEF2F2':'#F8FAFC';
+          const availColor=p.avail==='Available'?'#16A34A':p.avail==='Out of Stock - Raise Order Request'?'#DC2626':'#94A3B8';
+          const availBg=p.avail==='Available'?'#F0FDF4':p.avail==='Out of Stock - Raise Order Request'?'#FEF2F2':'#F8FAFC';
           return`<div style="border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;background:#fff;break-inside:avoid">
             ${photo}
             <div style="padding:10px 12px">
@@ -4543,7 +4544,7 @@ function clearProductFilters(){
   renderProducts();
 }
 
-const availBadge = a => {const m={Available:'badge-green','Out of Stock':'badge-red',Discontinued:'badge-gray'};return`<span class="badge ${m[a]||'badge-gray'}">${a}</span>`;};
+const availBadge = a => {const m={Available:'badge-green',Display:'badge-blue','Out of Stock - Raise Order Request':'badge-yellow',Sold:'badge-gray'};return`<span class="badge ${m[a]||'badge-gray'}">${a}</span>`;};
 
 function renderProducts(){
   const q=(el('prod-search')?.value||'').toLowerCase();

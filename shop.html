@@ -327,9 +327,45 @@ const WA_ICON='<svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="curre
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 let apiProducts = [];
 
-function petEnquiryUrl(p){
-  const msg=`Hi HV Petvilla! I'm interested in the ${p.name}${p.breed?' ('+p.breed+')':''} listed on your website. Is it still available?`;
+function waUrl(msg){
   return 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg);
+}
+function itemLabel(p){
+  return p.name+(p.breed?' ('+p.breed+')':'');
+}
+function petEnquiryUrl(p){
+  return waUrl(`Hi HV Petvilla! I'm interested in the ${itemLabel(p)} listed on your website. Is it still available?`);
+}
+function orderRequestUrl(p){
+  return waUrl(`Hi HV Petvilla! I'd like to raise an order request for ${itemLabel(p)} — please let me know when it's back in stock.`);
+}
+function displayEnquiryUrl(p){
+  return waUrl(`Hi HV Petvilla! I saw the ${itemLabel(p)} on display on your website. Could you tell me more about it?`);
+}
+function waButtonHTML(url, label){
+  return `<a class="add-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px" href="${url}" target="_blank" onclick="event.stopPropagation()">${WA_ICON} ${label}</a>`;
+}
+
+const STATUS_BADGE={
+  'Display':{cls:'badge-display',label:'On Display'},
+  'Out of Stock - Raise Order Request':{cls:'badge-outofstock',label:'Out of Stock'},
+  'Sold':{cls:'badge-sold',label:'Sold'}
+};
+function statusBadgeHTML(avail){
+  const s=STATUS_BADGE[avail]; if(!s) return '';
+  return `<span class="badge-pill ${s.cls}">${s.label}</span>`;
+}
+// The action shown in a card's footer (and the detail modal) depends on
+// Availability, not just on whether it's a pet or a shop item: Sold items
+// get no action, Out of Stock / Display get a WhatsApp button instead of
+// Add to Cart / Enquire, and only Available shop items show a price.
+function actionHTML(p){
+  const avail=p.avail||'Available';
+  if(avail==='Sold') return `<span style="font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.85rem">Sold</span>`;
+  if(avail==='Out of Stock - Raise Order Request') return waButtonHTML(orderRequestUrl(p), 'Raise Order Request');
+  if(avail==='Display') return waButtonHTML(displayEnquiryUrl(p), 'Enquire');
+  if(p.section==='pets') return waButtonHTML(petEnquiryUrl(p), 'Enquire');
+  return `<button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>`;
 }
 
 async function loadProducts(){
@@ -338,7 +374,7 @@ async function loadProducts(){
     if(!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     apiProducts = data.map(p => ({
-      id: p._id, name: p.name, category: p.category, section: p.section,
+      id: p._id, name: p.name, category: p.category, section: p.section, avail: p.avail||'Available',
       breed: p.breed||'', age: p.age||'', gender: p.gender||'',
       photos: Array.isArray(p.photos)?p.photos:[], desc: p.desc || '',
       price: p.price, mrp: p.mrp
@@ -390,9 +426,10 @@ function badgeHTML(name){
 function shopCardHTML(p){
   const photo=p.photos&&p.photos[0];
   const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-weight:600;font-size:.85rem;margin-right:6px">₹${p.mrp}</span>`:'';
+  const showPrice=p.avail!=='Sold';
   return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
-      ${badgeHTML(p.name)}
+      ${statusBadgeHTML(p.avail)||badgeHTML(p.name)}
       <div class="product-thumb">
         ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
       </div>
@@ -401,8 +438,8 @@ function shopCardHTML(p){
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-desc">${escapeHtml(p.desc||'')}</div>
         <div class="product-foot">
-          <div class="product-price">${mrpHtml}₹${p.price}</div>
-          <button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>
+          ${showPrice?`<div class="product-price">${mrpHtml}₹${p.price}</div>`:''}
+          ${actionHTML(p)}
         </div>
       </div>
     </div>`;
@@ -413,7 +450,7 @@ function petCardHTML(p){
   const meta=[p.breed,p.age,p.gender].filter(Boolean).join(' · ');
   return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
-      ${badgeHTML(p.name)}
+      ${statusBadgeHTML(p.avail)||badgeHTML(p.name)}
       <div class="product-thumb">
         ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
       </div>
@@ -422,7 +459,7 @@ function petCardHTML(p){
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-desc">${escapeHtml(meta||p.desc||'')}</div>
         <div class="product-foot">
-          <a class="add-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px" href="${petEnquiryUrl(p)}" target="_blank" onclick="event.stopPropagation()">${WA_ICON} Enquire</a>
+          ${actionHTML(p)}
         </div>
       </div>
     </div>`;
@@ -482,24 +519,37 @@ function openCart(){ document.getElementById('cartOverlay').classList.add('open'
 function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); }
 document.getElementById('cartOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('cartOverlay'))closeCart();});
 
+function statusInlineHTML(avail){
+  const s=STATUS_BADGE[avail]; if(!s) return '';
+  return `<span class="badge-pill ${s.cls}" style="position:static;display:inline-block;margin-left:8px">${s.label}</span>`;
+}
+function fullWidthWAButton(url,label){
+  return `<a class="add-btn" style="text-decoration:none;width:100%;display:flex;align-items:center;justify-content:center;gap:6px" href="${url}" target="_blank">${WA_ICON} ${label}</a>`;
+}
+function detailActionHTML(p){
+  const avail=p.avail||'Available';
+  if(avail==='Sold') return `<div style="width:100%;text-align:center;font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.95rem;padding:10px 0">Sold</div>`;
+  if(avail==='Out of Stock - Raise Order Request') return fullWidthWAButton(orderRequestUrl(p),'Raise Order Request');
+  if(avail==='Display') return fullWidthWAButton(displayEnquiryUrl(p),'Enquire on WhatsApp');
+  if(p.section==='pets') return fullWidthWAButton(petEnquiryUrl(p),'Enquire on WhatsApp');
+  return `<div class="pd-price">₹${p.price}</div><button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`;
+}
+
 // ── PRODUCT DETAIL MODAL ──
 function openProductDetail(id){
   const p=getAllProducts().find(x=>x.id===id); if(!p) return;
   const photo=p.photos&&p.photos[0];
-  const isPet=p.section==='pets';
   const meta=[p.breed,p.age,p.gender].filter(Boolean).join(' · ');
   document.getElementById('productDetailBody').innerHTML=`
     <div class="pd-thumb">
       ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
     </div>
-    <div class="pd-cat">${escapeHtml(p.category)}</div>
+    <div class="pd-cat">${escapeHtml(p.category)}${statusInlineHTML(p.avail)}</div>
     <div class="pd-name">${escapeHtml(p.name)}</div>
     ${meta?`<div style="font-weight:700;color:var(--teal);margin-bottom:6px">${escapeHtml(meta)}</div>`:''}
     <div class="pd-desc">${escapeHtml(p.desc||'No description available.')}</div>
     <div class="pd-foot">
-      ${isPet
-        ?`<a class="add-btn" style="text-decoration:none;width:100%;display:flex;align-items:center;justify-content:center;gap:6px" href="${petEnquiryUrl(p)}" target="_blank">${WA_ICON} Enquire on WhatsApp</a>`
-        :`<div class="pd-price">₹${p.price}</div><button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`}
+      ${detailActionHTML(p)}
     </div>`;
   document.getElementById('productDetailOverlay').classList.add('open');
 }

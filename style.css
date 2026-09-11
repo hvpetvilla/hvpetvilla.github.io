@@ -291,6 +291,9 @@ footer a:hover { text-decoration: underline; }
 }
 .badge-best { background: linear-gradient(135deg,var(--green),#9C7440); }
 .badge-new  { background: linear-gradient(135deg,var(--teal),var(--green)); }
+.badge-display     { background: #3A8DC1; }
+.badge-outofstock  { background: #D97706; }
+.badge-sold        { background: #64748B; }
 
 /* ── Product card shine + lift (extends .product-card) ── */
 .product-card { position: relative; }
