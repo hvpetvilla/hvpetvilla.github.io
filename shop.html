@@ -48,6 +48,18 @@
   }
   </script>
   <style>
+    .section-toggle {
+      display:flex; gap:10px; margin-bottom:20px;
+    }
+    .sec-btn {
+      flex:1; padding:12px 16px; border-radius:var(--radius-sm); border:2px solid var(--border);
+      background:var(--surface); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
+      font-size:.92rem; cursor:pointer; transition:all .15s; color:var(--muted);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .sec-btn.on { background:var(--teal); color:var(--white); border-color:var(--teal); }
+    .sec-btn:hover:not(.on) { border-color:var(--teal); color:var(--teal); }
+    @media(max-width:480px){ .sec-btn{font-size:.8rem;padding:10px 8px;} }
     .shop-bar {
       display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:20px;
     }
@@ -199,15 +211,21 @@
 <div class="hero">
   <div class="hero-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
   <h1 class="word-reveal-init">Pet <span class="hi">Shop</span></h1>
-  <p>Quality food, accessories and supplies for exotic & small pets. Order via WhatsApp checkout.</p>
+  <p>Quality food, accessories and supplies for exotic & small pets — plus live pets available for enquiry.</p>
 </div>
 
-<p class="page-intro">Our shop stocks food, accessories, cages and supplies chosen for the exotic and small pets we specialise in, including birds, rabbits, hamsters, mice, rats and sugar gliders, the kind of stock that's often hard to find at general pet stores. Browse by category, add what you need to your cart, and check out directly over WhatsApp; we'll confirm your order and share a payment QR to complete it. We're based in Nizampet, Hyderabad, and serve customers across the city.</p>
+<p class="page-intro">Our shop stocks food, accessories, cages and supplies chosen for the exotic and small pets we specialise in, including birds, rabbits, hamsters, mice, rats and sugar gliders, the kind of stock that's often hard to find at general pet stores. Browse by category, add what you need to your cart, and check out directly over WhatsApp; we'll confirm your order and share a payment QR to complete it. Switch to Live Pets to see animals currently available and enquire about one directly on WhatsApp. We're based in Nizampet, Hyderabad, and serve customers across the city.</p>
 
 <div class="container">
 
-  <!-- Products are managed from BizTrack (admin/index.html → Website Products)
-       and appear here automatically since both read the same catalogue. -->
+  <!-- Products and live pets are managed from BizTrack's Products catalogue
+       and appear here automatically — mark an item "Available" there and it
+       shows up below, split into Shop or Live Pets by its category. -->
+
+  <div class="section-toggle" id="sectionToggle">
+    <button class="sec-btn on" data-sec="shop" onclick="switchSection('shop')">🛍️ Shop</button>
+    <button class="sec-btn" data-sec="pets" onclick="switchSection('pets')">🐾 Live Pets</button>
+  </div>
 
   <div class="shop-bar">
     <div class="search-wrap">
@@ -288,21 +306,31 @@ document.addEventListener('click',function(e){
 </script>
 
 <script>
-const CATS=['all','food','accessories','cages','other'];
-const CAT_LABELS={
-  all:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="currentColor" style="vertical-align:-0.1em"><circle cx="6" cy="10" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><path d="M12 12c-3 0-6 2-6 5.5A2.5 2.5 0 0 0 8.5 20c1 0 1.5-.5 3.5-.5s2.5.5 3.5.5A2.5 2.5 0 0 0 18 17.5c0-3.5-3-5.5-6-5.5z"/></svg> All Products',
-  food:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M3 11h18a1 1 0 0 1 1 1 8 8 0 0 1-8 8H10a8 8 0 0 1-8-8 1 1 0 0 1 1-1z"/><path d="M7 11V9a5 5 0 0 1 10 0v2"/></svg> Food & Treats',
-  accessories:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M20.59 13.41L13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Accessories',
-  cages:'<svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Cages & Habitats',
-  other:'Other'
+// Categories come straight from BizTrack's Products catalogue. "shop" items
+// (food/equipment/accessories/other) and "pets" items (live animals) are
+// two views over the same feed, split by the section the API tags each on.
+const SECTION_CATS={
+  shop:['all','Feed & Medicine','Equipment','Accessories','Other'],
+  pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic']
 };
-const BESTSELLER_NAMES=['Sugar Glider Nectar Blend','Bird Cage (Medium)'];
-const NEW_ARRIVAL_NAMES=['Natural Bedding (5 L)'];
-let activecat='all', cart=[];
+const CAT_LABELS={
+  all:'🐾 All',
+  'Feed & Medicine':'🍖 Feed & Medicine', Equipment:'🧰 Equipment', Accessories:'🎀 Accessories', Other:'📦 Other',
+  Birds:'🦜 Birds', Reptiles:'🦎 Reptiles', 'Small Mammals':'🐹 Small Mammals', Aquatics:'🐠 Aquatics', Exotic:'🐉 Exotic'
+};
+const BESTSELLER_NAMES=[];
+const NEW_ARRIVAL_NAMES=[];
+let activecat='all', activeSection='shop', cart=[];
 const PAW_ICON='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-0.1em"><ellipse cx="12" cy="16.5" rx="5.4" ry="4.4"/><ellipse cx="5.4" cy="9" rx="2.1" ry="2.7"/><ellipse cx="10.1" cy="5.3" rx="2" ry="2.6"/><ellipse cx="15.4" cy="5.5" rx="2" ry="2.6"/><ellipse cx="19" cy="9.2" rx="2" ry="2.5"/></svg>';
+const WA_ICON='<svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.12em"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z"/></svg>';
 
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 let apiProducts = [];
+
+function petEnquiryUrl(p){
+  const msg=`Hi HV Petvilla! I'm interested in the ${p.name}${p.breed?' ('+p.breed+')':''} listed on your website. Is it still available?`;
+  return 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg);
+}
 
 async function loadProducts(){
   try {
@@ -310,9 +338,10 @@ async function loadProducts(){
     if(!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     apiProducts = data.map(p => ({
-      id: p._id,
-      name: p.name, cat: p.cat, emoji: p.emoji,
-      imgUrl: p.imgUrl || '', desc: p.desc || '', price: p.price
+      id: p._id, name: p.name, category: p.category, section: p.section,
+      breed: p.breed||'', age: p.age||'', gender: p.gender||'',
+      photos: Array.isArray(p.photos)?p.photos:[], desc: p.desc || '',
+      price: p.price, mrp: p.mrp
     }));
   } catch(e) {
     console.error('Failed to load products:', e);
@@ -332,11 +361,10 @@ function showFallbackEmoji(img){
   img.parentElement.innerHTML = img.dataset.emoji ? escapeHtml(img.dataset.emoji) : PAW_ICON;
 }
 
-// Build chips
+// Build chips (category set depends on which section — Shop or Live Pets — is active)
 function buildChips(){
   const el=document.getElementById('chips'); el.innerHTML='';
-  const cats=['all','food','accessories','cages','other'];
-  cats.forEach(c=>{
+  SECTION_CATS[activeSection].forEach(c=>{
     const btn=document.createElement('button');
     btn.className='chip'+(c===activecat?' on':'');
     btn.innerHTML=CAT_LABELS[c]||c;
@@ -345,28 +373,68 @@ function buildChips(){
   });
 }
 
-function renderProducts(){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  const all=getAllProducts();
-  const filtered=all.filter(p=>(activecat==='all'||p.cat===activecat)&&p.name.toLowerCase().includes(q));
-  const grid=document.getElementById('productGrid');
-  grid.innerHTML=filtered.length?filtered.map(p=>`
+function switchSection(sec){
+  activeSection=sec; activecat='all';
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on', b.dataset.sec===sec));
+  document.getElementById('searchInput').value='';
+  buildChips();
+  renderProducts();
+}
+
+function badgeHTML(name){
+  if(BESTSELLER_NAMES.includes(name)) return '<span class="badge-pill badge-best"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestseller</span>';
+  if(NEW_ARRIVAL_NAMES.includes(name)) return '<span class="badge-pill badge-new"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New</span>';
+  return '';
+}
+
+function shopCardHTML(p){
+  const photo=p.photos&&p.photos[0];
+  const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-weight:600;font-size:.85rem;margin-right:6px">₹${p.mrp}</span>`:'';
+  return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
-      ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New</span>':'')}
+      ${badgeHTML(p.name)}
       <div class="product-thumb">
-        ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:(p.emoji?escapeHtml(p.emoji):PAW_ICON)}
+        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
       </div>
       <div class="product-body">
-        <div class="product-cat">${escapeHtml(p.cat)}</div>
+        <div class="product-cat">${escapeHtml(p.category)}</div>
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-desc">${escapeHtml(p.desc||'')}</div>
         <div class="product-foot">
-          <div class="product-price">₹${p.price}</div>
+          <div class="product-price">${mrpHtml}₹${p.price}</div>
           <button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>
         </div>
       </div>
-    </div>
-  `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
+    </div>`;
+}
+
+function petCardHTML(p){
+  const photo=p.photos&&p.photos[0];
+  const meta=[p.breed,p.age,p.gender].filter(Boolean).join(' · ');
+  return `
+    <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
+      ${badgeHTML(p.name)}
+      <div class="product-thumb">
+        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
+      </div>
+      <div class="product-body">
+        <div class="product-cat">${escapeHtml(p.category)}</div>
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-desc">${escapeHtml(meta||p.desc||'')}</div>
+        <div class="product-foot">
+          <a class="add-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px" href="${petEnquiryUrl(p)}" target="_blank" onclick="event.stopPropagation()">${WA_ICON} Enquire</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderProducts(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const sectionItems=getAllProducts().filter(p=>p.section===activeSection);
+  const filtered=sectionItems.filter(p=>(activecat==='all'||p.category===activecat)&&p.name.toLowerCase().includes(q));
+  const grid=document.getElementById('productGrid');
+  const cardFn=activeSection==='pets'?petCardHTML:shopCardHTML;
+  grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">${activeSection==='pets'?'No pets available right now — check back soon!':'No products found.'}</p>`;
   if(window.applyScrollReveal) applyScrollReveal();
 }
 
@@ -394,7 +462,7 @@ function renderCartModal(){
   const totalAmt=cart.reduce((a,b)=>a+b.price*b.qty,0);
   body.innerHTML=cart.map(item=>`
     <div class="cart-item">
-      <div class="cart-item-icon">${item.emoji||PAW_ICON}</div>
+      <div class="cart-item-icon" style="${item.photos&&item.photos[0]?'width:2.2rem;height:2.2rem;overflow:hidden;border-radius:6px;display:flex;align-items:center;justify-content:center':''}">${item.photos&&item.photos[0]?`<img src="${escapeHtml(item.photos[0])}" style="width:100%;height:100%;object-fit:cover">`:PAW_ICON}</div>
       <div class="cart-item-info"><strong>${item.name}</strong><span>₹${item.price} each</span></div>
       <div class="qty-controls">
         <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},-1)">−</button>
@@ -417,16 +485,21 @@ document.getElementById('cartOverlay').addEventListener('click',e=>{if(e.target=
 // ── PRODUCT DETAIL MODAL ──
 function openProductDetail(id){
   const p=getAllProducts().find(x=>x.id===id); if(!p) return;
+  const photo=p.photos&&p.photos[0];
+  const isPet=p.section==='pets';
+  const meta=[p.breed,p.age,p.gender].filter(Boolean).join(' · ');
   document.getElementById('productDetailBody').innerHTML=`
     <div class="pd-thumb">
-      ${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" data-emoji="${escapeHtml(p.emoji||'')}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:(p.emoji?escapeHtml(p.emoji):PAW_ICON)}
+      ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
     </div>
-    <div class="pd-cat">${escapeHtml(p.cat)}</div>
+    <div class="pd-cat">${escapeHtml(p.category)}</div>
     <div class="pd-name">${escapeHtml(p.name)}</div>
+    ${meta?`<div style="font-weight:700;color:var(--teal);margin-bottom:6px">${escapeHtml(meta)}</div>`:''}
     <div class="pd-desc">${escapeHtml(p.desc||'No description available.')}</div>
     <div class="pd-foot">
-      <div class="pd-price">₹${p.price}</div>
-      <button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>
+      ${isPet
+        ?`<a class="add-btn" style="text-decoration:none;width:100%;display:flex;align-items:center;justify-content:center;gap:6px" href="${petEnquiryUrl(p)}" target="_blank">${WA_ICON} Enquire on WhatsApp</a>`
+        :`<div class="pd-price">₹${p.price}</div><button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`}
     </div>`;
   document.getElementById('productDetailOverlay').classList.add('open');
 }
