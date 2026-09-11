@@ -378,6 +378,14 @@ select.form-control{cursor:pointer}
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
         Products
       </button>
+      <button class="nav-item" onclick="showPage('webshop')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Website Products
+      </button>
+      <button class="nav-item" onclick="showPage('reviews')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Reviews
+      </button>
       <button class="nav-item" onclick="showPage('requirements')">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Requirements
@@ -1106,6 +1114,54 @@ select.form-control{cursor:pointer}
       </div>
     </div><!-- /page-products -->
 
+    <!-- ===== WEBSITE PRODUCTS (hvpetvilla.in shop) ===== -->
+    <div class="page" id="page-webshop">
+      <div class="flex justify-between items-center mb-4">
+        <h2 style="font-size:18px;font-weight:700"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Website Shop Products</h2>
+        <button class="btn btn-primary" onclick="openWebProductModal()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Product
+        </button>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">These are the food, accessory and cage listings shown on the hvpetvilla.in online shop. Changes here go live on the website immediately — this is separate from the internal "Products" catalogue above.</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Website Products</span>
+          <div class="search-wrapper">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="form-control" id="webprod-search" placeholder="Search..." oninput="renderWebProducts()" style="padding-left:36px;width:220px">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="table" style="min-width:700px">
+            <thead><tr>
+              <th>Photo</th><th>Name</th><th>Category</th><th style="text-align:right">Price (₹)</th><th>Description</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="webprod-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /page-webshop -->
+
+    <!-- ===== REVIEWS (hvpetvilla.in customer reviews) ===== -->
+    <div class="page" id="page-reviews">
+      <div class="flex justify-between items-center mb-4">
+        <h2 style="font-size:18px;font-weight:700"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:-0.15em"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Customer Reviews</h2>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Reviews submitted by customers on hvpetvilla.in. Deleting a review here removes it from the website immediately.</div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">All Reviews</span></div>
+        <div style="overflow-x:auto">
+          <table class="table" style="min-width:700px">
+            <thead><tr>
+              <th>Photo</th><th>Name</th><th>Pet</th><th>Rating</th><th>Message</th><th>Date</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="reviews-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /page-reviews -->
+
     <!-- ===== REQUIREMENTS ===== -->
     <div class="page" id="page-requirements">
       <div class="flex justify-between items-center mb-4">
@@ -1771,6 +1827,58 @@ select.form-control{cursor:pointer}
   </div>
 </div>
 
+<!-- WEBSITE PRODUCT MODAL -->
+<div class="modal-backdrop hidden" id="webprod-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <span class="card-title" id="webprod-modal-title" style="font-size:15px">Add Website Product</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeWebProductModal()">✕</button>
+    </div>
+    <div class="card-body">
+      <div class="form-grid form-grid-2" style="gap:12px">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Product Name <span>*</span></label>
+          <input class="form-control" id="wp-name" placeholder="e.g. Premium Bird Seed Mix">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control" id="wp-cat">
+            <option value="food">Food & Treats</option>
+            <option value="accessories">Accessories</option>
+            <option value="cages">Cages & Habitats</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price (₹) <span>*</span></label>
+          <input class="form-control" id="wp-price" type="number" min="1" placeholder="350">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Emoji / Icon (optional)</label>
+          <input class="form-control" id="wp-emoji" placeholder="Leave blank for the default paw icon" maxlength="4">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Description</label>
+          <input class="form-control" id="wp-desc" placeholder="Short product description">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Product Image URL (optional)</label>
+          <input class="form-control" id="wp-img" placeholder="https://…/product.jpg  or leave blank to use icon">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Or Upload Product Photo (optional)</label>
+          <input class="form-control" type="file" id="wp-imgfile" accept="image/*" onchange="previewWebProductImg(event)">
+          <img id="wp-img-preview" style="max-width:140px;border-radius:8px;margin-top:10px;display:none" alt="Preview">
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--border)">
+      <button class="btn btn-secondary" onclick="closeWebProductModal()">Cancel</button>
+      <button class="btn btn-primary" id="wp-save-btn" onclick="saveWebProduct()">Save product</button>
+    </div>
+  </div>
+</div>
+
 <!-- VENDOR MODAL -->
 <div class="modal-backdrop hidden" id="vendor-modal">
   <div class="modal" style="max-width:560px">
@@ -2072,8 +2180,9 @@ const ICONS = {
 };
 
 // ============================================================
-//  AUTH GATE  (separate passcode/token from the public shop admin —
-//  session keys below must not collide with shop.html's hvpv_shop_admin*)
+//  AUTH GATE  (separate passcode/token from the site's ADMIN_KEY login —
+//  BizTrack's own session, though /api/reviews and /api/products also
+//  accept this token so Reviews/Website Products work off one login)
 // ============================================================
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 
@@ -2226,7 +2335,8 @@ const pageTitles = {
   'customers':'Customer Management','analytics':'Analytics','settings':'Settings',
   'tracker':'Expense Tracker','vendors':'Vendor Management',
   'products':'Product Catalogue','requirements':'Customer Requirements',
-  'pricecompare':'Price Comparison Matrix'
+  'pricecompare':'Price Comparison Matrix',
+  'webshop':'Website Products','reviews':'Customer Reviews'
 };
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -2246,6 +2356,8 @@ function showPage(name){
   if(name==='tracker'){ renderTrackerDashboard(); }
   if(name==='vendors'){ renderVendors(); }
   if(name==='products'){ renderProducts(); }
+  if(name==='webshop'){ loadWebProducts(); }
+  if(name==='reviews'){ loadSiteReviews(); }
   if(name==='requirements'){ renderRequirements(); }
   if(name==='pricecompare'){ renderPriceCompare(); }
   if(name==='new-invoice' && !editingInvoiceId) { resetForm(); }
@@ -4101,6 +4213,184 @@ async function deleteVendor(id){
     renderVendors(); toast('Vendor deleted');
   } catch(e) {
     if(e.message!=='auth') toast('Could not delete vendor — '+e.message,'error');
+  }
+}
+
+// -- Website Products (hvpetvilla.in shop catalogue) --
+// This talks to /api/products directly (not bizFetch/api/biz) since that's
+// the same public endpoint the storefront reads — writing here is what
+// makes a BizTrack edit show up on the website immediately.
+let webProducts = [];
+let editingWebProductId = null;
+
+async function loadWebProducts(){
+  try {
+    const res = await fetch(API_URL + '/api/products');
+    webProducts = res.ok ? await res.json() : [];
+  } catch(e) {
+    webProducts = [];
+  }
+  renderWebProducts();
+}
+
+function renderWebProducts(){
+  const tbody = el('webprod-tbody'); if(!tbody) return;
+  const q = (el('webprod-search')?.value||'').toLowerCase();
+  const filtered = q ? webProducts.filter(p=>(p.name||'').toLowerCase().includes(q)) : webProducts;
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">${webProducts.length?'No products match your search.':'No website products yet. Click "Add Product" to get started.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(p=>`
+    <tr>
+      <td>${p.imgUrl?`<img src="${escapeHtml(p.imgUrl)}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">`:`<div style="width:40px;height:40px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px">${p.emoji||'🐾'}</div>`}</td>
+      <td><strong class="text-sm">${escapeHtml(p.name)}</strong></td>
+      <td><span class="badge badge-blue" style="font-size:10px">${escapeHtml(p.cat||'other')}</span></td>
+      <td style="text-align:right" class="font-bold text-sm">₹${(+p.price||0).toLocaleString('en-IN')}</td>
+      <td style="font-size:12px;color:var(--text3)">${escapeHtml(p.desc||'—')}</td>
+      <td>
+        <div class="flex gap-2">
+          <button class="btn btn-secondary btn-sm" onclick="openWebProductModal(${escapeHtml(JSON.stringify(p._id))})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteWebProduct(${escapeHtml(JSON.stringify(p._id))})">Del</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openWebProductModal(id=null){
+  editingWebProductId = id;
+  el('webprod-modal-title').textContent = id!==null?'Edit Website Product':'Add Website Product';
+  const p = id!==null?webProducts.find(x=>x._id===id):null;
+  el('wp-name').value = p?p.name:'';
+  el('wp-cat').value = p?(p.cat||'food'):'food';
+  el('wp-price').value = p?p.price:'';
+  el('wp-emoji').value = p?(p.emoji||''):'';
+  el('wp-desc').value = p?(p.desc||''):'';
+  el('wp-img').value = p?(p.imgUrl||''):'';
+  el('wp-imgfile').value = '';
+  const preview = el('wp-img-preview'); preview.style.display='none'; preview.src='';
+  el('webprod-modal').classList.remove('hidden');
+}
+function closeWebProductModal(){ el('webprod-modal').classList.add('hidden'); }
+
+function previewWebProductImg(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = el('wp-img-preview');
+    img.src = ev.target.result; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+async function uploadWebProductImage(file){
+  if(file.size > 4*1024*1024) throw new Error('Photo is too large — please use one under 4MB');
+  const res = await fetch(API_URL + '/api/upload', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream', 'X-File-Type': file.type },
+    body: file
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.error || 'Image upload failed');
+  }
+  const { url } = await res.json();
+  return url;
+}
+
+async function saveWebProduct(){
+  const name = el('wp-name').value.trim();
+  const price = parseInt(el('wp-price').value)||0;
+  if(!name||!price){ toast('Name and price are required','error'); return; }
+  const cat = el('wp-cat').value;
+  const emoji = el('wp-emoji').value.trim();
+  const desc = el('wp-desc').value.trim();
+  const saveBtn = el('wp-save-btn');
+  saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+  try {
+    const fileInput = el('wp-imgfile');
+    let imgUrl = el('wp-img').value.trim();
+    if(fileInput.files[0]){
+      saveBtn.textContent = 'Uploading photo…';
+      imgUrl = await uploadWebProductImage(fileInput.files[0]);
+    }
+    const url = API_URL + '/api/products' + (editingWebProductId!==null ? '?id=' + encodeURIComponent(editingWebProductId) : '');
+    const res = await fetch(url, {
+      method: editingWebProductId!==null ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': bizToken() || '' },
+      body: JSON.stringify({ name, cat, emoji, imgUrl, desc, price })
+    });
+    if(res.status === 401){ handleBizAuthFailure(); return; }
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Request failed');
+    await loadWebProducts();
+    closeWebProductModal();
+    toast(editingWebProductId!==null?'Product updated':'Product saved');
+    editingWebProductId = null;
+  } catch(e) {
+    toast('Could not save product — '+e.message,'error');
+  } finally {
+    saveBtn.disabled = false; saveBtn.textContent = 'Save product';
+  }
+}
+
+async function deleteWebProduct(id){
+  if(!confirm('Delete this product? It will disappear from the website immediately.')) return;
+  try {
+    const res = await fetch(API_URL + '/api/products?id=' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Key': bizToken() || '' }
+    });
+    if(res.status === 401){ handleBizAuthFailure(); return; }
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Request failed');
+    await loadWebProducts();
+    toast('Product deleted');
+  } catch(e) {
+    toast('Could not delete product — '+e.message,'error');
+  }
+}
+
+// -- Reviews (hvpetvilla.in customer reviews) --
+let siteReviews = [];
+async function loadSiteReviews(){
+  try {
+    const res = await fetch(API_URL + '/api/reviews');
+    siteReviews = res.ok ? await res.json() : [];
+  } catch(e) {
+    siteReviews = [];
+  }
+  renderSiteReviews();
+}
+function renderSiteReviews(){
+  const tbody = el('reviews-tbody'); if(!tbody) return;
+  if(!siteReviews.length){
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No reviews yet.</td></tr>`;
+    return;
+  }
+  const sorted = [...siteReviews].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  tbody.innerHTML = sorted.map(r=>`
+    <tr>
+      <td>${r.img?`<img src="${escapeHtml(r.img)}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">`:'—'}</td>
+      <td><strong class="text-sm">${escapeHtml(r.name)}</strong></td>
+      <td class="text-sm">${escapeHtml(r.pet||'—')}</td>
+      <td style="color:#D97706">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</td>
+      <td style="font-size:12px;max-width:320px">${escapeHtml(r.message||'')}</td>
+      <td class="text-sm">${r.date?new Date(r.date).toLocaleDateString('en-IN'):'—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteSiteReview(${escapeHtml(JSON.stringify(r._id))})">Del</button></td>
+    </tr>`).join('');
+}
+async function deleteSiteReview(id){
+  if(!confirm('Delete this review? It will disappear from the website immediately.')) return;
+  try {
+    const res = await fetch(API_URL + '/api/reviews?id=' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Key': bizToken() || '' }
+    });
+    if(res.status === 401){ handleBizAuthFailure(); return; }
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Request failed');
+    siteReviews = siteReviews.filter(x=>x._id!==id);
+    renderSiteReviews();
+    toast('Review deleted');
+  } catch(e) {
+    toast('Could not delete review — '+e.message,'error');
   }
 }
 

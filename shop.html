@@ -68,39 +68,6 @@
     }
     .chip:hover,.chip.on { background:var(--teal); color:var(--white); border-color:var(--teal); }
 
-    /* Admin button */
-    .admin-toggle {
-      margin-bottom:12px; text-align:right;
-    }
-    .admin-toggle button {
-      background:none; border:1.5px solid var(--border); padding:7px 14px;
-      border-radius:var(--radius-sm); font-size:.78rem; font-weight:600;
-      cursor:pointer; color:var(--muted); transition:.15s;
-    }
-    .admin-toggle button:hover { border-color:var(--teal); color:var(--teal); }
-
-    /* Admin panel */
-    .admin-panel {
-      background:var(--surface); border:2px solid var(--teal-light);
-      border-radius:var(--radius); padding:24px; margin-bottom:24px;
-      display:none;
-    }
-    .admin-panel h3 {
-      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal);
-      margin-bottom:16px; font-size:1rem;
-    }
-    .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .admin-panel input, .admin-panel select, .admin-panel textarea {
-      width:100%; padding:9px 12px; border:1.5px solid var(--border);
-      border-radius:var(--radius-sm); font-size:.85rem;
-      font-family:'Inter',sans-serif; outline:none;
-    }
-    .admin-panel input:focus { border-color:var(--teal); }
-    .admin-panel label {
-      display:block; font-size:.78rem; font-weight:600;
-      color:var(--teal); margin-bottom:4px;
-    }
-    .admin-actions { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
     .buyer-details { margin-top:14px; display:flex; flex-direction:column; gap:10px; }
     .buyer-details input, .buyer-details textarea {
       width:100%; padding:9px 12px; border:1.5px solid var(--border);
@@ -143,16 +110,6 @@
       font-family:'Bricolage Grotesque',sans-serif; transition:background .18s;
     }
     .add-btn:hover { background:var(--teal-dark); }
-    .admin-card-actions {
-      position:absolute; top:8px; right:8px; gap:6px; display:none;
-    }
-    .admin-mode .admin-card-actions { display:flex; }
-    .admin-card-actions button {
-      color:#fff; border:none; border-radius:6px; padding:4px 8px;
-      font-size:.72rem; cursor:pointer;
-    }
-    .edit-prod { background:rgba(58,141,193,.85); }
-    .delete-prod { background:rgba(231,76,60,.85); }
 
     /* Cart */
     .cart-btn {
@@ -209,7 +166,7 @@
     .pd-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .pd-price { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.35rem; }
 
-    @media(max-width:640px){ .product-grid{grid-template-columns:1fr 1fr;} .admin-grid{grid-template-columns:1fr;} }
+    @media(max-width:640px){ .product-grid{grid-template-columns:1fr 1fr;} }
     @media(max-width:420px){ .product-grid{grid-template-columns:1fr;} }
   </style>
 </head>
@@ -249,52 +206,8 @@
 
 <div class="container">
 
-  <!-- ══════════════════════════════════════
-       ADMIN: HOW TO ADD PRODUCTS
-       ══════════════════════════════════════
-       Open this page, click "Manage Products (Admin)",
-       fill in the form, click "Add Product".
-       Products are saved to the database and are visible
-       to every visitor immediately.
-  -->
-
-  <div class="admin-toggle">
-    <button onclick="showAdminLogin()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</button>
-    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;margin-left:8px;"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</button>
-  </div>
-
-  <div class="admin-panel" id="adminPanel">
-    <h3><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add / Edit Product</h3>
-    <input type="hidden" id="ap-edit-id"/>
-    <div class="admin-grid">
-      <div><label>Product Name *</label><input id="ap-name" placeholder="e.g. Premium Bird Seed Mix"/></div>
-      <div><label>Category *</label>
-        <select id="ap-cat">
-          <option value="food">Food & Treats</option>
-          <option value="accessories">Accessories</option>
-          <option value="cages">Cages & Habitats</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div><label>Price (₹) *</label><input id="ap-price" type="number" min="1" placeholder="350"/></div>
-      <div><label>Emoji / Icon (optional)</label><input id="ap-emoji" placeholder="Leave blank for the default paw icon" maxlength="4"/></div>
-      <div style="grid-column:1/-1"><label>Description</label><input id="ap-desc" placeholder="Short product description"/></div>
-      <div style="grid-column:1/-1"><label>Product Image URL (optional)</label><input id="ap-img" placeholder="https://…/product.jpg  or leave blank to use icon"/></div>
-      <div style="grid-column:1/-1">
-        <label>Or Upload Product Photo (optional)</label>
-        <input type="file" id="ap-imgfile" accept="image/*" onchange="previewProductImg(event)"/>
-        <img id="ap-img-preview" style="max-width:160px;border-radius:8px;margin-top:10px;display:none;" alt="Preview"/>
-      </div>
-    </div>
-    <div class="admin-actions">
-      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Product</button>
-      <button class="btn" style="background:var(--teal-light);color:var(--teal);" onclick="clearAdminForm()">Clear</button>
-      <button class="btn" style="background:rgba(193,68,58,.12);color:#A93326;" onclick="exportProducts()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Export JSON</button>
-    </div>
-    <div style="margin-top:14px;font-size:.78rem;color:var(--muted);">
-      Products added here are stored in the database and visible to every visitor immediately.
-    </div>
-  </div>
+  <!-- Products are managed from BizTrack (admin/index.html → Website Products)
+       and appear here automatically since both read the same catalogue. -->
 
   <div class="shop-bar">
     <div class="search-wrap">
@@ -385,8 +298,7 @@ const CAT_LABELS={
 };
 const BESTSELLER_NAMES=['Sugar Glider Nectar Blend','Bird Cage (Medium)'];
 const NEW_ARRIVAL_NAMES=['Natural Bedding (5 L)'];
-let activecat='all', cart=[], adminOpen=false;
-const SAVE_ICON='<svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+let activecat='all', cart=[];
 const PAW_ICON='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-0.1em"><ellipse cx="12" cy="16.5" rx="5.4" ry="4.4"/><ellipse cx="5.4" cy="9" rx="2.1" ry="2.7"/><ellipse cx="10.1" cy="5.3" rx="2" ry="2.6"/><ellipse cx="15.4" cy="5.5" rx="2" ry="2.6"/><ellipse cx="19" cy="9.2" rx="2" ry="2.5"/></svg>';
 
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
@@ -438,8 +350,6 @@ function renderProducts(){
   const all=getAllProducts();
   const filtered=all.filter(p=>(activecat==='all'||p.cat===activecat)&&p.name.toLowerCase().includes(q));
   const grid=document.getElementById('productGrid');
-  const isAdmin=adminOpen;
-  grid.className='product-grid'+(isAdmin?' admin-mode':'');
   grid.innerHTML=filtered.length?filtered.map(p=>`
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
       ${BESTSELLER_NAMES.includes(p.name)?'<span class="badge-pill badge-best"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestseller</span>':(NEW_ARRIVAL_NAMES.includes(p.name)?'<span class="badge-pill badge-new"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New</span>':'')}
@@ -455,185 +365,9 @@ function renderProducts(){
           <button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>
         </div>
       </div>
-      <div class="admin-card-actions">
-        <button class="edit-prod" onclick="event.stopPropagation();editProduct(${escapeHtml(JSON.stringify(p.id))})"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> Edit</button>
-        <button class="delete-prod" onclick="event.stopPropagation();deleteProduct(${escapeHtml(JSON.stringify(p.id))})"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
-      </div>
     </div>
   `).join(''):'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">No products found.</p>';
   if(window.applyScrollReveal) applyScrollReveal();
-}
-
-// ── ADMIN ──
-function updateAdminLogoutVisibility(){
-  const btn = document.getElementById('adminLogoutBtn');
-  if(btn) btn.style.display = sessionStorage.getItem('hvpv_shop_admin')==='1' ? 'inline-block' : 'none';
-}
-async function showAdminLogin(){
-  if(sessionStorage.getItem('hvpv_shop_admin')==='1'){
-    adminOpen=!adminOpen;
-    document.getElementById('adminPanel').style.display=adminOpen?'block':'none';
-    renderProducts();
-    return;
-  }
-  const pw = prompt('Enter admin passcode:');
-  if(pw === null) return;
-  try {
-    const res = await fetch(API_URL + '/api/admin-login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passcode: pw })
-    });
-    if(!res.ok) throw new Error('bad passcode');
-    const { token } = await res.json();
-    sessionStorage.setItem('hvpv_shop_admin','1');
-    sessionStorage.setItem('hvpv_shop_admin_key', token);
-    adminOpen = true;
-    document.getElementById('adminPanel').style.display='block';
-    updateAdminLogoutVisibility();
-    renderProducts();
-  } catch(e) {
-    alert('Incorrect passcode. Access denied.');
-  }
-}
-function logoutAdmin(){
-  sessionStorage.removeItem('hvpv_shop_admin');
-  sessionStorage.removeItem('hvpv_shop_admin_key');
-  adminOpen = false;
-  document.getElementById('adminPanel').style.display='none';
-  updateAdminLogoutVisibility();
-  renderProducts();
-  showToast('Logged out');
-}
-// A 401 here means the session token expired or is stale (e.g. logged in
-// before a backend deploy rotated auth) — surface it clearly and force a
-// fresh login, instead of a vague "could not save/delete" that looks like
-// the action silently did nothing.
-function handleAdminAuthFailure(){
-  sessionStorage.removeItem('hvpv_shop_admin');
-  sessionStorage.removeItem('hvpv_shop_admin_key');
-  adminOpen = false;
-  document.getElementById('adminPanel').style.display='none';
-  updateAdminLogoutVisibility();
-  renderProducts();
-  alert('Your admin session expired. Please click Admin and log in again.');
-}
-function toggleAdmin(){ showAdminLogin(); }
-function previewProductImg(e){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = document.getElementById('ap-img-preview');
-    img.src = ev.target.result; img.style.display='block';
-  };
-  reader.readAsDataURL(file);
-}
-// Uploads the raw file to Vercel Blob storage and returns its public URL,
-// instead of embedding the photo as base64 in the product record.
-async function uploadImageFile(file){
-  if(file.size > 4*1024*1024) throw new Error('Photo is too large — please use one under 4MB');
-  const res = await fetch(API_URL + '/api/upload', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/octet-stream', 'X-File-Type': file.type },
-    body: file
-  });
-  if(!res.ok){
-    const err = await res.json().catch(()=>({}));
-    throw new Error(err.error || 'Image upload failed');
-  }
-  const { url } = await res.json();
-  return url;
-}
-function clearAdminForm(){
-  ['ap-name','ap-price','ap-emoji','ap-desc','ap-img','ap-edit-id','ap-imgfile'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('ap-cat').value='food';
-  const preview=document.getElementById('ap-img-preview');
-  preview.style.display='none'; preview.src='';
-  const saveBtn=document.getElementById('saveProductBtn');
-  if(saveBtn) saveBtn.innerHTML=SAVE_ICON+' Save Product';
-}
-function editProduct(id){
-  const p = apiProducts.find(x=>x.id===id); if(!p) return;
-  document.getElementById('ap-edit-id').value = p.id;
-  document.getElementById('ap-name').value = p.name;
-  document.getElementById('ap-cat').value = p.cat;
-  document.getElementById('ap-price').value = p.price;
-  document.getElementById('ap-emoji').value = p.emoji || '';
-  document.getElementById('ap-desc').value = p.desc || '';
-  document.getElementById('ap-img').value = p.imgUrl || '';
-  document.getElementById('ap-imgfile').value = '';
-  const preview=document.getElementById('ap-img-preview');
-  preview.style.display='none'; preview.src='';
-  const saveBtn=document.getElementById('saveProductBtn');
-  if(saveBtn) saveBtn.innerHTML=SAVE_ICON+' Update Product';
-  document.getElementById('adminPanel').scrollIntoView({behavior:'smooth', block:'start'});
-}
-let isSavingProduct = false;
-async function saveProduct(){
-  if(isSavingProduct) return; // guards against duplicate submissions from repeated clicks
-  const editId = document.getElementById('ap-edit-id').value.trim();
-  const name=document.getElementById('ap-name').value.trim();
-  const price=parseInt(document.getElementById('ap-price').value)||0;
-  const cat=document.getElementById('ap-cat').value;
-  const emoji=document.getElementById('ap-emoji').value.trim();
-  const desc=document.getElementById('ap-desc').value.trim();
-  if(!name||!price) return showToast('Name and Price are required');
-  const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
-  const saveBtn = document.getElementById('saveProductBtn');
-  isSavingProduct = true;
-  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = editId ? 'Updating…' : 'Saving…'; }
-  try {
-    const fileInput = document.getElementById('ap-imgfile');
-    let imgUrl = document.getElementById('ap-img').value.trim();
-    if(fileInput.files[0]){
-      if(saveBtn) saveBtn.textContent = 'Uploading photo…';
-      imgUrl = await uploadImageFile(fileInput.files[0]);
-    }
-    const url = API_URL + '/api/products' + (editId ? '?id=' + encodeURIComponent(editId) : '');
-    const res = await fetch(url, {
-      method: editId ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
-      body: JSON.stringify({ name, cat, emoji, imgUrl, desc, price })
-    });
-    if(res.status === 401) return handleAdminAuthFailure();
-    if(!res.ok) throw new Error('API error ' + res.status);
-    await loadProducts();
-    clearAdminForm(); renderProducts();
-    showToast(editId ? 'Product updated!' : 'Product saved!');
-  } catch(e) {
-    console.error('Failed to save product:', e);
-    showToast('Could not save product — please try again later');
-  } finally {
-    isSavingProduct = false;
-    if(saveBtn){
-      saveBtn.disabled = false;
-      saveBtn.innerHTML = SAVE_ICON+(document.getElementById('ap-edit-id').value.trim() ? ' Update Product' : ' Save Product');
-    }
-  }
-}
-async function deleteProduct(id){
-  const adminKey = sessionStorage.getItem('hvpv_shop_admin_key');
-  try {
-    const res = await fetch(API_URL + '/api/products?id=' + encodeURIComponent(id), {
-      method: 'DELETE',
-      headers: { 'X-Admin-Key': adminKey || '' }
-    });
-    if(res.status === 401) return handleAdminAuthFailure();
-    if(!res.ok) throw new Error('API error ' + res.status);
-  } catch(e) {
-    console.error('Failed to delete product:', e);
-    return showToast('Could not delete product — please try again later');
-  }
-  await loadProducts();
-  renderProducts(); showToast('Product deleted');
-}
-function exportProducts(){
-  const json=JSON.stringify(apiProducts,null,2);
-  navigator.clipboard.writeText(json).then(()=>showToast('JSON copied to clipboard!')).catch(()=>{
-    const ta=document.createElement('textarea'); ta.value=json;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); showToast('JSON copied!');
-  });
 }
 
 // ── CART ──
@@ -743,7 +477,6 @@ function showToast(msg){
 }
 
 buildChips();
-updateAdminLogoutVisibility();
 prefillBuyerDetails();
 loadProducts().then(renderProducts);
 </script>

@@ -336,9 +336,6 @@
 
   <div style="text-align:center;margin-bottom:16px">
     <button class="write-review-btn" onclick="toggleReviewForm()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Write a Review</button>
-    &nbsp;
-    <button onclick="showAdminReviewPanel()" style="background:none;border:none;font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline">Admin</button>
-    <button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none;background:none;border:none;font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline;margin-left:10px;"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</button>
   </div>
 
   <div class="review-form-box" id="reviewFormBox">
@@ -473,14 +470,13 @@ async function loadReviews() {
   }
 }
 
-function reviewCard(r, isAdmin) {
+function reviewCard(r) {
   return `<div class="review-card">
     ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo" onclick="openLightbox(${escapeHtml(JSON.stringify(r.img))})"/>` : ''}
     <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
     <div class="review-text">"${escapeHtml(r.text)}"</div>
     <div class="review-author">— ${escapeHtml(r.name)}</div>
     ${r.pet ? `<div class="review-pet"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.1em"><circle cx="6" cy="10" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><path d="M12 12c-3 0-6 2-6 5.5A2.5 2.5 0 0 0 8.5 20c1 0 1.5-.5 3.5-.5s2.5.5 3.5.5A2.5 2.5 0 0 0 18 17.5c0-3.5-3-5.5-6-5.5z"/></svg> ${escapeHtml(r.pet)}</div>` : ''}
-    ${isAdmin && r.id ? `<button onclick="adminDeleteReview('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:.75rem;background:rgba(193,68,58,.12);color:#A93326;border:none;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>` : ''}
   </div>`;
 }
 function renderOverallRating(all) {
@@ -518,7 +514,6 @@ async function renderReviews() {
   grid.innerHTML = '<div class="reviews-loading bird-loading"><span class="bird-spinner"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22 11l-6-1-3-6-3 6-6 1 4.5 4-1.5 6 6-3.5L19 21l-1.5-6z"/></svg></span>Loading reviews…</div>';
   const all = await loadReviews();
   const moreWrap = document.getElementById('moreReviewsWrap');
-  const isAdmin = sessionStorage.getItem('hvpv_admin_ok')==='1';
   const SHOW = 3;
   renderOverallRating(all);
   if(all.length === 0){
@@ -526,13 +521,13 @@ async function renderReviews() {
     if(moreWrap) moreWrap.innerHTML='';
     return;
   }
-  grid.innerHTML = all.slice(0,SHOW).map(r=>reviewCard(r,isAdmin)).join('');
+  grid.innerHTML = all.slice(0,SHOW).map(r=>reviewCard(r)).join('');
   if(!moreWrap){ return; }
   if(all.length <= SHOW){ moreWrap.innerHTML=''; return; }
   const rest = all.slice(SHOW);
   moreWrap.innerHTML = `
     <div id="extraReviews" style="display:none">
-      <div class="reviews-grid">${rest.map(r=>reviewCard(r,isAdmin)).join('')}</div>
+      <div class="reviews-grid">${rest.map(r=>reviewCard(r)).join('')}</div>
     </div>
     <div style="text-align:center;margin-top:12px">
       <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:none;padding:4px;font-size:.85rem;font-weight:700;color:var(--teal);text-decoration:underline;cursor:pointer">
@@ -648,71 +643,11 @@ async function submitReview() {
   }
 }
 
-async function adminDeleteReview(id) {
-  const adminKey = sessionStorage.getItem('hvpv_admin_key');
-  try {
-    const res = await fetch(API_URL + '/api/reviews?id=' + encodeURIComponent(id), {
-      method: 'DELETE',
-      headers: { 'X-Admin-Key': adminKey || '' }
-    });
-    if(res.status === 401) return handleAdminAuthFailure();
-    if(!res.ok) throw new Error('API error ' + res.status);
-  } catch(e) {
-    console.error('Failed to delete review:', e);
-    return showToast('Could not delete review — please try again later');
-  }
-  renderReviews();
-  showToast('Review deleted');
-}
-
-function updateAdminLogoutVisibility(){
-  const btn = document.getElementById('adminLogoutBtn');
-  if(btn) btn.style.display = sessionStorage.getItem('hvpv_admin_ok')==='1' ? 'inline-block' : 'none';
-}
-async function showAdminReviewPanel() {
-  const pw = prompt('Enter admin passcode:');
-  if(pw === null) return;
-  try {
-    const res = await fetch(API_URL + '/api/admin-login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passcode: pw })
-    });
-    if(!res.ok) throw new Error('bad passcode');
-    const { token } = await res.json();
-    sessionStorage.setItem('hvpv_admin_ok','1');
-    sessionStorage.setItem('hvpv_admin_key', token);
-    updateAdminLogoutVisibility();
-    renderReviews();
-    showToast('Admin mode enabled — you can now delete reviews');
-  } catch(e) {
-    showToast('Incorrect passcode');
-  }
-}
-function logoutAdmin(){
-  sessionStorage.removeItem('hvpv_admin_ok');
-  sessionStorage.removeItem('hvpv_admin_key');
-  updateAdminLogoutVisibility();
-  renderReviews();
-  showToast('Logged out');
-}
-// A 401 here means the session token expired or is stale (e.g. logged in
-// before a backend deploy rotated auth) — surface it clearly and force a
-// fresh login, instead of a vague failure that looks like the action did nothing.
-function handleAdminAuthFailure(){
-  sessionStorage.removeItem('hvpv_admin_ok');
-  sessionStorage.removeItem('hvpv_admin_key');
-  updateAdminLogoutVisibility();
-  renderReviews();
-  alert('Your admin session expired. Please click Admin and log in again.');
-}
-
 function showToast(msg) {
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-updateAdminLogoutVisibility();
 renderReviews();
 </script>
 </body>
