@@ -3040,18 +3040,19 @@ function computeBizStats(invoices){
   const totalSupplyInvested=supplies.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
   const totalInvested=totalExpensesInvested;
 
-  // Revenue = every invoice raised + direct sales recorded in the tracker
+  // Revenue = every invoice raised, and only that. Expense Tracker sales
+  // (Quick Sell) are tracked separately in the tracker's own Revenue/Profit
+  // figures and are deliberately excluded here — Total Revenue is invoices only.
   const trackerRevenue=tEntries.reduce((a,e)=>a+e.revenue,0);
-  const totalRevenueAll=totalRev+trackerRevenue;
+  const totalRevenueAll=totalRev;
 
   // Profit = Revenue - Investment. Breakeven target = total invested.
   const totalProfit=totalRevenueAll-totalInvested;
   const breakeven=totalInvested;
   const gap=totalRevenueAll-breakeven;
 
-  const monthTrackerRev=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.revenue,0);
   const monthExpenses=tEntries.filter(e=>(e.date||'').startsWith(thisMonth)).reduce((a,e)=>a+e.amount,0);
-  const monthProfit=monthRev+monthTrackerRev-monthExpenses;
+  const monthProfit=monthRev-monthExpenses;
 
   // Month-on-month series (last 12 months seen in the data)
   const monthSet=new Set();
@@ -3067,8 +3068,7 @@ function computeBizStats(invoices){
   const firstSeenMonths=Object.values(custFirstSeen);
   let cumCust=0, cumInv=0;
   const series=months.map(m=>{
-    const rev=invoices.filter(i=>(i.createdAt||'').startsWith(m)).reduce((s,i)=>s+(i.charges?.grand||0),0)
-      + tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.revenue,0);
+    const rev=invoices.filter(i=>(i.createdAt||'').startsWith(m)).reduce((s,i)=>s+(i.charges?.grand||0),0);
     const exp=tEntries.filter(e=>(e.date||'').startsWith(m)).reduce((s,e)=>s+e.amount,0);
     const profit=rev-exp;
     const newInv=invoices.filter(i=>(i.createdAt||'').startsWith(m)).length;
@@ -3084,8 +3084,8 @@ function computeBizStats(invoices){
   // P&L can show a loss (unsold stock) even while the whole business is
   // profitable overall — most revenue comes from invoices, split below.
   const byPartner=partnerBreakdown(tEntries);
-  // Ownership-weighted share of the WHOLE business profit (all invoices +
-  // tracker sales, minus all investment), proportional to how much of the
+  // Ownership-weighted share of the WHOLE business profit (all invoice
+  // revenue minus all investment), proportional to how much of the
   // total money invested each partner funded. This is the figure that
   // reconciles with the overall Total Profit/Loss shown elsewhere.
   ['Akshay','Hemanth'].forEach(p=>{
@@ -3104,11 +3104,11 @@ function computeBizStats(invoices){
 const INFO = {
   todayRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised today.',
   monthlyRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised this calendar month.',
-  totalRevenue:'<strong>Formula:</strong> (Sum of Grand Total on every invoice raised) + (revenue recorded on Expense Tracker sales). Every invoice raised is revenue received — this is the same number used on the Dashboard and in the Expense Tracker.',
-  monthProfit:'<strong>Formula:</strong> This month\'s revenue (invoices + tracker sales) − this month\'s expenses (Expense Tracker purchases only).',
+  totalRevenue:'<strong>Formula:</strong> Sum of the Grand Total on every invoice raised. Expense Tracker sales (Quick Sell) are tracked separately in the Expense Tracker\'s own Revenue figure and are not counted here.',
+  monthProfit:'<strong>Formula:</strong> This month\'s invoice revenue − this month\'s expenses (Expense Tracker purchases only).',
   pendingPayments:'<strong>Formula:</strong> Sum of the remaining balance on invoices whose payment status is "Pending".',
   totalInvested:'<strong>Formula:</strong> Σ Expense Tracker purchase amounts. Every expense recorded there is treated as money invested. Vendor Supplies are tracked separately on the Vendors page and are not included in this figure.',
-  totalProfit:'<strong>Formula:</strong> Total Revenue − Total Invested. Revenue = all invoices raised + tracker sales. Investment = Expense Tracker entries only (Vendor Supplies excluded). This exact formula is used on every tab.',
+  totalProfit:'<strong>Formula:</strong> Total Revenue − Total Invested. Revenue = all invoices raised only (Expense Tracker sales are tracked separately and excluded). Investment = Expense Tracker entries only (Vendor Supplies excluded). This exact formula is used on every tab.',
   breakeven:'<strong>Formula:</strong> Breakeven target = Total Invested. Breakeven Gap = Total Revenue − Total Invested. Positive means you\'re above breakeven (in profit); negative means you\'re still below it.',
   totalCustomers:'<strong>Formula:</strong> Count of unique customers across all invoices, identified by mobile number (or name if no mobile was recorded).',
   totalInvoices:'<strong>Formula:</strong> Count of every invoice raised, regardless of payment status.',
@@ -3176,7 +3176,7 @@ async function loadDashboard(){
   // Row 1 — Revenue + Profit cards
   renderStatCards('stats-grid',[
     {label:'Monthly Revenue',val:fmt(st.monthRev),sub:new Date().toLocaleString('default',{month:'long',year:'numeric'}),icon:ICONS.calendar,cls:'blue',icls:'blue',desc:INFO.monthlyRevenue},
-    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'All invoices + tracker sales',icon:ICONS.dollar,cls:'green',icls:'green',desc:INFO.totalRevenue},
+    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'Sum of all invoices raised',icon:ICONS.dollar,cls:'green',icls:'green',desc:INFO.totalRevenue},
     {label:"Today's Revenue",val:fmt(st.todayRev),sub:'Today',icon:ICONS.bolt,cls:'teal',icls:'teal',desc:INFO.todayRevenue},
     {label:'This Month Profit',val:(st.monthProfit>=0?'+':'')+fmt(Math.abs(st.monthProfit)),sub:new Date().toLocaleString('default',{month:'long'}),icon:ICONS.calendar,cls:st.monthProfit>=0?'green':'red',icls:st.monthProfit>=0?'green':'red',desc:INFO.monthProfit},
     {label:'Pending Payments',val:fmt(st.pendingAmt),sub:`${st.pendingList.length} invoices`,icon:ICONS.hourglass,cls:'orange',icls:'orange',desc:INFO.pendingPayments},
@@ -3288,7 +3288,7 @@ async function loadAnalytics(){
   const st=computeBizStats(invoices);
 
   renderStatCards('analytics-stats',[
-    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'All invoices + tracker sales',cls:'purple',icls:'purple',icon:ICONS.dollar,desc:INFO.totalRevenue},
+    {label:'Total Revenue',val:fmt(st.totalRevenueAll),sub:'Sum of all invoices raised',cls:'purple',icls:'purple',icon:ICONS.dollar,desc:INFO.totalRevenue},
     {label:'Total Invested',val:fmt(st.totalInvested),sub:'Expense Tracker entries only',cls:'blue',icls:'blue',icon:ICONS.wallet,desc:INFO.totalInvested},
     {label:'Total Profit / Loss',val:(st.totalProfit>=0?'+':'-')+fmt(Math.abs(st.totalProfit)),sub:'Revenue minus invested',cls:st.totalProfit>=0?'green':'red',icls:st.totalProfit>=0?'green':'red',icon:st.totalProfit>=0?ICONS.heart:ICONS.trendDown,desc:INFO.totalProfit},
     {label:'Breakeven Gap',val:(st.gap>=0?'+':'-')+fmt(Math.abs(st.gap)),sub:st.gap>=0?'Above breakeven':'Below breakeven',cls:st.gap>=0?'green':'red',icls:st.gap>=0?'green':'red',icon:st.gap>=0?ICONS.check:ICONS.trendDown,desc:INFO.breakeven},
