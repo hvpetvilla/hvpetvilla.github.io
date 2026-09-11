@@ -1496,8 +1496,8 @@ select.form-control{cursor:pointer}
           <input class="form-control" id="p-mrp" type="number" min="0" placeholder="0">
         </div>
         <div class="form-group">
-          <label class="form-label">Selling Price (₹) <span>*</span></label>
-          <input class="form-control" id="p-price" type="number" min="0" placeholder="0">
+          <label class="form-label">Selling Price (₹)</label>
+          <input class="form-control" id="p-price" type="number" min="0" placeholder="Leave blank for price on enquiry">
         </div>
         <div class="form-group">
           <label class="form-label">Cost Price (₹)</label>
@@ -4503,7 +4503,6 @@ async function saveProduct(){
   const name = el('p-name').value.trim();
   const price = parseFloat(el('p-price').value)||0;
   if(!name){ toast('Product name is required','error'); return; }
-  if(!price){ toast('Selling price is required','error'); return; }
   const editing = editingProductId!==null ? products.find(x=>x._id===editingProductId) : null;
   const product = {
     name, category: el('p-category').value, breed: el('p-breed').value.trim(),

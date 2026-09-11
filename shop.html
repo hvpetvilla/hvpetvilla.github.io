@@ -358,13 +358,15 @@ function statusBadgeHTML(avail){
 // The action shown in a card's footer (and the detail modal) depends on
 // Availability, not just on whether it's a pet or a shop item: Sold items
 // get no action, Out of Stock / Display get a WhatsApp button instead of
-// Add to Cart / Enquire, and only Available shop items show a price.
+// Add to Cart / Enquire, and anything with no price set (BizTrack allows
+// leaving price blank) gets an Enquire button instead of Add to Cart too,
+// since there's nothing to check out with.
 function actionHTML(p){
   const avail=p.avail||'Available';
   if(avail==='Sold') return `<span style="font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.85rem">Sold</span>`;
   if(avail==='Out of Stock - Raise Order Request') return waButtonHTML(orderRequestUrl(p), 'Raise Order Request');
   if(avail==='Display') return waButtonHTML(displayEnquiryUrl(p), 'Enquire');
-  if(p.section==='pets') return waButtonHTML(petEnquiryUrl(p), 'Enquire');
+  if(p.section==='pets'||!p.price) return waButtonHTML(petEnquiryUrl(p), 'Enquire');
   return `<button class="add-btn" onclick="event.stopPropagation();addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add</button>`;
 }
 
@@ -426,7 +428,7 @@ function badgeHTML(name){
 function shopCardHTML(p){
   const photo=p.photos&&p.photos[0];
   const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-weight:600;font-size:.85rem;margin-right:6px">₹${p.mrp}</span>`:'';
-  const showPrice=p.avail!=='Sold';
+  const showPrice=p.avail!=='Sold'&&!!p.price;
   return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
       ${statusBadgeHTML(p.avail)||badgeHTML(p.name)}
@@ -531,7 +533,7 @@ function detailActionHTML(p){
   if(avail==='Sold') return `<div style="width:100%;text-align:center;font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.95rem;padding:10px 0">Sold</div>`;
   if(avail==='Out of Stock - Raise Order Request') return fullWidthWAButton(orderRequestUrl(p),'Raise Order Request');
   if(avail==='Display') return fullWidthWAButton(displayEnquiryUrl(p),'Enquire on WhatsApp');
-  if(p.section==='pets') return fullWidthWAButton(petEnquiryUrl(p),'Enquire on WhatsApp');
+  if(p.section==='pets'||!p.price) return fullWidthWAButton(petEnquiryUrl(p),'Enquire on WhatsApp');
   return `<div class="pd-price">₹${p.price}</div><button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`;
 }
 
