@@ -10,30 +10,35 @@
     gtag('config', 'G-RCG5NW8291');
   </script>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HV Petvilla — Pet Boarding, Shop & Community · Hyderabad</title>
-  <meta name="description" content="HV Petvilla — Hyderabad's trusted pet boarding for hamsters, rabbits, sugar gliders & more. Visit our pet shop or join CommuniTree, our pet parent community."/>
-  <meta name="keywords" content="pet boarding Hyderabad, exotic pets Hyderabad, pet shop Hyderabad, hamster boarding, rabbit boarding, sugar glider, HV Petvilla"/>
-  <meta property="og:title" content="HV Petvilla — Pet Boarding & Shop, Hyderabad"/>
-  <meta property="og:description" content="Hyderabad's trusted pet boarding for hamsters, rabbits, sugar gliders & more. Visit our pet shop or join CommuniTree, our pet parent community."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>HV Petvilla — Boarding for All Legal Pets, Pet Shop & Community · Hyderabad</title>
+  <meta name="description" content="HV Petvilla is Hyderabad's trusted pet care hub — boarding for all legal pets, from dogs and cats to birds, rabbits, reptiles, hamsters and sugar gliders, plus a curated pet shop and CommuniTree, our pet parent community."/>
+  <meta name="keywords" content="pet boarding Hyderabad, dog boarding Hyderabad, cat boarding Hyderabad, exotic pet boarding, pet shop Hyderabad, rabbit boarding, bird boarding, sugar glider, HV Petvilla"/>
+  <meta property="og:title" content="HV Petvilla — Boarding for All Legal Pets, Hyderabad"/>
+  <meta property="og:description" content="Boarding for all legal pets — dogs, cats, birds, rabbits, reptiles and more — plus a curated pet shop and Hyderabad's pet parent community."/>
   <meta property="og:image" content="https://hvpetvilla.in/images/logo.jpg"/>
+  <meta name="theme-color" content="#1B3A2D"/>
   <link rel="canonical" href="https://hvpetvilla.in/"/>
   <link rel="icon" type="image/jpeg" href="images/logo-192.jpg"/>
   <link rel="apple-touch-icon" href="images/logo-192.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"/>
   <link rel="stylesheet" href="style.css"/>
+  <script>document.documentElement.classList.add('js')</script>
   <script type="application/ld+json" id="business-ldjson">
   {
     "@context": "https://schema.org",
     "@type": "PetStore",
     "@id": "https://hvpetvilla.in/#business",
     "name": "HV Petvilla",
+    "description": "Boarding for all legal pets, a curated pet shop and a pet parent community in Hyderabad.",
     "image": "https://hvpetvilla.in/images/logo.jpg",
     "url": "https://hvpetvilla.in/",
     "telephone": "+91 94929 19527",
     "email": "hv.petvilla@gmail.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Nizampet",
       "addressLocality": "Hyderabad",
       "addressRegion": "Telangana",
       "postalCode": "500118",
@@ -52,401 +57,533 @@
   }
   </script>
   <style>
-    .home-hero {
-      background: linear-gradient(135deg, var(--teal-dark) 0%, #5C3B22 45%, var(--teal) 100%);
-      color: var(--white); padding: 64px 20px 80px;
-      text-align: center; position: relative; overflow: hidden;
+    /* ── HERO ── */
+    .hero-home {
+      position: relative; isolation: isolate; overflow: hidden;
+      min-height: 100vh; min-height: 100svh;
+      display: flex; align-items: flex-end;
+      padding: calc(var(--nav-h) + 48px) 0 clamp(64px, 11vh, 128px);
     }
-    .home-hero::before {
-      content:''; position:absolute; inset:0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    .hero-media {
+      position: absolute; inset: 0; z-index: -2;
+      background-position: 60% 88%;   /* keep the sleeping dog's face in frame */
+      transform-origin: 72% 70%;
+      animation: ken-burns 32s ease-in-out infinite alternate;
+      will-change: transform;
     }
-    #hero-fx { position:absolute; inset:0; z-index:0; width:100%; height:100%; }
-    /* Hero Logo */
-    .hero-logo-wrap {
-      position: relative; z-index:1;
-      display: flex; justify-content: center; margin-bottom: 22px;
+    @keyframes ken-burns {
+      from { transform: scale(1); }
+      to   { transform: scale(1.14) translate(-1.5%, -1%); }
     }
-    .hero-logo {
-      width: 130px; height: 130px;
-      border-radius: 22px; object-fit: cover;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-      border: 4px solid rgba(255,255,255,0.35);
+    .hero-shade {
+      position: absolute; inset: 0; z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(12,26,20,.55) 0%, rgba(12,26,20,0) 22%),
+        linear-gradient(90deg, rgba(12,26,20,.6) 0%, rgba(12,26,20,.25) 45%, rgba(12,26,20,0) 70%),
+        linear-gradient(0deg, rgba(12,26,20,.88) 0%, rgba(12,26,20,.5) 38%, rgba(12,26,20,.08) 72%);
     }
-    .home-hero .badge {
-      position:relative; z-index:1;
-      display: inline-block;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 30px; padding: 5px 18px;
-      font-size: 0.8rem; font-weight: 700;
-      letter-spacing: 0.06em; margin-bottom: 16px;
+    @media (max-width: 700px) { .hero-media { background-position: 72% 80%; } }
+    .hero-home h1 { max-width: 13.5ch; }
+    .hero-sub {
+      margin: 28px 0 40px; font-size: clamp(1.02rem, .5vw + .9rem, 1.2rem);
+      color: rgba(251,247,241,.86); letter-spacing: .01em; max-width: 60ch;
     }
-    .home-hero h1 {
-      position:relative; z-index:1;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: clamp(2.2rem, 7vw, 3.8rem);
-      font-weight: 900; line-height: 1.08; margin-bottom: 14px;
-    }
-    .home-hero h1 .hi { color: var(--green); }
-    .home-hero p {
-      position:relative; z-index:1;
-      font-size: 1.05rem; opacity: 0.85;
-      max-width: 480px; margin: 0 auto 36px;
-    }
-    .hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+    .hero-sub .dot { color: var(--coral); padding: 0 .45em; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
 
-    /* Tiles */
-    .tiles {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-      max-width: 860px; margin: -44px auto 0;
-      padding: 0 20px; position: relative; z-index: 2;
-    }
-    .tile {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 30px 22px; border: 1.5px solid var(--border);
-      box-shadow: var(--shadow-md); text-decoration: none; color: inherit;
-      display: block; transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
-      position: relative; overflow: hidden;
-    }
-    .tile::after {
-      content:''; position:absolute; top:0; left:0; right:0; height:4px;
-      background: linear-gradient(90deg, var(--teal), var(--green));
-    }
-    .tile:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--teal); }
-    .tile-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
-    .tile h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:1.1rem; color:var(--teal); margin-bottom:7px; }
-    .tile p { font-size:0.85rem; color:var(--muted); line-height:1.55; }
-    .tile-cta { display:inline-flex; align-items:center; gap:4px; margin-top:14px; font-size:0.82rem; font-weight:700; color:var(--green); }
+    /* One block at a time: headline, then +300ms subhead, then +300ms CTAs */
+    .hero-in { opacity: 0; animation: hero-in 1.1s var(--ease) forwards; }
+    .hero-in-1 { animation-delay: .25s; }
+    .hero-in-2 { animation-delay: .55s; }
+    .hero-in-3 { animation-delay: .85s; }
+    @keyframes hero-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
-    /* Why */
-    .why { max-width: 860px; margin: 52px auto 0; padding: 0 20px; }
-    .why-title {
-      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.45rem;
-      color:var(--teal); text-align:center; margin-bottom:24px;
+    .hero-scroll {
+      position: absolute; right: var(--gutter); top: 50%; translate: 0 -50%;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      color: rgba(251,247,241,.7); text-decoration: none;
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; writing-mode: vertical-rl;
     }
-    .why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .why-card {
-      background:var(--surface); border-radius:var(--radius);
-      border:1.5px solid var(--border); padding:22px 18px; text-align:center;
-    }
-    .why-card .icon { font-size:1.8rem; margin-bottom:8px; color:var(--teal); display:flex; justify-content:center; }
-    .why-card .icon svg { width:1em; height:1em; }
-    .why-card h3 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:0.95rem; color:var(--teal); margin-bottom:6px; }
-    .why-card p { font-size:0.82rem; color:var(--muted); line-height:1.5; }
+    .hero-scroll::after { content: ''; width: 1px; height: 96px; background: linear-gradient(rgba(251,247,241,.7), transparent); }
 
-    /* Reviews */
-    .reviews-section { max-width:860px; margin:48px auto; padding:0 20px 40px; }
-    .reviews-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.45rem; color:var(--teal); text-align:center; margin-bottom:8px; }
-    .reviews-sub { text-align:center; color:var(--muted); font-size:0.88rem; margin-bottom:28px; }
-    .overall-rating { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:28px; flex-wrap:wrap; }
-    .overall-rating .score { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:2.1rem; color:var(--teal); line-height:1; }
-    .overall-rating .stars { color:var(--green); font-size:1.3rem; letter-spacing:1px; }
-    .overall-rating .count { font-size:0.82rem; color:var(--muted); }
-    .reviews-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:28px; }
-    .reviews-loading { grid-column:1/-1; }
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 2.2fr; gap: clamp(32px, 6vw, 96px); }
+    .about-since { font-size: .95rem; color: var(--muted); max-width: 22ch; }
+    .about-text {
+      font-family: var(--font-display); color: var(--forest);
+      font-size: clamp(1.45rem, 1.3vw + 1rem, 2.2rem); line-height: 1.38; letter-spacing: -.01em;
+    }
+    .about-text em { color: var(--coral-ink); }
+    .species {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; list-style: none;
+    }
+    .species li {
+      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line);
+      font-size: .9rem; color: var(--forest); background: rgba(251,247,241,.6);
+    }
+    .species li.more { border-style: dashed; color: var(--muted); }
+
+    /* Species mosaic — one tall photo per kind of pet, gently staggered */
+    .pet-mosaic {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(12px, 1.6vw, 24px);
+      margin-top: clamp(56px, 8vw, 104px); padding-bottom: 40px;
+    }
+    .pet-mosaic figure { position: relative; aspect-ratio: 3 / 4; border-radius: 20px; overflow: hidden; background: var(--sand-2); }
+    .pet-mosaic figure:nth-child(even) { translate: 0 40px; }
+    .pet-mosaic img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+    .pet-mosaic figure:hover img { transform: scale(1.05); }
+    .pet-mosaic figcaption {
+      position: absolute; inset: auto 0 0 0; padding: 40px 18px 16px;
+      background: linear-gradient(0deg, rgba(12,26,20,.7), transparent);
+      color: var(--cream); font-family: var(--font-display); font-size: 1.3rem;
+    }
+    @media (max-width: 700px) {
+      .pet-mosaic {
+        grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 58%;
+        overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+        margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 8px;
+      }
+      .pet-mosaic::-webkit-scrollbar { display: none; }
+      .pet-mosaic figure { scroll-snap-align: start; }
+      .pet-mosaic figure:nth-child(even) { translate: none; }
+    }
+
+    /* ── SERVICES ── */
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: clamp(48px, 6vw, 80px); }
+    .section-head .h2 { max-width: 16ch; }
+    .svc-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 72px) clamp(28px, 4vw, 64px);
+      padding-bottom: 104px;
+    }
+    .svc-cell:nth-child(even) { translate: 0 104px; }   /* editorial stagger */
+    .svc {
+      display: block; text-decoration: none; color: inherit;
+      transition: transform .5s var(--ease);
+    }
+    .svc-art {
+      border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 3;
+      transition: box-shadow .5s ease;
+    }
+    .svc-art svg { width: 100%; height: 100%; }
+    .svc-art img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+    .svc:hover .svc-art img { transform: scale(1.04); }   /* slow drift inside the frame; the card itself only lifts */
+    .svc--boarding .svc-art { background: var(--forest); }
+    .svc--shop .svc-art { background: #F4CDB8; }
+    .svc--community .svc-art { background: var(--sand-2); }
+    .svc--contact .svc-art { background: var(--cream); box-shadow: inset 0 0 0 1px var(--line); }
+    .svc-body { padding-top: 26px; max-width: 46ch; }
+    .svc-num { font-size: .78rem; font-weight: 600; letter-spacing: .18em; color: var(--coral-ink); }
+    .svc h3 { font-size: clamp(1.7rem, 1vw + 1.3rem, 2.2rem); margin: 8px 0 12px; }
+    .svc-body > p { color: var(--muted); }
+    .svc-detail {
+      display: grid; grid-template-rows: 0fr; opacity: 0;
+      transition: grid-template-rows .45s var(--ease), opacity .35s ease, margin .45s var(--ease);
+    }
+    .svc-detail > span { overflow: hidden; color: var(--forest); font-weight: 500; }
+    .svc-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-weight: 600; color: var(--forest); min-height: 44px; }
+    .svc-link .arrow { transition: transform .35s var(--ease); }
+
+    .svc:hover, .svc:focus-visible { transform: translateY(-8px); }
+    .svc:hover .svc-art, .svc:focus-visible .svc-art { box-shadow: var(--shadow-lg); }
+    .svc--contact:hover .svc-art { box-shadow: inset 0 0 0 1px var(--line), var(--shadow-lg); }
+    .svc:hover .svc-detail, .svc:focus-visible .svc-detail { grid-template-rows: 1fr; opacity: 1; margin-top: 10px; }
+    .svc:hover .svc-link .arrow { transform: translateX(6px); }
+    .svc .dots circle { transition: transform .4s var(--ease); transform-box: fill-box; transform-origin: center; }
+    .svc:hover .dots circle:nth-child(1) { transform: translateY(-5px); }
+    .svc:hover .dots circle:nth-child(2) { transform: translateY(-5px); transition-delay: .08s; }
+    .svc:hover .dots circle:nth-child(3) { transform: translateY(-5px); transition-delay: .16s; }
+    /* No hover on touch screens — show the detail line outright */
+    @media (hover: none) {
+      .svc-detail { grid-template-rows: 1fr; opacity: 1; margin-top: 10px; }
+    }
+
+    /* ── WHY US ── */
+    .why { background: var(--forest); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: clamp(48px, 8vw, 128px); align-items: start; }
+    .why-intro { position: sticky; top: calc(var(--nav-h) + 48px); }
+    .why-intro .h2 { margin-bottom: 24px; }
+    .why-intro .lede { margin-bottom: 36px; }
+    .why-list { list-style: none; }
+    .why-list li {
+      display: grid; grid-template-columns: 64px 1fr; gap: 20px;
+      padding: 32px 0; border-top: 1px solid rgba(251,247,241,.14);
+    }
+    .why-list li:last-child { border-bottom: 1px solid rgba(251,247,241,.14); }
+    .why-n { font-family: var(--font-display); font-style: italic; font-size: 1.4rem; color: #F4B08F; line-height: 1.3; }
+    .why-list h3 { font-size: 1.5rem; margin-bottom: 8px; }
+    .why-list p { color: rgba(251,247,241,.72); }
+
+    /* ── REVIEWS ── */
+    .reviews-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 48px; }
+    .reviews-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .overall-rating { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .overall-rating .score { font-family: var(--font-display); font-size: 3rem; line-height: 1; color: var(--forest); }
+    .overall-rating .stars { color: var(--coral); font-size: 1.1rem; letter-spacing: 2px; }
+    .overall-rating .count { font-size: .9rem; color: var(--muted); }
+
+    .reviews-strip {
+      overflow: hidden; padding: 8px 0 32px;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+              mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+    }
+    .reviews-grid { display: flex; width: max-content; padding-inline: var(--gutter); }
+    .reviews-grid.is-marquee { padding-inline: 0; animation: marquee var(--marquee-duration, 60s) linear infinite; }
+    .reviews-strip:hover .is-marquee, .reviews-strip:focus-within .is-marquee { animation-play-state: paused; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    /* Without the marquee (few reviews / reduced motion) it's a swipeable row */
+    .reviews-strip.static { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-mask-image: none; mask-image: none; }
+    .reviews-strip.static .review-card { scroll-snap-align: start; }
+    .reviews-loading, .reviews-empty { width: calc(100vw - 2 * var(--gutter)); max-width: var(--wrap); }
+    .reviews-empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
     .review-card {
-      background:var(--surface); border-radius:var(--radius);
-      border:1.5px solid var(--border); padding:18px; position:relative;
-      box-shadow: var(--shadow-sm);
+      flex: 0 0 auto; width: clamp(280px, 30vw, 380px); margin-right: 24px;
+      display: flex; flex-direction: column;
+      background: var(--cream); border-radius: 20px; padding: 28px;
+      border: 1px solid var(--line);
     }
-    .review-stars { color:var(--green); font-size:1.1rem; margin-bottom:6px; }
-    .review-text { font-size:0.85rem; color:var(--ink); line-height:1.55; margin-bottom:10px; font-style:italic; }
-    .review-author { font-size:0.8rem; font-weight:700; color:var(--teal); }
-    .review-pet { font-size:0.75rem; color:var(--muted); }
-    .review-img { width:100%; border-radius:8px; object-fit:cover; max-height:120px; margin-bottom:10px; cursor:zoom-in; transition:opacity .15s; }
-    .review-img:hover { opacity:.85; }
+    .review-stars { color: var(--coral); font-size: 1rem; letter-spacing: 2px; margin-bottom: 14px; }
+    .review-text { font-family: var(--font-display); font-style: italic; font-size: 1.12rem; line-height: 1.5; color: var(--forest); margin-bottom: 20px; flex: 1; }
+    .review-author { font-size: .92rem; font-weight: 600; color: var(--charcoal); }
+    .review-pet { font-size: .85rem; color: var(--muted); }
+    .review-pet svg { display: none; }
+    .review-img { width: 100%; height: 160px; border-radius: 12px; object-fit: cover; margin-bottom: 18px; cursor: zoom-in; }
 
     /* Review photo lightbox */
     .lightbox-overlay {
-      display:none; position:fixed; inset:0; background:rgba(0,0,0,.85);
-      z-index:900; align-items:center; justify-content:center; padding:24px; cursor:zoom-out;
+      display: none; position: fixed; inset: 0; background: rgba(12,26,20,.9);
+      z-index: 900; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;
     }
-    .lightbox-overlay.open { display:flex; }
-    .lightbox-overlay img { max-width:92vw; max-height:92vh; border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,.5); }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-overlay img { max-width: 92vw; max-height: 88vh; border-radius: 14px; }
     .lightbox-close {
-      position:fixed; top:18px; right:24px; z-index:901;
-      background:none; border:none; color:#fff; font-size:2rem; line-height:1;
-      cursor:pointer; opacity:.85;
+      position: fixed; top: 16px; right: 16px; z-index: 901;
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      background: rgba(251,247,241,.12); border: none; border-radius: 50%; color: #fff; font-size: 1.4rem; cursor: pointer;
     }
-    .lightbox-close:hover { opacity:1; }
 
-    /* Write review */
-    .write-review-btn {
-      display:block; width:fit-content; margin:0 auto 20px;
-      padding:12px 28px; border-radius:var(--radius-sm);
-      background:linear-gradient(135deg,var(--teal),var(--green));
-      color:var(--white); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
-      font-size:0.95rem; cursor:pointer; border:none;
-      box-shadow:0 4px 14px rgba(138,90,52,.3); transition:all .18s;
-    }
-    .write-review-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(138,90,52,.4); }
-    .review-form-box {
-      background:var(--surface); border:1.5px solid var(--border);
-      border-radius:var(--radius); padding:24px; display:none; margin-top:16px;
-    }
-    .review-form-box h3 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); margin-bottom:18px; }
-    .star-picker { display:flex; gap:6px; margin-bottom:16px; }
+    /* Write a review */
+    .review-write { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 24px; }
+    .write-review-btn { }
+    .write-review-btn svg { display: none; }
+    .review-form-box { width: 100%; max-width: 640px; display: none; margin-top: 8px; }
+    .review-form-box h3 { font-size: 1.8rem; margin-bottom: 24px; }
+    .review-form-box h3 svg { display: none; }
+    .star-picker { display: flex; gap: 4px; }
     .star-pick {
-      font-size:1.6rem; cursor:pointer; color:var(--border); transition:color .12s;
-      background:none; border:none; padding:0;
+      width: 48px; height: 48px; font-size: 1.7rem; cursor: pointer; color: var(--border);
+      background: none; border: none; transition: color .15s, transform .2s var(--ease);
     }
-    .star-pick.lit { color:var(--green); }
+    .star-pick:hover { transform: scale(1.12); }
+    .star-pick.lit { color: var(--coral); }
     .upload-area {
-      border:2px dashed var(--border); border-radius:var(--radius-sm);
-      padding:22px; text-align:center; cursor:pointer; transition:border-color .18s;
+      border: 1px dashed #C9BBA3; border-radius: var(--radius-sm); background: #FFFDF9;
+      padding: 28px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
     }
-    .upload-area:hover { border-color:var(--teal); }
-    .upload-area input { display:none; }
+    .upload-area:hover { border-color: var(--forest); background: #fff; }
+    .upload-area input { display: none; }
+    .upload-area svg { margin: 0 auto 8px; color: var(--forest); }
 
-    @media(max-width:700px){
-      .tiles { grid-template-columns:1fr; margin-top:-24px; }
-      .why-grid { grid-template-columns:1fr 1fr; }
-      .hero-logo { width:100px; height:100px; }
+    /* ── CLOSING CTA ── */
+    .cta-band { background: var(--sand-2); }
+    .cta-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .cta-inner .h2 { max-width: 14ch; }
+
+    @media (max-width: 860px) {
+      .about-grid, .why-grid { grid-template-columns: 1fr; }
+      .why-intro { position: static; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      .reviews-meta { align-items: flex-start; }
     }
-    @media(max-width:460px){
-      .why-grid { grid-template-columns:1fr; }
+    @media (max-width: 700px) {
+      .svc-grid { grid-template-columns: 1fr; padding-bottom: 0; }
+      .svc-cell:nth-child(even) { translate: none; }
+      .hero-scroll { display: none; }
+      .hero-btns .btn { flex: 1 1 100%; }
+      .why-list li { grid-template-columns: 44px 1fr; gap: 12px; }
+      .review-card { width: 82vw; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-media { animation: none; }
+      .hero-in { opacity: 1; animation: none; }
     }
   </style>
 </head>
 <body>
 
-<nav class="nav" id="mainNav">
-  <a href="index.html" class="nav-logo">
-    <img src="images/logo-192.jpg" alt="HV Petvilla Logo" class="nav-logo-img"/>
-    <div class="logo-text">HV<span class="accent">Petvilla</span></div>
+<nav class="nav nav--over" id="mainNav" aria-label="Main">
+  <a href="index.html" class="nav-logo" aria-label="HV Petvilla home">
+    <img src="images/logo-192.jpg" alt="" class="nav-logo-img" width="42" height="42"/>
+    <span class="nav-wordmark">HV <em>Petvilla</em></span>
   </a>
   <div class="nav-links">
-    <a href="boarding.html" id="nl-boarding"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
-    <a href="shop.html" id="nl-shop"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
-    <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
-    <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
-    <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
+    <a href="boarding.html" id="nl-boarding">Boarding</a>
+    <a href="shop.html" id="nl-shop">Shop</a>
+    <a href="communiTree.html">CommuniTree</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
   </div>
-  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+  <a href="boarding.html" class="nav-cta">Book a stay</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
     <span></span><span></span><span></span>
   </button>
 </nav>
 <div class="nav-mobile" id="navMobile">
-  <a href="boarding.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
-  <a href="shop.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
-  <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
-  <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
-  <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
-</div>
-
-<div class="home-hero">
-  <canvas id="hero-fx"></canvas>
-  <div class="hero-logo-wrap">
-    <img src="images/logo-192.jpg" alt="HV Petvilla" class="hero-logo"/>
-  </div>
-  <div class="badge"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-0.1em"><circle cx="6" cy="10" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><path d="M12 12c-3 0-6 2-6 5.5A2.5 2.5 0 0 0 8.5 20c1 0 1.5-.5 3.5-.5s2.5.5 3.5.5A2.5 2.5 0 0 0 18 17.5c0-3.5-3-5.5-6-5.5z"/></svg> Hyderabad's Favourite Pet Hub</div>
-  <h1 class="word-reveal-init">A Trusted Pet Staycation<br><span class="hi"> While You’re on Vacation.</span></h1>
-  <p>Trusted boarding for exotic & small pets, a curated pet shop, and a warm community for Hyderabad pet parents.</p>
-  <div class="hero-btns">
-    <a href="boarding.html" class="btn btn-green"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Book a Boarding Slot</a>
-    <a href="shop.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.6);color:#fff;"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Browse Pet Shop</a>
+  <a href="boarding.html">Boarding</a>
+  <a href="shop.html">Shop</a>
+  <a href="communiTree.html">CommuniTree</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+  <div class="nav-mobile-foot">
+    <span>Hyderabad, Telangana</span>
+    <a href="https://wa.me/919492919527" target="_blank" rel="noopener">WhatsApp · +91 94929 19527</a>
+    <a href="https://www.instagram.com/hv.petvilla" target="_blank" rel="noopener">Instagram · @hv.petvilla</a>
   </div>
 </div>
 
-<div class="tiles">
-  <a href="boarding.html" class="tile reveal reveal-1">
-    <span class="tile-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg></span>
-    <h2>Pet Boarding</h2>
-    <p>Safe, loving care for birds, rabbits, hamsters, mice, rats, sugar gliders and more while you're away.</p>
-    <span class="tile-cta">Book a slot →</span>
-  </a>
-  <a href="shop.html" class="tile reveal reveal-2">
-    <span class="tile-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
-    <h2>Pet Shop</h2>
-    <p>Quality food, accessories and supplies for your exotic & small pets. Order via WhatsApp checkout.</p>
-    <span class="tile-cta">Shop now →</span>
-  </a>
-  <a href="communiTree.html" class="tile reveal reveal-3">
-    <span class="tile-icon"><svg viewBox="0 0 24 24" width="1em" height="1em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg></span>
-    <h2>CommuniTree</h2>
-    <p>Join our WhatsApp & Instagram community of Hyderabad pet parents. Share, learn and grow together.</p>
-    <span class="tile-cta">Join community →</span>
-  </a>
-  <a href="contact.html" class="tile reveal reveal-4">
-    <span class="tile-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg></span>
-    <h2>Contact Us</h2>
-    <p>Questions about boarding, products, or anything else? We're always happy to help on WhatsApp.</p>
-    <span class="tile-cta">Get in touch →</span>
-  </a>
-</div>
-
-<p class="page-intro">HV Petvilla is a Hyderabad-based pet care business run out of Nizampet, offering three things under one roof: overnight boarding for exotic and small pets such as birds, rabbits, hamsters, mice, rats and sugar gliders, a curated pet shop for their food and supplies, and CommuniTree, a WhatsApp and Instagram community where local pet parents share advice and support each other. Whether you're travelling and need a trustworthy place to board your pet, restocking supplies, or just looking to connect with other exotic-pet owners nearby, we're a short trip away in Nizampet, Hyderabad, Telangana.</p>
-
-<!-- WHY SECTION -->
-<div class="why">
-  <div class="why-title">Why pet parents trust HV Petvilla</div>
-  <div class="why-grid">
-    <div class="why-card reveal reveal-1">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg></div>
-      <h3>Daily Photo Updates</h3>
-      <p>We send WhatsApp photos and videos so you always know your pet is happy and safe.</p>
-    </div>
-    <div class="why-card reveal reveal-2">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h.01"/><path d="M3.4 18.4c-.8-.8-.8-2 0-2.8l9.2-9.2a4 4 0 0 1 2.8-1.2h4.4a2 2 0 0 1 2 2v4.4a4 4 0 0 1-1.2 2.8l-9.2 9.2c-.8.8-2 .8-2.8 0z"/><path d="M7 21l-4-4"/><path d="M11 17l-4-4"/></svg></div>
-      <h3>Exotic Pet Specialists</h3>
-      <p>Years of hands-on experience caring for birds, sugar gliders, reptiles, hamsters and other exotic and small pets that others won't handle.</p>
-    </div>
-    <div class="why-card reveal reveal-3">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41L13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
-      <h3>Affordable Rates</h3>
-      <p>Transparent, fair pricing with no hidden charges — quality care that doesn't break the bank.</p>
-    </div>
-    <div class="why-card reveal reveal-4">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <h3>Home Environment</h3>
-      <p>Pets stay in a warm, homely setting — not a cage in a clinic. Comfortable and stress-free.</p>
-    </div>
-    <div class="why-card reveal reveal-5">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div>
-      <h3>Species-Specific Care</h3>
-      <p>Each pet gets the right diet, temperature, and attention suited to their specific species and needs.</p>
-    </div>
-    <div class="why-card reveal reveal-6">
-      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <h3>Trusted by Hyderabad</h3>
-      <p>Dozens of happy pet parents across the city and counting. Read their stories below!</p>
+<!-- HERO — photo: images/hero.jpg (≈2400px wide, see images/CREDITS.txt).
+     Replace it with your own photo any time, keeping the filename. -->
+<header class="hero-home on-dark">
+  <div class="hero-media photo" style="--img:url('images/hero.jpg')" aria-hidden="true"></div>
+  <div class="hero-shade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow light hero-in hero-in-1">HV Petvilla · Hyderabad</p>
+    <h1 class="display hero-in hero-in-1">A Trusted Home for Every Pet, <em>While You're Away.</em></h1>
+    <p class="hero-sub hero-in hero-in-2">Boarding for all legal pets<span class="dot">·</span>Curated pet shop<span class="dot">·</span>Hyderabad's pet parent community</p>
+    <div class="hero-btns hero-in hero-in-3">
+      <a href="boarding.html" class="btn btn-primary">Book a Boarding Slot <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="shop.html" class="btn btn-ghost">Browse Pet Shop</a>
     </div>
   </div>
-</div>
+  <a href="#about" class="hero-scroll">Scroll</a>
+</header>
 
-<!-- REVIEWS SECTION -->
-<div class="reviews-section">
-  <div class="reviews-title"><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="currentColor" style="vertical-align:-0.05em"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> What Pet Parents Say</div>
-  <div class="reviews-sub">Real reviews from our community of happy pet parents</div>
-  <div style="text-align:center;margin-bottom:8px">
-    <a href="https://share.google/JfBABXKOrvQlqPZaZ" target="_blank" rel="noopener" style="font-size:0.82rem;font-weight:700;color:var(--teal);text-decoration:underline">See all our reviews on Google →</a>
+<main>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="wrap about-grid">
+    <div>
+      <p class="eyebrow">About us</p>
+      <p class="about-since">Caring for Hyderabad's pets, and the people who love them, since 2021.</p>
+    </div>
+    <div>
+      <p class="about-text reveal">HV Petvilla is Hyderabad's trusted pet care hub. We offer boarding for <em>all legal pets</em> — from dogs and cats to birds, rabbits, reptiles, hamsters, sugar gliders and more. Alongside boarding, we run a curated pet shop and CommuniTree, a warm community of Hyderabad pet parents on WhatsApp and Instagram.</p>
+      <ul class="species reveal reveal-2" aria-label="Pets we board">
+        <li>Dogs</li><li>Cats</li><li>Birds</li><li>Rabbits</li><li>Reptiles</li><li>Hamsters</li><li>Sugar gliders</li><li>Guinea pigs</li><li>Tortoises</li><li class="more">+ every other legal pet</li>
+      </ul>
+    </div>
   </div>
-  <div class="overall-rating" id="overallRating" style="display:none"></div>
-  <div class="reviews-grid" id="reviewsGrid">
-    <div class="reviews-loading bird-loading"><span class="bird-spinner"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22 11l-6-1-3-6-3 6-6 1 4.5 4-1.5 6 6-3.5L19 21l-1.5-6z"/></svg></span>Loading reviews…</div>
+  <div class="wrap">
+    <div class="pet-mosaic reveal">
+      <figure><img src="images/pet-dog.jpg" alt="A golden retriever rolling happily in the grass" loading="lazy" width="800" height="1067"/><figcaption>Dogs</figcaption></figure>
+      <figure><img src="images/pet-cat.jpg" alt="A ginger cat asleep on a soft rug by a window" loading="lazy" width="800" height="1067"/><figcaption>Cats</figcaption></figure>
+      <figure><img src="images/pet-bird.jpg" alt="A yellow cockatiel" loading="lazy" width="800" height="1067"/><figcaption>Birds</figcaption></figure>
+      <figure><img src="images/pet-rabbit.jpg" alt="A ginger rabbit" loading="lazy" width="800" height="1067"/><figcaption>Rabbits</figcaption></figure>
+      <figure><img src="images/pet-hamster.jpg" alt="A hamster peeking out of a clear tube" loading="lazy" width="800" height="1067"/><figcaption>Hamsters</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" style="padding-top:0" aria-labelledby="svc-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">What we do</p>
+        <h2 class="h2" id="svc-title">Four ways we look after <em>you and your pet.</em></h2>
+      </div>
+      <p class="lede" style="max-width:36ch">One place for a safe stay, the right supplies, and people who understand your pet.</p>
+    </div>
+
+    <div class="svc-grid">
+      <div class="svc-cell reveal"><a href="boarding.html" class="svc svc--boarding">
+        <div class="svc-art"><img src="images/svc-boarding.jpg" alt="A tabby kitten resting on a sleeping dog" loading="lazy" width="1400" height="1050"/></div>
+        <div class="svc-body">
+          <span class="svc-num">01</span>
+          <h3>Pet Boarding</h3>
+          <p>Safe, loving stays for dogs, cats, birds, rabbits, reptiles and every other legal pet while you're away.</p>
+          <div class="svc-detail"><span>Daily WhatsApp photo updates, every single day.</span></div>
+          <span class="svc-link">Book a slot <span class="arrow" aria-hidden="true">→</span></span>
+        </div>
+      </a></div>
+
+      <div class="svc-cell reveal reveal-2"><a href="shop.html" class="svc svc--shop">
+        <div class="svc-art"><img src="images/svc-shop.jpg" alt="A bowl of pet food" loading="lazy" width="1400" height="1050"/></div>
+        <div class="svc-body">
+          <span class="svc-num">02</span>
+          <h3>Pet Shop</h3>
+          <p>Quality food, accessories and supplies, plus live pets available for enquiry. Order with a simple WhatsApp checkout.</p>
+          <div class="svc-detail"><span>Delivery across Hyderabad, and anywhere in India.</span></div>
+          <span class="svc-link">Shop now <span class="arrow" aria-hidden="true">→</span></span>
+        </div>
+      </a></div>
+
+      <div class="svc-cell reveal"><a href="communiTree.html" class="svc svc--community">
+        <div class="svc-art"><img src="images/svc-community.jpg" alt="A man hugging his smiling golden retriever" loading="lazy" width="1400" height="1050"/></div>
+        <div class="svc-body">
+          <span class="svc-num">03</span>
+          <h3>CommuniTree</h3>
+          <p>Our WhatsApp and Instagram community of Hyderabad pet parents. Share, learn and grow together.</p>
+          <div class="svc-detail"><span>Free to join, and open to every pet parent.</span></div>
+          <span class="svc-link">Join the community <span class="arrow" aria-hidden="true">→</span></span>
+        </div>
+      </a></div>
+
+      <div class="svc-cell reveal reveal-2"><a href="contact.html" class="svc svc--contact">
+        <div class="svc-art" aria-hidden="true">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect x="82" y="72" width="190" height="112" rx="30" fill="#1B3A2D"/>
+            <path d="M126 182l-12 38 46-38z" fill="#1B3A2D"/>
+            <g class="dots"><circle cx="140" cy="128" r="10" fill="#F2E8D9"/><circle cx="177" cy="128" r="10" fill="#F2E8D9"/><circle cx="214" cy="128" r="10" fill="#F2E8D9"/></g>
+            <rect x="220" y="168" width="116" height="66" rx="24" fill="#E87040"/>
+            <path d="M302 232l18 26-34-26z" fill="#E87040"/>
+            <path d="M260 201h40" stroke="#2C2C2C" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="svc-body">
+          <span class="svc-num">04</span>
+          <h3>Talk to Us</h3>
+          <p>Questions about boarding, products, or anything else? We're always happy to help on WhatsApp.</p>
+          <div class="svc-detail"><span>We usually reply within a few hours.</span></div>
+          <span class="svc-link">Get in touch <span class="arrow" aria-hidden="true">→</span></span>
+        </div>
+      </a></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section why on-dark" aria-labelledby="why-title">
+  <div class="wrap why-grid">
+    <div class="why-intro">
+      <p class="eyebrow light">Why pet parents trust us</p>
+      <h2 class="h2" id="why-title">The small things, <em>done every day.</em></h2>
+      <p class="lede">Leaving a pet behind is hard. Here's what you can count on from the moment you drop them off.</p>
+      <a href="boarding.html" class="btn btn-primary">Book a Boarding Slot <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+    <ol class="why-list">
+      <li class="reveal-left"><span class="why-n">01</span><div><h3>Daily photo updates</h3><p>We send WhatsApp photos and videos every day, so you always know your pet is happy and safe.</p></div></li>
+      <li class="reveal-left"><span class="why-n">02</span><div><h3>Every species, understood</h3><p>Dogs and cats, birds, sugar gliders, reptiles, hamsters — years of hands-on experience, including the pets others won't take.</p></div></li>
+      <li class="reveal-left"><span class="why-n">03</span><div><h3>A home, not a clinic</h3><p>Pets stay in a warm, homely setting — not a cage in a clinic. Calm, comfortable and stress-free.</p></div></li>
+      <li class="reveal-left"><span class="why-n">04</span><div><h3>Species-specific care</h3><p>Each pet gets the right diet, temperature and attention for their species and their individual needs.</p></div></li>
+      <li class="reveal-left"><span class="why-n">05</span><div><h3>Fair, transparent rates</h3><p>Clear pricing with no hidden charges — quality care that doesn't break the bank.</p></div></li>
+      <li class="reveal-left"><span class="why-n">06</span><div><h3>Trusted across Hyderabad</h3><p>Dozens of happy pet parents across the city, and counting. Read their stories below.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section reviews-section" id="reviews" aria-labelledby="rev-title">
+  <div class="wrap reviews-head">
+    <div>
+      <p class="eyebrow">Kind words</p>
+      <h2 class="h2" id="rev-title">What pet parents <em>say about us.</em></h2>
+    </div>
+    <div class="reviews-meta">
+      <div class="overall-rating" id="overallRating" style="display:none"></div>
+      <a href="https://share.google/JfBABXKOrvQlqPZaZ" target="_blank" rel="noopener" class="text-link">See all our reviews on Google →</a>
+    </div>
+  </div>
+
+  <div class="reviews-strip" id="reviewsStrip">
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="reviews-loading bird-loading"><span class="bird-spinner"></span>Loading reviews…</div>
+    </div>
   </div>
 
   <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close photo">✕</button>
     <img id="lightboxImg" src="" alt="Full-size review photo"/>
   </div>
 
-  <div id="moreReviewsWrap"></div>
+  <div class="wrap review-write">
+    <button class="btn btn-outline write-review-btn" onclick="toggleReviewForm()">Write a review</button>
 
-  <div style="text-align:center;margin-bottom:16px">
-    <button class="write-review-btn" onclick="toggleReviewForm()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Write a Review</button>
+    <div class="card review-form-box" id="reviewFormBox">
+      <h3>Share your experience</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="rv-name">Your name *</label>
+          <input type="text" id="rv-name" placeholder="e.g. Priya Sharma"/>
+        </div>
+        <div class="form-group">
+          <label for="rv-pet">Your pet</label>
+          <input type="text" id="rv-pet" placeholder="e.g. Labrador, Cockatiel"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Rating *</label>
+        <div class="star-picker" id="starPicker">
+          <button class="star-pick" data-v="1" onclick="setRating(1)" aria-label="1 star">★</button>
+          <button class="star-pick" data-v="2" onclick="setRating(2)" aria-label="2 stars">★</button>
+          <button class="star-pick" data-v="3" onclick="setRating(3)" aria-label="3 stars">★</button>
+          <button class="star-pick" data-v="4" onclick="setRating(4)" aria-label="4 stars">★</button>
+          <button class="star-pick" data-v="5" onclick="setRating(5)" aria-label="5 stars">★</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="rv-text">Your review *</label>
+        <textarea id="rv-text" placeholder="Tell us about your experience with HV Petvilla…" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Photo of your pet (optional)</label>
+        <div class="upload-area" onclick="document.getElementById('rv-img').click()">
+          <input type="file" id="rv-img" accept="image/*" onchange="previewReviewImg(event)"/>
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+          <p style="font-size:.9rem;color:var(--muted);">Tap to upload a photo · JPG or PNG</p>
+          <img id="rv-img-preview" style="max-width:100%;border-radius:10px;margin:12px auto 0;display:none;" alt="Preview"/>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="submitReviewBtn" onclick="submitReview()">Submit Review</button>
+    </div>
   </div>
+</section>
 
-  <div class="review-form-box" id="reviewFormBox">
-    <h3><svg viewBox="0 0 24 24" width="0.85em" height="0.85em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Share Your Experience</h3>
-    <div class="form-group">
-      <label>Your Name *</label>
-      <input type="text" id="rv-name" placeholder="e.g. Priya Sharma"/>
+<!-- CLOSING CTA -->
+<section class="section cta-band">
+  <div class="wrap cta-inner">
+    <h2 class="h2 reveal">Travelling soon? <em>Let's plan their stay.</em></h2>
+    <div class="hero-btns reveal reveal-2">
+      <a href="boarding.html" class="btn btn-primary">Book a Boarding Slot <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="https://wa.me/919492919527" target="_blank" rel="noopener" class="btn btn-outline">Ask on WhatsApp</a>
     </div>
-    <div class="form-group">
-      <label>Your Pet Type</label>
-      <input type="text" id="rv-pet" placeholder="e.g. Cockatiel, Hamster"/>
-    </div>
-    <div class="form-group">
-      <label>Rating *</label>
-      <div class="star-picker" id="starPicker">
-        <button class="star-pick" data-v="1" onclick="setRating(1)">★</button>
-        <button class="star-pick" data-v="2" onclick="setRating(2)">★</button>
-        <button class="star-pick" data-v="3" onclick="setRating(3)">★</button>
-        <button class="star-pick" data-v="4" onclick="setRating(4)">★</button>
-        <button class="star-pick" data-v="5" onclick="setRating(5)">★</button>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Your Review *</label>
-      <textarea id="rv-text" placeholder="Tell us about your experience with HV Petvilla…" rows="4"></textarea>
-    </div>
-    <div class="form-group">
-      <label>Photo of your pet (optional)</label>
-      <div class="upload-area" onclick="document.getElementById('rv-img').click()">
-        <input type="file" id="rv-img" accept="image/*" onchange="previewReviewImg(event)"/>
-        <div style="margin-bottom:6px;color:var(--teal);"><svg viewBox="0 0 24 24" width="1.8rem" height="1.8rem" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg></div>
-        <p style="font-size:0.82rem;color:var(--muted);">Click to upload a photo · JPG or PNG</p>
-        <img id="rv-img-preview" style="max-width:100%;border-radius:8px;margin-top:10px;display:none;" alt="Preview"/>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-block" id="submitReviewBtn" onclick="submitReview()">Submit Review</button>
   </div>
-</div>
-<br>
+</section>
+
+</main>
 
 <footer>
-  <img src="images/logo-192.jpg" alt="HV Petvilla" class="footer-logo"/>
-  <div>© 2026 HV Petvilla · Hyderabad, Telangana</div>
-  <div style="margin-top:6px;">
-    <a href="https://wa.me/919492919527" target="_blank"><svg viewBox="0 0 32 32" width="15" height="15" style="vertical-align:-0.15em"><rect width="32" height="32" rx="8" fill="#25D366"/><path d="M21.5 18.3c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.21 5.09 4.5.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z" fill="#fff"/></svg> WhatsApp Us</a> &nbsp;·&nbsp;
-    <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
+  <div class="wrap footer-inner">
+    <div class="footer-top">
+      <p class="footer-statement">Every pet, cared for <em>like family.</em></p>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="boarding.html">Boarding</a>
+        <a href="shop.html">Pet Shop</a>
+        <a href="communiTree.html">CommuniTree</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Talk to us</h4>
+        <a href="https://wa.me/919492919527" target="_blank" rel="noopener">WhatsApp · +91 94929 19527</a>
+        <a href="https://www.instagram.com/hv.petvilla" target="_blank" rel="noopener">Instagram · @hv.petvilla</a>
+        <a href="mailto:hv.petvilla@gmail.com">hv.petvilla@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-brand"><img src="images/logo-192.jpg" alt="HV Petvilla" class="footer-logo" width="44" height="44"/><span>© 2026 HV Petvilla · Hyderabad, Telangana</span></div>
+      <span>Boarding for all legal pets</span>
+    </div>
   </div>
 </footer>
-<a href="https://wa.me/919492919527" target="_blank" class="wa-float" title="Chat on WhatsApp"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z" fill="none" stroke="#fff" stroke-width="1.3"/></svg></a>
-<a href="#" id="backTop" class="back-top" title="Back to top">↑</a>
-<div class="toast" id="toast"></div>
+
+<a href="https://wa.me/919492919527" target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z" stroke="#fff" stroke-width="1.3"/></svg><span class="wa-float-label">Chat with us on WhatsApp</span></a>
+<a href="#" id="backTop" class="back-top" aria-label="Back to top">↑</a>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="main.js" defer></script>
-<script>
-function toggleNav(){
-  const h=document.getElementById('hamburger');
-  const m=document.getElementById('navMobile');
-  h.classList.toggle('open');
-  m.classList.toggle('open');
-}
-// Close mobile nav on outside click
-document.addEventListener('click',function(e){
-  const nav=document.getElementById('mainNav');
-  const mob=document.getElementById('navMobile');
-  if(!nav.contains(e.target)&&!mob.contains(e.target)){
-    document.getElementById('hamburger').classList.remove('open');
-    mob.classList.remove('open');
-  }
-});
-</script>
-<script>
-// Drifting firefly particles behind the homepage hero
-(function(){
-  const canvas = document.getElementById('hero-fx');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const hero = canvas.parentElement;
-  let w, h, particles;
-
-  function resize(){
-    w = canvas.width = hero.clientWidth;
-    h = canvas.height = hero.clientHeight;
-  }
-  function makeParticles(){
-    particles = Array.from({length: 22}, () => ({
-      x: Math.random()*w, y: Math.random()*h,
-      r: 1 + Math.random()*1.8,
-      vx: (Math.random()-0.5)*0.15, vy: -0.08 - Math.random()*0.12,
-      a: 0.15 + Math.random()*0.5, phase: Math.random()*Math.PI*2
-    }));
-  }
-  function draw(t){
-    ctx.clearRect(0,0,w,h);
-    particles.forEach(p=>{
-      p.x += p.vx; p.y += p.vy;
-      if(p.y < -10){ p.y = h+10; p.x = Math.random()*w; }
-      if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
-      const flicker = 0.55 + 0.45*Math.sin(t/900 + p.phase);
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(200,155,92,${(p.a*flicker).toFixed(3)})`;
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fill();
-    });
-    if(!reduceMotion) requestAnimationFrame(draw);
-  }
-  resize(); makeParticles();
-  window.addEventListener('resize', ()=>{ resize(); makeParticles(); });
-  if(reduceMotion){ draw(0); } else { requestAnimationFrame(draw); }
-})();
-</script>
 <script>
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 
@@ -470,14 +607,14 @@ async function loadReviews() {
   }
 }
 
-function reviewCard(r) {
-  return `<div class="review-card">
-    ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo" onclick="openLightbox(${escapeHtml(JSON.stringify(r.img))})"/>` : ''}
-    <div class="review-stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
-    <div class="review-text">"${escapeHtml(r.text)}"</div>
-    <div class="review-author">— ${escapeHtml(r.name)}</div>
-    ${r.pet ? `<div class="review-pet"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.1em"><circle cx="6" cy="10" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><path d="M12 12c-3 0-6 2-6 5.5A2.5 2.5 0 0 0 8.5 20c1 0 1.5-.5 3.5-.5s2.5.5 3.5.5A2.5 2.5 0 0 0 18 17.5c0-3.5-3-5.5-6-5.5z"/></svg> ${escapeHtml(r.pet)}</div>` : ''}
-  </div>`;
+function reviewCard(r, isClone) {
+  return `<article class="review-card"${isClone ? ' aria-hidden="true"' : ''}>
+    ${r.img ? `<img src="${escapeHtml(r.img)}" class="review-img" alt="Pet photo" loading="lazy" onclick="openLightbox(${escapeHtml(JSON.stringify(r.img))})"/>` : ''}
+    <div class="review-stars" aria-label="${r.rating} out of 5 stars">${'★'.repeat(r.rating)}${r.rating<5?'☆'.repeat(5-r.rating):''}</div>
+    <p class="review-text">“${escapeHtml(r.text)}”</p>
+    <div class="review-author">${escapeHtml(r.name)}</div>
+    ${r.pet ? `<div class="review-pet">${escapeHtml(r.pet)}</div>` : ''}
+  </article>`;
 }
 function renderOverallRating(all) {
   updateBusinessSchemaRating(all);
@@ -491,7 +628,7 @@ function renderOverallRating(all) {
   el.innerHTML = `
     <span class="score">${avg.toFixed(1)}</span>
     <span class="stars">${stars}</span>
-    <span class="count">based on ${all.length} review${all.length>1?'s':''}</span>`;
+    <span class="count">from ${all.length} review${all.length>1?'s':''}</span>`;
 }
 // Keeps the LocalBusiness JSON-LD's aggregateRating in sync with real,
 // live review data instead of a number hardcoded in the HTML source.
@@ -509,40 +646,33 @@ function updateBusinessSchemaRating(all) {
     el.textContent = JSON.stringify(data);
   } catch(e) {}
 }
+// The review strip auto-scrolls as a seamless loop: the cards are rendered
+// twice and the track slides by half its width, pausing on hover/focus (CSS).
+// With too few reviews to fill a loop, or with reduced motion requested, it
+// stays a plain swipeable row instead.
+function setupReviewStrip(grid, all) {
+  const strip = document.getElementById('reviewsStrip');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const loop = !reduce && all.length >= 3;
+  strip.classList.toggle('static', !loop);
+  grid.classList.toggle('is-marquee', loop);
+  if(!loop) return;
+  grid.insertAdjacentHTML('beforeend', all.map(r=>reviewCard(r, true)).join(''));
+  grid.style.setProperty('--marquee-duration', Math.max(30, all.length * 9) + 's');
+}
 async function renderReviews() {
   const grid = document.getElementById('reviewsGrid');
-  grid.innerHTML = '<div class="reviews-loading bird-loading"><span class="bird-spinner"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22 11l-6-1-3-6-3 6-6 1 4.5 4-1.5 6 6-3.5L19 21l-1.5-6z"/></svg></span>Loading reviews…</div>';
+  grid.classList.remove('is-marquee');
+  grid.innerHTML = '<div class="reviews-loading bird-loading"><span class="bird-spinner"></span>Loading reviews…</div>';
   const all = await loadReviews();
-  const moreWrap = document.getElementById('moreReviewsWrap');
-  const SHOW = 3;
   renderOverallRating(all);
   if(all.length === 0){
-    grid.innerHTML='<p style="text-align:center;color:var(--muted)">No reviews yet. Be the first!</p>';
-    if(moreWrap) moreWrap.innerHTML='';
+    document.getElementById('reviewsStrip').classList.add('static');
+    grid.innerHTML='<p class="reviews-empty">No reviews yet. Be the first!</p>';
     return;
   }
-  grid.innerHTML = all.slice(0,SHOW).map(r=>reviewCard(r)).join('');
-  if(!moreWrap){ return; }
-  if(all.length <= SHOW){ moreWrap.innerHTML=''; return; }
-  const rest = all.slice(SHOW);
-  moreWrap.innerHTML = `
-    <div id="extraReviews" style="display:none">
-      <div class="reviews-grid">${rest.map(r=>reviewCard(r)).join('')}</div>
-    </div>
-    <div style="text-align:center;margin-top:12px">
-      <button id="moreRevBtn" onclick="toggleMoreReviews()" style="background:none;border:none;padding:4px;font-size:.85rem;font-weight:700;color:var(--teal);text-decoration:underline;cursor:pointer">
-        Show ${rest.length} more review${rest.length>1?'s':''}
-      </button>
-    </div>`;
-}
-function toggleMoreReviews(){
-  const el=document.getElementById('extraReviews');
-  const btn=document.getElementById('moreRevBtn');
-  if(!el||!btn) return;
-  const open = el.style.display==='block';
-  el.style.display = open?'none':'block';
-  const cnt = el.querySelectorAll('.review-card').length;
-  btn.textContent = open ? `Show ${cnt} more review${cnt>1?'s':''}` : 'Show fewer reviews';
+  grid.innerHTML = all.map(r=>reviewCard(r)).join('');
+  setupReviewStrip(grid, all);
 }
 
 // ── REVIEW PHOTO LIGHTBOX ──

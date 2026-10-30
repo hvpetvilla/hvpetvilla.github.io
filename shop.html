@@ -10,13 +10,21 @@
     gtag('config', 'G-RCG5NW8291');
   </script>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pet Shop Hyderabad — Food & Accessories | HV Petvilla</title>
-  <meta name="description" content="Buy pet food, accessories and supplies for exotic and small pets in Hyderabad. Order via WhatsApp checkout. HV Petvilla pet shop."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Pet Shop Hyderabad — Food, Accessories & Live Pets | HV Petvilla</title>
+  <meta name="description" content="Shop pet food, accessories and supplies in Hyderabad, plus live pets available for enquiry. Simple WhatsApp checkout from HV Petvilla, Hyderabad's pet care hub for all legal pets."/>
+  <meta property="og:title" content="HV Petvilla Pet Shop — Hyderabad"/>
+  <meta property="og:description" content="Pet food, accessories, supplies and live pets — ordered over WhatsApp. HV Petvilla, Hyderabad."/>
+  <meta property="og:image" content="https://hvpetvilla.in/images/logo.jpg"/>
+  <meta name="theme-color" content="#1B3A2D"/>
   <link rel="canonical" href="https://hvpetvilla.in/shop.html"/>
   <link rel="icon" type="image/jpeg" href="images/logo-192.jpg"/>
   <link rel="apple-touch-icon" href="images/logo-192.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"/>
   <link rel="stylesheet" href="style.css"/>
+  <script>document.documentElement.classList.add('js')</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -29,7 +37,6 @@
     "email": "hv.petvilla@gmail.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Nizampet",
       "addressLocality": "Hyderabad",
       "addressRegion": "Telangana",
       "postalCode": "500118",
@@ -48,263 +55,298 @@
   }
   </script>
   <style>
-    .section-toggle {
-      display:flex; gap:10px; margin-bottom:20px;
-    }
-    .sec-btn {
-      flex:1; padding:12px 16px; border-radius:var(--radius-sm); border:2px solid var(--border);
-      background:var(--surface); font-family:'Bricolage Grotesque',sans-serif; font-weight:800;
-      font-size:.92rem; cursor:pointer; transition:all .15s; color:var(--muted);
-      display:flex; align-items:center; justify-content:center; gap:8px;
-    }
-    .sec-btn.on { background:var(--teal); color:var(--white); border-color:var(--teal); }
-    .sec-btn:hover:not(.on) { border-color:var(--teal); color:var(--teal); }
-    @media(max-width:480px){ .sec-btn{font-size:.8rem;padding:10px 8px;} }
-    .shop-bar {
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:20px;
-    }
-    .search-wrap {
-      flex:1; min-width:200px; display:flex; align-items:center; gap:8px;
-      background:var(--surface); border:1.5px solid var(--border);
-      border-radius:var(--radius-sm); padding:9px 14px;
-    }
-    .search-wrap input {
-      border:none; outline:none; font-size:.9rem;
-      font-family:'Inter',sans-serif; width:100%; background:transparent;
-    }
-    .chips { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:22px; }
-    .chip {
-      padding:6px 14px; border-radius:30px; border:1.5px solid var(--border);
-      background:var(--surface); font-size:.8rem; font-weight:700; cursor:pointer;
-      transition:all .15s; font-family:'Bricolage Grotesque',sans-serif;
-    }
-    .chip:hover,.chip.on { background:var(--teal); color:var(--white); border-color:var(--teal); }
+    .shop-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+    .shop-head .display { max-width: 14ch; }
+    .shop-steps { list-style: none; display: flex; gap: 28px; font-size: .9rem; color: var(--muted); counter-reset: step; }
+    .shop-steps li { counter-increment: step; max-width: 14ch; }
+    .shop-steps li::before { content: '0' counter(step); display: block; font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--coral-ink); margin-bottom: 4px; }
 
-    .buyer-details { margin-top:14px; display:flex; flex-direction:column; gap:10px; }
-    .buyer-details input, .buyer-details textarea {
-      width:100%; padding:9px 12px; border:1.5px solid var(--border);
-      border-radius:var(--radius-sm); font-size:.85rem;
-      font-family:'Inter',sans-serif; outline:none; resize:vertical;
+    /* Toolbar */
+    .shop-toolbar {
+      position: sticky; top: var(--nav-h); z-index: 50;
+      background: rgba(242,232,217,.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 16px 0; margin-bottom: 32px; border-bottom: 1px solid var(--line);
     }
-    .buyer-details input:focus, .buyer-details textarea:focus { border-color:var(--teal); }
-    .buyer-details label {
-      display:block; font-size:.78rem; font-weight:600;
-      color:var(--teal); margin-bottom:4px;
+    .toolbar-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .section-toggle { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--sand-2); }
+    .sec-btn {
+      min-height: 44px; padding: 0 22px; border-radius: 999px; border: none; background: transparent;
+      font-weight: 600; font-size: .95rem; cursor: pointer; color: var(--muted);
+      transition: background .25s, color .25s, box-shadow .25s;
     }
+    .sec-btn.on { background: var(--cream); color: var(--forest); box-shadow: var(--shadow-sm); }
+    .sec-btn:hover:not(.on) { color: var(--forest); }
+    .shop-bar { flex: 1; min-width: 220px; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 10px; min-height: 48px;
+      background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 0 18px;
+      color: var(--muted); transition: border-color .2s, box-shadow .2s;
+    }
+    .search-wrap:focus-within { border-color: var(--forest); box-shadow: 0 0 0 4px rgba(232,112,64,.16); }
+    .search-wrap input { border: none; outline: none; font: inherit; font-size: 1rem; width: 100%; background: transparent; color: var(--charcoal); min-height: 44px; }
+    .chips { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0; min-height: 44px; padding: 0 18px; border-radius: 999px;
+      border: 1px solid var(--line); background: transparent;
+      font-size: .92rem; font-weight: 500; cursor: pointer; color: var(--charcoal);
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .chip:hover { border-color: var(--forest); }
+    .chip.on { background: var(--forest); color: var(--cream); border-color: var(--forest); }
 
     /* Product grid */
-    .product-grid {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;
-    }
-    .products-loading { grid-column:1/-1; }
-    .product-card {
-      background:var(--surface); border-radius:var(--radius);
-      border:1.5px solid var(--border); overflow:hidden;
-      transition:transform .2s,box-shadow .2s; position:relative; cursor:pointer;
-    }
-    .product-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 40px 24px; margin-bottom: clamp(72px, 10vw, 128px); }
+    .products-loading { grid-column: 1 / -1; }
+    .product-card { position: relative; cursor: pointer; transition: transform .45s var(--ease); }
+    .product-card:hover { transform: translateY(-6px); }
+    html.js .product-card.in-view { transition: opacity .8s ease, transform .45s var(--ease); }
     .product-thumb {
-      height:150px; display:flex; align-items:center; justify-content:center;
-      font-size:3.6rem; background:linear-gradient(135deg,var(--teal-light),var(--surface));
-      overflow:hidden; position:relative;
+      aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--sand-2); color: rgba(27,58,45,.35);
+      transition: box-shadow .45s ease;
     }
-    .product-thumb img { width:100%; height:100%; object-fit:cover; }
-    .product-body { padding:14px; }
-    .product-cat { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--green); margin-bottom:3px; }
-    .product-name { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:.95rem; color:var(--teal); margin-bottom:4px; }
-    .product-desc { font-size:.78rem; color:var(--muted); margin-bottom:12px; line-height:1.4; }
-    .product-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; }
-    .product-price { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.05rem; }
+    .product-thumb svg { width: 56px; height: 56px; }
+    .product-card:hover .product-thumb { box-shadow: var(--shadow-lg); }
+    .product-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+    .product-card:hover .product-thumb img { transform: scale(1.03); }
+    .product-body { padding-top: 16px; }
+    .product-cat { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .14em; color: var(--coral-ink); margin-bottom: 6px; }
+    .product-name { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.25; color: var(--forest); margin-bottom: 6px; }
+    .product-desc { font-size: .9rem; color: var(--muted); margin-bottom: 14px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .product-price { font-family: var(--font-display); font-size: 1.3rem; color: var(--charcoal); }
     .add-btn {
-      background:var(--teal); color:var(--white); border:none;
-      border-radius:var(--radius-sm); padding:8px 14px;
-      font-size:.82rem; font-weight:700; cursor:pointer;
-      font-family:'Bricolage Grotesque',sans-serif; transition:background .18s;
+      min-height: 44px; padding: 0 18px; border-radius: 999px;
+      background: var(--forest); color: var(--cream); border: none;
+      font-size: .9rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      transition: background .2s, color .2s;
     }
-    .add-btn:hover { background:var(--teal-dark); }
+    .add-btn:hover { background: var(--coral); color: var(--charcoal); }
 
     /* Cart */
     .cart-btn {
-      position:fixed; bottom:84px; right:20px;
-      background:var(--teal); color:var(--white); border:none;
-      border-radius:50px; padding:12px 20px;
-      font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:.9rem;
-      cursor:pointer; box-shadow:var(--shadow-md);
-      display:none; align-items:center; gap:8px; z-index:90; transition:transform .18s;
+      position: fixed; bottom: 96px; right: 24px;
+      background: var(--forest); color: var(--cream); border: none;
+      border-radius: 999px; min-height: 56px; padding: 0 22px;
+      font-weight: 600; font-size: .95rem; cursor: pointer; box-shadow: var(--shadow-lg);
+      display: none; align-items: center; gap: 10px; z-index: 270; transition: transform .3s var(--ease);
     }
-    .cart-btn:hover { transform:scale(1.05); }
-    .cart-badge {
-      background:var(--red); border-radius:50%; width:22px; height:22px;
-      display:flex; align-items:center; justify-content:center; font-size:.72rem;
-    }
+    .cart-btn:hover { transform: translateY(-3px); }
+    .cart-badge { background: var(--coral); color: var(--charcoal); border-radius: 999px; min-width: 24px; height: 24px; padding: 0 6px; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 600; }
     .overlay {
-      display:none; position:fixed; inset:0;
-      background:rgba(0,0,0,.45); z-index:300; align-items:center; justify-content:center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(12,26,20,.5); z-index: 400; align-items: center; justify-content: center;
     }
-    .overlay.open { display:flex; }
+    .overlay.open { display: flex; animation: fade .25s ease; }
+    @keyframes fade { from { opacity: 0; } }
     .modal {
-      background:var(--surface); border-radius:var(--radius);
-      padding:28px; max-width:480px; width:92%; max-height:90vh; overflow-y:auto;
+      background: var(--cream); border-radius: var(--radius);
+      padding: 32px; max-width: 520px; width: calc(100% - 32px); max-height: 90vh; overflow-y: auto;
     }
-    .modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-    .modal-head h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.15rem; }
-    .close-x { background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--muted); }
-    .cart-item { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1.5px solid var(--border); }
-    .cart-item-icon { font-size:2rem; }
-    .cart-item-info { flex:1; }
-    .cart-item-info strong { font-size:.9rem; color:var(--teal); display:block; }
-    .cart-item-info span { font-size:.8rem; color:var(--muted); }
-    .qty-controls { display:flex; align-items:center; gap:7px; }
-    .qty-btn { background:var(--teal-light); border:none; border-radius:6px; width:26px; height:26px; cursor:pointer; font-weight:900; font-size:1rem; color:var(--teal); }
-    .qty-val { font-weight:800; font-size:.9rem; min-width:20px; text-align:center; }
-    .cart-total {
-      display:flex; justify-content:space-between;
-      font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.1rem; color:var(--teal);
-      border-top:2px solid var(--border); padding-top:16px; margin-top:16px;
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-head h2 { font-size: 1.7rem; }
+    .modal-head h2 svg { display: none; }
+    .close-x { width: 44px; height: 44px; border-radius: 50%; background: var(--sand); border: none; cursor: pointer; color: var(--forest); display: flex; align-items: center; justify-content: center; }
+    .close-x:hover { background: var(--sand-2); }
+    .cart-item { display: flex; gap: 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .cart-item-icon { font-size: 1.6rem; color: rgba(27,58,45,.4); width: 2.6rem; height: 2.6rem; display: flex; align-items: center; justify-content: center; border-radius: 10px; overflow: hidden; background: var(--sand-2); }
+    .cart-item-icon svg { width: 22px; height: 22px; }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-info strong { font-weight: 600; font-size: .95rem; color: var(--forest); display: block; }
+    .cart-item-info span { font-size: .85rem; color: var(--muted); }
+    .qty-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--sand); border: none; cursor: pointer; font-size: 1.1rem; color: var(--forest); }
+    .qty-btn:hover { background: var(--sand-2); }
+    .qty-val { font-weight: 600; min-width: 22px; text-align: center; }
+    .cart-total { display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 1.5rem; color: var(--forest); padding-top: 20px; margin-top: 4px; }
+    .empty-cart { text-align: center; padding: 32px 0; color: var(--muted); }
+    .empty-cart svg { margin: 0 auto; }
+
+    .buyer-details { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .buyer-details input, .buyer-details textarea {
+      width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 1rem; font-family: var(--font-body); outline: none; resize: vertical; background: #FFFDF9;
     }
-    .empty-cart { text-align:center; padding:32px 0; color:var(--muted); }
+    .buyer-details input:focus, .buyer-details textarea:focus { border-color: var(--forest); box-shadow: 0 0 0 4px rgba(232,112,64,.16); }
+    .buyer-details label { display: block; font-size: .85rem; font-weight: 600; color: var(--forest); margin-bottom: 6px; }
 
     /* Product detail modal */
-    .pd-thumb {
-      width:100%; height:260px; border-radius:var(--radius-sm);
-      background:linear-gradient(135deg,var(--teal-light),var(--surface));
-      display:flex; align-items:center; justify-content:center;
-      font-size:5rem; overflow:hidden; margin-bottom:18px;
-    }
-    .pd-thumb img { width:100%; height:100%; object-fit:cover; }
-    .pd-cat { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--green); margin-bottom:4px; }
-    .pd-name { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:1.25rem; color:var(--teal); margin-bottom:8px; }
-    .pd-desc { font-size:.88rem; color:var(--ink); line-height:1.5; margin-bottom:16px; }
-    .pd-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .pd-price { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; color:var(--teal); font-size:1.35rem; }
+    .pd-thumb { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; background: var(--sand-2); color: rgba(27,58,45,.35); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px; }
+    .pd-thumb svg { width: 64px; height: 64px; }
+    .pd-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .pd-cat { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .14em; color: var(--coral-ink); margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; }
+    .pd-name { font-family: var(--font-display); font-size: 1.8rem; line-height: 1.15; color: var(--forest); margin-bottom: 10px; }
+    .pd-desc { font-size: 1rem; color: var(--charcoal); line-height: 1.6; margin-bottom: 20px; }
+    .pd-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .pd-price { font-family: var(--font-display); font-size: 1.7rem; color: var(--charcoal); }
 
-    @media(max-width:640px){ .product-grid{grid-template-columns:1fr 1fr;} }
-    @media(max-width:420px){ .product-grid{grid-template-columns:1fr;} }
+    @media (max-width: 700px) {
+      .product-grid { grid-template-columns: 1fr 1fr; gap: 28px 14px; }
+      .product-name { font-size: 1.05rem; }
+      .shop-steps { display: none; }
+      .section-toggle { width: 100%; }
+      .sec-btn { flex: 1; }
+      .cart-btn { bottom: calc(84px + env(safe-area-inset-bottom)); right: 16px; }
+      .overlay { align-items: flex-end; }
+      .modal { width: 100%; border-radius: 24px 24px 0 0; max-height: 88vh; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); }
+    }
+    @media (max-width: 380px) { .product-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-<nav class="nav" id="mainNav">
-  <a href="index.html" class="nav-logo">
-    <img src="images/logo-192.jpg" alt="HV Petvilla Logo" class="nav-logo-img"/>
-    <div class="logo-text">HV<span class="accent">Petvilla</span></div>
+<nav class="nav" id="mainNav" aria-label="Main">
+  <a href="index.html" class="nav-logo" aria-label="HV Petvilla home">
+    <img src="images/logo-192.jpg" alt="" class="nav-logo-img" width="42" height="42"/>
+    <span class="nav-wordmark">HV <em>Petvilla</em></span>
   </a>
   <div class="nav-links">
-    <a href="boarding.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
-    <a href="shop.html" class="active"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
-    <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
-    <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
-    <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
+    <a href="boarding.html">Boarding</a>
+    <a href="shop.html" class="active" aria-current="page">Shop</a>
+    <a href="communiTree.html">CommuniTree</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
   </div>
-  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+  <a href="boarding.html" class="nav-cta">Book a stay</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
     <span></span><span></span><span></span>
   </button>
 </nav>
 <div class="nav-mobile" id="navMobile">
-  <a href="boarding.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4h2v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V10"/></svg> Boarding</a>
-  <a href="shop.html" class="active"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Shop</a>
-  <a href="communiTree.html"><svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em"><g fill="currentColor"><circle cx="8.8" cy="9.5" r="4.3"/><circle cx="15.2" cy="9.5" r="4.3"/><circle cx="12" cy="6.3" r="4.3"/><rect x="11" y="13.5" width="2" height="6.5" rx="0.6"/></g></svg> CommuniTree</a>
-  <a href="faq.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a>
-  <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
+  <a href="boarding.html">Boarding</a>
+  <a href="shop.html" class="active">Shop</a>
+  <a href="communiTree.html">CommuniTree</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+  <div class="nav-mobile-foot">
+    <span>Hyderabad, Telangana</span>
+    <a href="https://wa.me/919492919527" target="_blank" rel="noopener">WhatsApp · +91 94929 19527</a>
+    <a href="https://www.instagram.com/hv.petvilla" target="_blank" rel="noopener">Instagram · @hv.petvilla</a>
+  </div>
 </div>
 
-<div class="hero">
-  <div class="hero-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
-  <h1 class="word-reveal-init">Pet <span class="hi">Shop</span></h1>
-  <p>Quality food, accessories and supplies for exotic & small pets — plus live pets available for enquiry.</p>
+<header class="page-head">
+  <div class="wrap">
+    <div class="shop-head">
+      <div>
+        <p class="eyebrow">The HV Petvilla Shop</p>
+        <h1 class="display">Everything they need, <em>chosen with care.</em></h1>
+        <p class="lede">Quality food, accessories and supplies — plus live pets available for enquiry. Order in a few taps over WhatsApp.</p>
+      </div>
+      <ol class="shop-steps" aria-label="How ordering works">
+        <li>Add items to your cart</li>
+        <li>Check out on WhatsApp</li>
+        <li>Pay by UPI QR, and you're done</li>
+      </ol>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" style="margin-bottom:clamp(40px,6vw,72px)">
+  <p class="page-intro">Our shop stocks food, accessories, cages and supplies, including hard-to-find stock for birds, rabbits, hamsters, mice, rats and sugar gliders that general pet stores often don't carry. Browse by category, add what you need to your cart, and check out directly over WhatsApp; we'll confirm your order and share a payment QR to complete it. Switch to Live Pets to see animals currently available and enquire about one directly on WhatsApp. We're based in Hyderabad and serve customers across the city.</p>
 </div>
 
-<p class="page-intro">Our shop stocks food, accessories, cages and supplies chosen for the exotic and small pets we specialise in, including birds, rabbits, hamsters, mice, rats and sugar gliders, the kind of stock that's often hard to find at general pet stores. Browse by category, add what you need to your cart, and check out directly over WhatsApp; we'll confirm your order and share a payment QR to complete it. Switch to Live Pets to see animals currently available and enquire about one directly on WhatsApp. We're based in Nizampet, Hyderabad, and serve customers across the city.</p>
-
-<div class="container">
-
+<main>
   <!-- Products and live pets are managed from BizTrack's Products catalogue
        and appear here automatically — mark an item "Available" there and it
        shows up below, split into Shop or Live Pets by its category. -->
-
-  <div class="section-toggle" id="sectionToggle">
-    <button class="sec-btn on" data-sec="shop" onclick="switchSection('shop')">🛍️ Shop</button>
-    <button class="sec-btn" data-sec="pets" onclick="switchSection('pets')">🐾 Live Pets</button>
-  </div>
-
-  <div class="shop-bar">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> <input type="text" id="searchInput" placeholder="Search products…" oninput="renderProducts()"/>
+  <div class="shop-toolbar">
+    <div class="wrap">
+      <div class="toolbar-row">
+        <div class="section-toggle" id="sectionToggle" role="tablist">
+          <button class="sec-btn on" data-sec="shop" onclick="switchSection('shop')">Shop</button>
+          <button class="sec-btn" data-sec="pets" onclick="switchSection('pets')">Live Pets</button>
+        </div>
+        <div class="shop-bar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Search products…" aria-label="Search products" oninput="renderProducts()"/>
+          </div>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
     </div>
   </div>
-  <div class="chips" id="chips"></div>
-  <div class="product-grid" id="productGrid">
-    <div class="products-loading bird-loading"><span class="bird-spinner"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22 11l-6-1-3-6-3 6-6 1 4.5 4-1.5 6 6-3.5L19 21l-1.5-6z"/></svg></span>Loading products…</div>
+
+  <div class="container">
+    <div class="product-grid" id="productGrid">
+      <div class="products-loading bird-loading"><span class="bird-spinner"></span>Loading products…</div>
+    </div>
   </div>
-</div>
+</main>
 
 <!-- Cart Button -->
 <button class="cart-btn" id="cartBtn" onclick="openCart()">
-  <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> View Cart <div class="cart-badge" id="cartBadge">0</div>
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> View cart <div class="cart-badge" id="cartBadge">0</div>
 </button>
 
 <!-- Cart Modal -->
 <div class="overlay" id="cartOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Your cart">
     <div class="modal-head">
-      <h2><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Your Cart</h2>
-      <button class="close-x" onclick="closeCart()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Your cart</h2>
+      <button class="close-x" onclick="closeCart()" aria-label="Close cart"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div id="cartBody"></div>
-    <div id="cartEmptyMsg" class="empty-cart"><div style="margin-bottom:8px;color:var(--teal);"><svg viewBox="0 0 24 24" width="2.5rem" height="2.5rem" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><p>Your cart is empty</p></div>
+    <div id="cartEmptyMsg" class="empty-cart"><p>Your cart is empty</p></div>
     <div id="cartFooterBlock" style="display:none;">
       <div class="cart-total"><span>Total</span><span id="cartTotalAmt"></span></div>
       <div class="buyer-details">
-        <div><label>Your Name *</label><input id="cb-name" placeholder="Full name"/></div>
-        <div><label>Phone Number *</label><input id="cb-phone" type="tel" placeholder="10-digit mobile number" maxlength="15"/></div>
-        <div><label>Delivery Address *</label><textarea id="cb-address" rows="2" placeholder="House no, street, area, city, pincode"></textarea></div>
+        <div><label for="cb-name">Your name *</label><input id="cb-name" placeholder="Full name" autocomplete="name"/></div>
+        <div><label for="cb-phone">Phone number *</label><input id="cb-phone" type="tel" placeholder="10-digit mobile number" maxlength="15" autocomplete="tel"/></div>
+        <div><label for="cb-address">Delivery address *</label><textarea id="cb-address" rows="2" placeholder="House no, street, area, city, pincode" autocomplete="street-address"></textarea></div>
       </div>
-      <button class="btn btn-green btn-block" style="margin-top:16px;" onclick="checkoutViaWhatsApp()"><svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.12em"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z"/></svg> Checkout via WhatsApp</button>
-      <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:8px;">We'll confirm your order & send a payment QR on WhatsApp</p>
+      <button class="btn btn-primary btn-block" style="margin-top:20px;" onclick="checkoutViaWhatsApp()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg> Checkout via WhatsApp</button>
+      <p style="font-size:.85rem;color:var(--muted);text-align:center;margin-top:10px;">We'll confirm your order &amp; send a payment QR on WhatsApp</p>
     </div>
   </div>
 </div>
 
 <!-- Product Detail Modal -->
 <div class="overlay" id="productDetailOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Product details">
     <div class="modal-head">
-      <h2>Product Details</h2>
-      <button class="close-x" onclick="closeProductDetail()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2 class="sr-only">Product details</h2>
+      <span></span>
+      <button class="close-x" onclick="closeProductDetail()" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div id="productDetailBody"></div>
   </div>
 </div>
 
 <footer>
-  <img src="images/logo-192.jpg" alt="HV Petvilla" class="footer-logo"/>
-  <div>© 2026 HV Petvilla · Hyderabad, Telangana</div>
-  <div style="margin-top:6px;">
-    <a href="https://wa.me/919492919527" target="_blank"><svg viewBox="0 0 32 32" width="15" height="15" style="vertical-align:-0.15em"><rect width="32" height="32" rx="8" fill="#25D366"/><path d="M21.5 18.3c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.21 5.09 4.5.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z" fill="#fff"/></svg> WhatsApp Us</a> &nbsp;·&nbsp;
-    <a href="contact.html"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Contact</a>
+  <div class="wrap footer-inner">
+    <div class="footer-top">
+      <p class="footer-statement">Every pet, cared for <em>like family.</em></p>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="boarding.html">Boarding</a>
+        <a href="shop.html">Pet Shop</a>
+        <a href="communiTree.html">CommuniTree</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Talk to us</h4>
+        <a href="https://wa.me/919492919527" target="_blank" rel="noopener">WhatsApp · +91 94929 19527</a>
+        <a href="https://www.instagram.com/hv.petvilla" target="_blank" rel="noopener">Instagram · @hv.petvilla</a>
+        <a href="mailto:hv.petvilla@gmail.com">hv.petvilla@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-brand"><img src="images/logo-192.jpg" alt="HV Petvilla" class="footer-logo" width="44" height="44"/><span>© 2026 HV Petvilla · Hyderabad, Telangana</span></div>
+      <span>Boarding for all legal pets</span>
+    </div>
   </div>
 </footer>
-<a href="https://wa.me/919492919527" target="_blank" class="wa-float"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z" fill="none" stroke="#fff" stroke-width="1.3"/></svg></a>
-<a href="#" id="backTop" class="back-top" title="Back to top">↑</a>
-<div class="toast" id="toast"></div>
+
+<a href="https://wa.me/919492919527" target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#fff"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z" stroke="#fff" stroke-width="1.3"/></svg><span class="wa-float-label">Chat with us on WhatsApp</span></a>
+<a href="#" id="backTop" class="back-top" aria-label="Back to top">↑</a>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="main.js" defer></script>
-<script>
-function toggleNav(){
-  const h=document.getElementById('hamburger');
-  const m=document.getElementById('navMobile');
-  h.classList.toggle('open'); m.classList.toggle('open');
-}
-document.addEventListener('click',function(e){
-  const nav=document.getElementById('mainNav');
-  const mob=document.getElementById('navMobile');
-  if(!nav.contains(e.target)&&!mob.contains(e.target)){
-    document.getElementById('hamburger').classList.remove('open');
-    mob.classList.remove('open');
-  }
-});
-</script>
-
 <script>
 // Categories come straight from BizTrack's Products catalogue. "shop" items
 // (food/equipment/accessories/other) and "pets" items (live animals) are
@@ -314,15 +356,14 @@ const SECTION_CATS={
   pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic']
 };
 const CAT_LABELS={
-  all:'🐾 All',
-  'Feed & Medicine':'🍖 Feed & Medicine', Equipment:'🧰 Equipment', Accessories:'🎀 Accessories', Other:'📦 Other',
-  Birds:'🦜 Birds', Reptiles:'🦎 Reptiles', 'Small Mammals':'🐹 Small Mammals', Aquatics:'🐠 Aquatics', Exotic:'🐉 Exotic'
+  all:'All'
 };
 const BESTSELLER_NAMES=[];
 const NEW_ARRIVAL_NAMES=[];
 let activecat='all', activeSection='shop', cart=[];
-const PAW_ICON='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" style="vertical-align:-0.1em"><ellipse cx="12" cy="16.5" rx="5.4" ry="4.4"/><ellipse cx="5.4" cy="9" rx="2.1" ry="2.7"/><ellipse cx="10.1" cy="5.3" rx="2" ry="2.6"/><ellipse cx="15.4" cy="5.5" rx="2" ry="2.6"/><ellipse cx="19" cy="9.2" rx="2" ry="2.5"/></svg>';
-const WA_ICON='<svg viewBox="0 0 24 24" width="0.9em" height="0.9em" fill="currentColor" style="vertical-align:-0.12em"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z"/></svg>';
+// Placeholder shown when an item has no photo (or its photo fails to load)
+const PAW_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>';
+const WA_ICON='<svg viewBox="0 0 24 24" width="0.95em" height="0.95em" fill="currentColor" style="vertical-align:-0.12em;display:inline-block"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.04 2.003c-5.523 0-10 4.477-10 10 0 1.77.463 3.434 1.276 4.874L2 22l5.223-1.371a9.94 9.94 0 0 0 4.817 1.227h.004c5.523 0 10-4.477 10-10s-4.477-9.853-10.004-9.853z"/></svg>';
 
 const API_URL = 'https://hvp-reviews-backend-hv-petvilla.vercel.app';
 let apiProducts = [];
@@ -363,7 +404,7 @@ function statusBadgeHTML(avail){
 // since there's nothing to check out with.
 function actionHTML(p){
   const avail=p.avail||'Available';
-  if(avail==='Sold') return `<span style="font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.85rem">Sold</span>`;
+  if(avail==='Sold') return `<span style="font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:.8rem">Sold</span>`;
   if(avail==='Out of Stock - Raise Order Request') return waButtonHTML(orderRequestUrl(p), 'Raise Order Request');
   if(avail==='Display') return waButtonHTML(displayEnquiryUrl(p), 'Enquire');
   if(p.section==='pets'||!p.price) return waButtonHTML(petEnquiryUrl(p), 'Enquire');
@@ -420,20 +461,20 @@ function switchSection(sec){
 }
 
 function badgeHTML(name){
-  if(BESTSELLER_NAMES.includes(name)) return '<span class="badge-pill badge-best"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestseller</span>';
-  if(NEW_ARRIVAL_NAMES.includes(name)) return '<span class="badge-pill badge-new"><svg viewBox="0 0 24 24" width="0.8em" height="0.8em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New</span>';
+  if(BESTSELLER_NAMES.includes(name)) return '<span class="badge-pill badge-best">Bestseller</span>';
+  if(NEW_ARRIVAL_NAMES.includes(name)) return '<span class="badge-pill badge-new">New</span>';
   return '';
 }
 
 function shopCardHTML(p){
   const photo=p.photos&&p.photos[0];
-  const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-weight:600;font-size:.85rem;margin-right:6px">₹${p.mrp}</span>`:'';
+  const mrpHtml=(p.mrp&&p.mrp>p.price)?`<span style="text-decoration:line-through;color:var(--muted);font-size:.95rem;margin-right:8px">₹${p.mrp}</span>`:'';
   const showPrice=p.avail!=='Sold'&&!!p.price;
   return `
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
       ${statusBadgeHTML(p.avail)||badgeHTML(p.name)}
       <div class="product-thumb">
-        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
+        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
       </div>
       <div class="product-body">
         <div class="product-cat">${escapeHtml(p.category)}</div>
@@ -454,7 +495,7 @@ function petCardHTML(p){
     <div class="product-card reveal" onclick="openProductDetail(${escapeHtml(JSON.stringify(p.id))})">
       ${statusBadgeHTML(p.avail)||badgeHTML(p.name)}
       <div class="product-thumb">
-        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
+        ${photo?`<img src="${escapeHtml(photo)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="showFallbackEmoji(this)"/>`:PAW_ICON}
       </div>
       <div class="product-body">
         <div class="product-cat">${escapeHtml(p.category)}</div>
@@ -473,7 +514,7 @@ function renderProducts(){
   const filtered=sectionItems.filter(p=>(activecat==='all'||p.category===activecat)&&p.name.toLowerCase().includes(q));
   const grid=document.getElementById('productGrid');
   const cardFn=activeSection==='pets'?petCardHTML:shopCardHTML;
-  grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:32px 0;">${activeSection==='pets'?'No pets available right now — check back soon!':'No products found.'}</p>`;
+  grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0;">${activeSection==='pets'?'No pets available right now — check back soon!':'No products found.'}</p>`;
   if(window.applyScrollReveal) applyScrollReveal();
 }
 
@@ -483,7 +524,7 @@ function addToCart(id){
   const p=all.find(x=>x.id===id); if(!p) return;
   const ex=cart.find(x=>x.id===id);
   if(ex) ex.qty++; else cart.push({...p,qty:1});
-  updateCartUI(); showToast(p.name+' added to cart!');
+  updateCartUI(); showToast(p.name+' added to cart');
 }
 function updateCartUI(){
   const total=cart.reduce((a,b)=>a+b.qty,0);
@@ -501,14 +542,14 @@ function renderCartModal(){
   const totalAmt=cart.reduce((a,b)=>a+b.price*b.qty,0);
   body.innerHTML=cart.map(item=>`
     <div class="cart-item">
-      <div class="cart-item-icon" style="${item.photos&&item.photos[0]?'width:2.2rem;height:2.2rem;overflow:hidden;border-radius:6px;display:flex;align-items:center;justify-content:center':''}">${item.photos&&item.photos[0]?`<img src="${escapeHtml(item.photos[0])}" style="width:100%;height:100%;object-fit:cover">`:PAW_ICON}</div>
-      <div class="cart-item-info"><strong>${item.name}</strong><span>₹${item.price} each</span></div>
+      <div class="cart-item-icon">${item.photos&&item.photos[0]?`<img src="${escapeHtml(item.photos[0])}" style="width:100%;height:100%;object-fit:cover" alt="">`:PAW_ICON}</div>
+      <div class="cart-item-info"><strong>${escapeHtml(item.name)}</strong><span>₹${item.price} each</span></div>
       <div class="qty-controls">
-        <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},-1)">−</button>
+        <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},-1)" aria-label="Decrease quantity">−</button>
         <div class="qty-val">${item.qty}</div>
-        <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},1)">+</button>
+        <button class="qty-btn" onclick="changeQty(${escapeHtml(JSON.stringify(item.id))},1)" aria-label="Increase quantity">+</button>
       </div>
-      <div style="min-width:56px;text-align:right;font-weight:800;color:var(--teal);">₹${item.price*item.qty}</div>
+      <div style="min-width:60px;text-align:right;font-weight:600;color:var(--forest);">₹${item.price*item.qty}</div>
     </div>`).join('');
   document.getElementById('cartTotalAmt').textContent='₹'+totalAmt.toLocaleString('en-IN');
 }
@@ -523,18 +564,18 @@ document.getElementById('cartOverlay').addEventListener('click',e=>{if(e.target=
 
 function statusInlineHTML(avail){
   const s=STATUS_BADGE[avail]; if(!s) return '';
-  return `<span class="badge-pill ${s.cls}" style="position:static;display:inline-block;margin-left:8px">${s.label}</span>`;
+  return `<span class="badge-pill ${s.cls}" style="position:static;display:inline-block;margin-left:10px">${s.label}</span>`;
 }
 function fullWidthWAButton(url,label){
-  return `<a class="add-btn" style="text-decoration:none;width:100%;display:flex;align-items:center;justify-content:center;gap:6px" href="${url}" target="_blank">${WA_ICON} ${label}</a>`;
+  return `<a class="add-btn" style="text-decoration:none;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px" href="${url}" target="_blank">${WA_ICON} ${label}</a>`;
 }
 function detailActionHTML(p){
   const avail=p.avail||'Available';
-  if(avail==='Sold') return `<div style="width:100%;text-align:center;font-weight:800;color:var(--muted);text-transform:uppercase;font-size:.95rem;padding:10px 0">Sold</div>`;
+  if(avail==='Sold') return `<div style="width:100%;text-align:center;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:.9rem;padding:12px 0">Sold</div>`;
   if(avail==='Out of Stock - Raise Order Request') return fullWidthWAButton(orderRequestUrl(p),'Raise Order Request');
   if(avail==='Display') return fullWidthWAButton(displayEnquiryUrl(p),'Enquire on WhatsApp');
   if(p.section==='pets'||!p.price) return fullWidthWAButton(petEnquiryUrl(p),'Enquire on WhatsApp');
-  return `<div class="pd-price">₹${p.price}</div><button class="add-btn" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`;
+  return `<div class="pd-price">₹${p.price}</div><button class="add-btn" style="min-height:52px;padding:0 24px" onclick="addToCart(${escapeHtml(JSON.stringify(p.id))})">+ Add to Cart</button>`;
 }
 
 // ── PRODUCT DETAIL MODAL ──
@@ -548,7 +589,7 @@ function openProductDetail(id){
     </div>
     <div class="pd-cat">${escapeHtml(p.category)}${statusInlineHTML(p.avail)}</div>
     <div class="pd-name">${escapeHtml(p.name)}</div>
-    ${meta?`<div style="font-weight:700;color:var(--teal);margin-bottom:6px">${escapeHtml(meta)}</div>`:''}
+    ${meta?`<div style="font-weight:500;color:var(--forest);margin-bottom:8px">${escapeHtml(meta)}</div>`:''}
     <div class="pd-desc">${escapeHtml(p.desc||'No description available.')}</div>
     <div class="pd-foot">
       ${detailActionHTML(p)}
@@ -557,6 +598,7 @@ function openProductDetail(id){
 }
 function closeProductDetail(){ document.getElementById('productDetailOverlay').classList.remove('open'); }
 document.getElementById('productDetailOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('productDetailOverlay'))closeProductDetail();});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeCart(); closeProductDetail(); } });
 
 // ── WHATSAPP CHECKOUT ──
 const WHATSAPP_NUMBER = '919492919527';

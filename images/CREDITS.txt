@@ -1,0 +1,17 @@
+Photo credits — all photos are free to use under the Unsplash License
+(https://unsplash.com/license). Attribution isn't required, but here's who took them.
+
+hero.jpg            Brunxs           https://unsplash.com/photos/azsk_6IMT3I
+boarding.jpg        Madalyn Cox      https://unsplash.com/photos/69IqyoXu5xw
+community.jpg       Andrea Brambila  https://unsplash.com/photos/2MdH59FwroA
+svc-boarding.jpg    Glomad Marketing https://unsplash.com/photos/6VQlKJp2vpo
+svc-shop.jpg        David D'Angelo   https://unsplash.com/photos/xWKBOhVXBQ4
+svc-community.jpg   Eric Ward        https://unsplash.com/photos/ISg37AI2A-s
+pet-dog.jpg         Michael Oxendine https://unsplash.com/photos/t7wwffh6x8E
+pet-cat.jpg         Wes Hicks        https://unsplash.com/photos/qGheSe6xIVY
+pet-bird.jpg        Ursula Gamez     https://unsplash.com/photos/uQ1Xg4dT07I
+pet-rabbit.jpg      Fabian Kleiser   https://unsplash.com/photos/m2v8QKFHP7o
+pet-hamster.jpg     Silje Roseneng   https://unsplash.com/photos/cMp84C0fPSg
+
+Swap any of these for your own photos of real HV Petvilla boarders at any time —
+just keep the same filename.
