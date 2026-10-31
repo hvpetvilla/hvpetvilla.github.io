@@ -13,5 +13,11 @@ pet-bird.jpg        Ursula Gamez     https://unsplash.com/photos/uQ1Xg4dT07I
 pet-rabbit.jpg      Fabian Kleiser   https://unsplash.com/photos/m2v8QKFHP7o
 pet-hamster.jpg     Silje Roseneng   https://unsplash.com/photos/cMp84C0fPSg
 
+farm-hero.jpg       Unsplash         https://images.unsplash.com/photo-1588597989061-b60ad0eefdbf
+farm-hen.jpg        Unsplash         https://images.unsplash.com/photo-1548550023-2bdb3c5beed7
+farm-eggs.jpg       Unsplash         https://images.unsplash.com/photo-1491524062933-cb0289261700
+farm-basket.jpg     Unsplash         https://images.unsplash.com/photo-1664339307400-9c22e5f44496
+farm-carton.jpg     Unsplash         https://images.unsplash.com/photo-1498654077810-12c21d4d6dc3
+
 Swap any of these for your own photos of real HV Petvilla boarders at any time —
 just keep the same filename.

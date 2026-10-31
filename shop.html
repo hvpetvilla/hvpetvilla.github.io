@@ -74,7 +74,7 @@
       font-weight: 600; font-size: .95rem; cursor: pointer; color: var(--muted);
       transition: background .25s, color .25s, box-shadow .25s;
     }
-    .sec-btn.on { background: var(--cream); color: var(--forest); box-shadow: var(--shadow-sm); }
+    .sec-btn.on { background: var(--forest); color: var(--cream); box-shadow: var(--shadow-sm); }
     .sec-btn:hover:not(.on) { color: var(--forest); }
     .shop-bar { flex: 1; min-width: 220px; }
     .search-wrap {
@@ -205,6 +205,7 @@
   <div class="nav-links">
     <a href="boarding.html">Boarding</a>
     <a href="shop.html" class="active" aria-current="page">Shop</a>
+    <a href="farm.html">Farm</a>
     <a href="communiTree.html">CommuniTree</a>
     <a href="faq.html">FAQ</a>
     <a href="contact.html">Contact</a>
@@ -217,6 +218,7 @@
 <div class="nav-mobile" id="navMobile">
   <a href="boarding.html">Boarding</a>
   <a href="shop.html" class="active">Shop</a>
+  <a href="farm.html">Farm</a>
   <a href="communiTree.html">CommuniTree</a>
   <a href="faq.html">FAQ</a>
   <a href="contact.html">Contact</a>
@@ -251,13 +253,14 @@
 <main>
   <!-- Products and live pets are managed from BizTrack's Products catalogue
        and appear here automatically — mark an item "Available" there and it
-       shows up below, split into Shop or Live Pets by its category. -->
+       shows up below, split into Shop, Live Pets or Farm by its category. -->
   <div class="shop-toolbar">
     <div class="wrap">
       <div class="toolbar-row">
         <div class="section-toggle" id="sectionToggle" role="tablist">
           <button class="sec-btn on" data-sec="shop" onclick="switchSection('shop')">Shop</button>
           <button class="sec-btn" data-sec="pets" onclick="switchSection('pets')">Live Pets</button>
+          <button class="sec-btn" data-sec="farm" onclick="switchSection('farm')">Farm</button>
         </div>
         <div class="shop-bar">
           <div class="search-wrap">
@@ -324,6 +327,7 @@
         <h4>Explore</h4>
         <a href="boarding.html">Boarding</a>
         <a href="shop.html">Pet Shop</a>
+        <a href="farm.html">Farm</a>
         <a href="communiTree.html">CommuniTree</a>
         <a href="faq.html">FAQ</a>
         <a href="contact.html">Contact</a>
@@ -353,7 +357,8 @@
 // two views over the same feed, split by the section the API tags each on.
 const SECTION_CATS={
   shop:['all','Feed & Medicine','Equipment','Accessories','Other'],
-  pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic']
+  pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic'],
+  farm:['all','Country Hen','Country Eggs']
 };
 const CAT_LABELS={
   all:'All'
@@ -440,7 +445,7 @@ function showFallbackEmoji(img){
   img.parentElement.innerHTML = img.dataset.emoji ? escapeHtml(img.dataset.emoji) : PAW_ICON;
 }
 
-// Build chips (category set depends on which section — Shop or Live Pets — is active)
+// Build chips (category set depends on which section — Shop, Live Pets or Farm — is active)
 function buildChips(){
   const el=document.getElementById('chips'); el.innerHTML='';
   SECTION_CATS[activeSection].forEach(c=>{
@@ -508,13 +513,18 @@ function petCardHTML(p){
     </div>`;
 }
 
+const EMPTY_MSG={
+  shop:'No products found.',
+  pets:'No pets available right now — check back soon!',
+  farm:'Our first farm batch is getting ready — message us on WhatsApp to reserve country eggs or country hens.'
+};
 function renderProducts(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const sectionItems=getAllProducts().filter(p=>p.section===activeSection);
   const filtered=sectionItems.filter(p=>(activecat==='all'||p.category===activecat)&&p.name.toLowerCase().includes(q));
   const grid=document.getElementById('productGrid');
   const cardFn=activeSection==='pets'?petCardHTML:shopCardHTML;
-  grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0;">${activeSection==='pets'?'No pets available right now — check back soon!':'No products found.'}</p>`;
+  grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0;">${EMPTY_MSG[activeSection]}</p>`;
   if(window.applyScrollReveal) applyScrollReveal();
 }
 
@@ -643,6 +653,12 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
+// farm.html links here with ?sec=farm (also ?sec=pets) to open that tab directly
+const initialSec=new URLSearchParams(location.search).get('sec');
+if(SECTION_CATS[initialSec]&&initialSec!==activeSection){
+  activeSection=initialSec;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on', b.dataset.sec===activeSection));
+}
 buildChips();
 prefillBuyerDetails();
 loadProducts().then(renderProducts);

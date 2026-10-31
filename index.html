@@ -307,6 +307,16 @@
       .hero-media { animation: none; }
       .hero-in { opacity: 1; animation: none; }
     }
+    /* Farm teaser — HV Petvilla Farm (farm.html) */
+    .farm-band { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
+    .farm-band-art { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--sand-2); box-shadow: var(--shadow-md); }
+    .farm-band-art img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+    .farm-band:hover .farm-band-art img { transform: scale(1.04); }
+    .farm-band-eggs { position: absolute; right: 18px; bottom: 18px; width: 34%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 5px solid var(--sand); box-shadow: var(--shadow-lg); }
+    .farm-band-new { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--coral); color: var(--charcoal); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 18px; }
+    .farm-band ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 30px; }
+    .farm-band li { padding: 8px 14px; border-radius: 999px; background: var(--cream); border: 1px solid var(--line); font-size: .9rem; font-weight: 500; color: var(--forest); }
+    @media (max-width: 760px) { .farm-band { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -319,6 +329,7 @@
   <div class="nav-links">
     <a href="boarding.html" id="nl-boarding">Boarding</a>
     <a href="shop.html" id="nl-shop">Shop</a>
+    <a href="farm.html">Farm</a>
     <a href="communiTree.html">CommuniTree</a>
     <a href="faq.html">FAQ</a>
     <a href="contact.html">Contact</a>
@@ -331,6 +342,7 @@
 <div class="nav-mobile" id="navMobile">
   <a href="boarding.html">Boarding</a>
   <a href="shop.html">Shop</a>
+  <a href="farm.html">Farm</a>
   <a href="communiTree.html">CommuniTree</a>
   <a href="faq.html">FAQ</a>
   <a href="contact.html">Contact</a>
@@ -453,6 +465,26 @@
   </div>
 </section>
 
+<!-- FARM -->
+<section class="section" style="padding-top:0" aria-labelledby="farm-title">
+  <div class="wrap">
+    <a href="farm.html" class="farm-band reveal" style="text-decoration:none;color:inherit">
+      <div class="farm-band-art">
+        <img src="images/farm-hero.jpg" alt="Free-roaming country hens on green grass" loading="lazy" width="2400" height="1602"/>
+        <div class="farm-band-eggs"><img src="images/farm-basket.jpg" alt="" loading="lazy" width="1400" height="933"/></div>
+      </div>
+      <div>
+        <span class="farm-band-new">New</span>
+        <p class="eyebrow">HV Petvilla Farm</p>
+        <h2 class="h2" id="farm-title">Country hens &amp; <em>country eggs.</em></h2>
+        <p class="lede" style="margin-top:18px">Our new farm raises free-roaming naatu kodi the old way. Order country hens and fresh country eggs, straight from our farm.</p>
+        <ul><li>Naatu Kodi</li><li>Country Eggs</li><li>Free to roam</li></ul>
+        <span class="btn btn-dark">Visit the farm <span class="arrow" aria-hidden="true">→</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
 <!-- WHY US -->
 <section class="section why on-dark" aria-labelledby="why-title">
   <div class="wrap why-grid">
@@ -561,6 +593,7 @@
         <h4>Explore</h4>
         <a href="boarding.html">Boarding</a>
         <a href="shop.html">Pet Shop</a>
+        <a href="farm.html">Farm</a>
         <a href="communiTree.html">CommuniTree</a>
         <a href="faq.html">FAQ</a>
         <a href="contact.html">Contact</a>
