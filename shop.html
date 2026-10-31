@@ -356,8 +356,8 @@
 // (food/equipment/accessories/other) and "pets" items (live animals) are
 // two views over the same feed, split by the section the API tags each on.
 const SECTION_CATS={
-  shop:['all','Feed & Medicine','Equipment','Accessories','Other'],
-  pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic'],
+  shop:['all','Feed & Medicine','Cages & Aviaries','Equipment','Accessories','Other'],
+  pets:['all','Birds','Reptiles','Small Mammals','Aquatics','Exotic','Domestic Pets'],
   farm:['all','Country Hen','Country Eggs']
 };
 const CAT_LABELS={
@@ -422,7 +422,7 @@ async function loadProducts(){
     if(!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     apiProducts = data.map(p => ({
-      id: p._id, name: p.name, category: p.category, section: p.section, avail: p.avail||'Available',
+      id: p._id, name: p.name, category: p.category, group: p.group || p.category, section: p.section, avail: p.avail||'Available',
       breed: p.breed||'', age: p.age||'', gender: p.gender||'',
       photos: Array.isArray(p.photos)?p.photos:[], desc: p.desc || '',
       price: p.price, mrp: p.mrp
@@ -521,7 +521,7 @@ const EMPTY_MSG={
 function renderProducts(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const sectionItems=getAllProducts().filter(p=>p.section===activeSection);
-  const filtered=sectionItems.filter(p=>(activecat==='all'||p.category===activecat)&&p.name.toLowerCase().includes(q));
+  const filtered=sectionItems.filter(p=>(activecat==='all'||p.group===activecat)&&p.name.toLowerCase().includes(q));
   const grid=document.getElementById('productGrid');
   const cardFn=activeSection==='pets'?petCardHTML:shopCardHTML;
   grid.innerHTML=filtered.length?filtered.map(cardFn).join(''):`<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:48px 0;">${EMPTY_MSG[activeSection]}</p>`;
