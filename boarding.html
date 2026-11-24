@@ -176,6 +176,19 @@
     .price-note { font-family: var(--font-body); font-size: .85rem; color: var(--muted); margin-top: 4px; }
     .price-foot-note { font-size: .95rem; color: var(--muted); margin-top: 20px; line-height: 1.6; }
     .price-foot-note a { color: var(--coral-ink); font-weight: 600; }
+    .pricing-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pricing-actions .btn { min-height: 44px; }
+    .pricing-actions .btn[disabled] { opacity: .6; cursor: wait; }
+    .terms-box { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 24px; }
+    .terms-box h3 { font-size: 1.35rem; margin-bottom: 12px; }
+    .terms-list { margin: 0; padding-left: 1.4em; color: var(--charcoal); font-size: .95rem; line-height: 1.6; }
+    .terms-list li { margin-bottom: 6px; }
+    .admin-panel textarea {
+      width: 100%; min-height: 220px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: .95rem; font-family: var(--font-body); line-height: 1.5; outline: none; background: #FFFDF9; resize: vertical;
+    }
+    .admin-panel textarea:focus { border-color: var(--forest); }
+    .admin-hint { font-size: .82rem; color: var(--muted); margin-top: 6px; }
 
     /* Admin (mirrors shop.html) */
     .admin-toggle { margin-top: 24px; text-align: right; }
@@ -430,11 +443,20 @@
         <p class="eyebrow">Pricing</p>
         <h2>Boarding rates, per night</h2>
       </div>
+      <div class="pricing-actions">
+        <button type="button" class="btn btn-outline" id="pricingPdfBtn" onclick="downloadPricingPdf()">Download PDF</button>
+        <button type="button" class="btn btn-primary" id="pricingShareBtn" onclick="sharePricingPdf()" style="display:none;">Share PDF</button>
+      </div>
     </div>
     <div id="pricingTableWrap">
       <p style="color:var(--muted);">Loading pricing…</p>
     </div>
     <p class="price-foot-note">Rates depend on your pet's species and care needs — WhatsApp us with details for an exact quote. <a href="https://wa.me/919492919527" target="_blank" rel="noopener">Chat with us →</a></p>
+
+    <div class="terms-box" id="termsBox" style="display:none;">
+      <h3>Terms &amp; conditions</h3>
+      <ol class="terms-list" id="termsList"></ol>
+    </div>
 
     <div class="admin-toggle">
       <button onclick="showPricingAdminLogin()">Admin</button>
@@ -459,6 +481,14 @@
       <div style="margin-top:14px;font-size:.82rem;color:var(--muted);">
         Tiers saved here are stored in the database and visible to every visitor immediately.
       </div>
+
+      <h3 style="margin-top:32px;">Terms &amp; conditions</h3>
+      <label for="termsText">One term per line. Shown under the pricing table and included in the PDF.</label>
+      <textarea id="termsText" placeholder="e.g.&#10;Vaccination records are required for dogs and cats.&#10;Check-in 10 AM – 7 PM; check-out by 12 noon.&#10;50% advance to confirm the booking."></textarea>
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="saveTermsBtn" onclick="saveTerms()">Save Terms</button>
+      </div>
+      <p class="admin-hint">Leave empty and save to hide the terms section.</p>
     </div>
   </section>
 </main>
@@ -828,8 +858,187 @@
     await loadPricing();
     showToast('Pricing tier deleted');
   }
+  // ── TERMS & CONDITIONS ──
+  let boardingTerms = '';
+  function termsLines(){
+    return boardingTerms.split('\n').map(l => l.trim().replace(/^(\d+[.)]|[-•*])\s*/, '')).filter(Boolean);
+  }
+  function renderTerms(){
+    const lines = termsLines();
+    document.getElementById('termsBox').style.display = lines.length ? 'block' : 'none';
+    document.getElementById('termsList').innerHTML = lines.map(l => '<li>' + escapeHtml(l) + '</li>').join('');
+    const ta = document.getElementById('termsText');
+    if(ta && document.activeElement !== ta) ta.value = boardingTerms;
+  }
+  async function loadTerms(){
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing?resource=terms');
+      if(!res.ok) throw new Error('API error ' + res.status);
+      const data = await res.json();
+      boardingTerms = data.text || '';
+    } catch(e) {
+      console.error('Failed to load terms:', e);
+    }
+    renderTerms();
+  }
+  let isSavingTerms = false;
+  async function saveTerms(){
+    if(isSavingTerms) return;
+    const text = document.getElementById('termsText').value.replace(/\r/g,'').trim();
+    const adminKey = sessionStorage.getItem('hvpv_boarding_admin_key');
+    const btn = document.getElementById('saveTermsBtn');
+    isSavingTerms = true; btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing?resource=terms', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
+        body: JSON.stringify({ text })
+      });
+      if(res.status === 401) return handlePricingAdminAuthFailure();
+      if(!res.ok) throw new Error('API error ' + res.status);
+      boardingTerms = text;
+      renderTerms();
+      showToast('Terms & conditions saved');
+    } catch(e) {
+      console.error('Failed to save terms:', e);
+      showToast('Could not save terms — please try again later');
+    } finally {
+      isSavingTerms = false; btn.disabled = false; btn.textContent = 'Save Terms';
+    }
+  }
+
+  // ── PRICING PDF ──
+  function loadScriptOnce(src){
+    return new Promise((resolve, reject) => {
+      if(document.querySelector('script[src="' + src + '"]')) return resolve();
+      const el = document.createElement('script');
+      el.src = src; el.onload = resolve; el.onerror = () => reject(new Error('Failed to load ' + src));
+      document.head.appendChild(el);
+    });
+  }
+  function imageToDataUrl(src){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img, 0, 0); resolve(c.toDataURL('image/jpeg', .9));
+        } catch(e) { resolve(null); }
+      };
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+  async function buildPricingPdf(){
+    await loadScriptOnce('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js');
+    await loadScriptOnce('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 40;
+    const forest = [27,58,45], coral = [232,112,64], muted = [94,107,99];
+
+    // Header band
+    doc.setFillColor(...forest); doc.rect(0, 0, W, 90, 'F');
+    const logo = await imageToDataUrl('images/logo.jpg');
+    let tx = M;
+    if(logo){ doc.addImage(logo, 'JPEG', M, 17, 56, 56); tx = M + 70; }
+    doc.setTextColor(255,255,255); doc.setFont('times', 'bold'); doc.setFontSize(24);
+    doc.text('HV Petvilla', tx, 46);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    doc.text('Pet Boarding - Hyderabad', tx, 64);
+    doc.setFontSize(9);
+    doc.text('WhatsApp +91 94929 19527', W - M, 40, { align: 'right' });
+    doc.text('hvpetvilla.in', W - M, 54, { align: 'right' });
+    doc.text('Instagram @hv.petvilla', W - M, 68, { align: 'right' });
+
+    // Title
+    doc.setTextColor(...forest); doc.setFont('times', 'bold'); doc.setFontSize(18);
+    doc.text('Boarding rates, per night', M, 124);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...muted);
+    const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    doc.text('Rates as on ' + today + '. All prices in Indian Rupees (Rs.) per night.', M, 140);
+
+    const rupees = v => (v == null || v === '') ? 'On request' : 'Rs. ' + Number(v).toLocaleString('en-IN');
+    doc.autoTable({
+      startY: 154,
+      margin: { left: M, right: M },
+      head: [['Pet', 'Without food', 'With food', 'Special care (Handfeeding)']],
+      body: pricingTiers.map(t => [t.label + (t.note ? '\n' + t.note : ''), rupees(t.withoutFood), rupees(t.withFood), rupees(t.specialCare)]),
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 10, cellPadding: 7, lineColor: [221,212,198], lineWidth: .5, textColor: [44,44,44], valign: 'middle' },
+      headStyles: { fillColor: coral, textColor: 255, fontStyle: 'bold', fontSize: 9.5 },
+      alternateRowStyles: { fillColor: [251,247,241] },
+      columnStyles: { 1: { cellWidth: 80, halign: 'right' }, 2: { cellWidth: 80, halign: 'right' }, 3: { cellWidth: 96, halign: 'right' } },
+      didParseCell: d => { if(d.section === 'head' && d.column.index > 0) d.cell.styles.halign = 'right'; }
+    });
+
+    let y = doc.lastAutoTable.finalY + 14;
+    doc.setFontSize(9); doc.setTextColor(...muted);
+    doc.text("Rates depend on your pet's species and care needs. WhatsApp us for an exact quote.", M, y);
+    y += 28;
+
+    const lines = termsLines();
+    if(lines.length){
+      if(y > H - 100){ doc.addPage(); y = 60; }
+      doc.setTextColor(...forest); doc.setFont('times', 'bold'); doc.setFontSize(14);
+      doc.text('Terms & conditions', M, y); y += 18;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(44,44,44);
+      lines.forEach((line, i) => {
+        const wrapped = doc.splitTextToSize(line.replace(/₹/g, 'Rs. '), W - 2*M - 20);
+        if(y + wrapped.length * 13 > H - 50){ doc.addPage(); y = 60; }
+        doc.text((i+1) + '.', M, y);
+        doc.text(wrapped, M + 20, y);
+        y += wrapped.length * 13 + 5;
+      });
+    }
+
+    // Footer on every page
+    const pages = doc.getNumberOfPages();
+    for(let p = 1; p <= pages; p++){
+      doc.setPage(p);
+      doc.setDrawColor(221,212,198); doc.line(M, H - 34, W - M, H - 34);
+      doc.setFontSize(8); doc.setTextColor(...muted);
+      doc.text('HV Petvilla - Hyderabad, Telangana - hvpetvilla.in - +91 94929 19527', M, H - 20);
+      if(pages > 1) doc.text('Page ' + p + ' of ' + pages, W - M, H - 20, { align: 'right' });
+    }
+    return doc;
+  }
+  function pdfFileName(){ return 'HV-Petvilla-Boarding-Rates-' + new Date().toISOString().slice(0,10) + '.pdf'; }
+  async function withPdfBusy(btnId, label, fn){
+    const btn = document.getElementById(btnId); const old = btn.textContent;
+    btn.disabled = true; btn.textContent = label;
+    try { await fn(); }
+    catch(e){ if(e && e.name === 'AbortError') return; console.error('PDF failed:', e); showToast('Could not create the PDF — please try again'); }
+    finally { btn.disabled = false; btn.textContent = old; }
+  }
+  function downloadPricingPdf(){
+    return withPdfBusy('pricingPdfBtn', 'Preparing…', async () => {
+      const doc = await buildPricingPdf();
+      doc.save(pdfFileName());
+    });
+  }
+  function sharePricingPdf(){
+    return withPdfBusy('pricingShareBtn', 'Preparing…', async () => {
+      const doc = await buildPricingPdf();
+      const file = new File([doc.output('blob')], pdfFileName(), { type: 'application/pdf' });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        await navigator.share({ files: [file], title: 'HV Petvilla boarding rates', text: 'HV Petvilla pet boarding rates and terms' });
+      } else {
+        doc.save(pdfFileName());
+      }
+    });
+  }
+  (function(){
+    try {
+      const probe = new File(['x'], 'x.pdf', { type: 'application/pdf' });
+      if(navigator.canShare && navigator.canShare({ files: [probe] })) document.getElementById('pricingShareBtn').style.display = 'inline-flex';
+    } catch(e) {}
+  })();
+
+
   updatePricingAdminLogoutVisibility();
   loadPricing();
+  loadTerms();
 </script>
 </body>
 </html>
