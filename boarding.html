@@ -190,6 +190,27 @@
     .admin-panel textarea:focus { border-color: var(--forest); }
     .admin-hint { font-size: .82rem; color: var(--muted); margin-top: 6px; }
 
+    /* Boarding setup gallery */
+    .setup-card { margin-top: clamp(48px, 7vw, 96px); }
+    .setup-head { margin-bottom: 24px; }
+    .setup-head h2 { margin: 0; }
+    .setup-head p { color: var(--muted); margin-top: 8px; max-width: 60ch; }
+    .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .setup-item { margin: 0; }
+    .setup-item img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm, 12px); display: block; cursor: zoom-in; background: var(--sand-2); }
+    .setup-item figcaption { font-size: .9rem; color: var(--charcoal); margin-top: 8px; }
+    .setup-item input { width: 100%; min-height: 40px; margin-top: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-family: var(--font-body); font-size: .9rem; background: #FFFDF9; }
+    .setup-tools { display: flex; gap: 6px; margin-top: 6px; }
+    .setup-tools button { min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); background: #FFFDF9; font-size: .8rem; cursor: pointer; color: var(--forest); }
+    .setup-tools button.del { background: var(--red); border-color: var(--red); color: #fff; margin-left: auto; }
+    .setup-tools button[disabled] { opacity: .4; cursor: default; }
+    .setup-admin { display: none; margin-top: 20px; background: var(--sand); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 18px; }
+    .setup-admin.open { display: block; }
+    .setup-empty { color: var(--muted); }
+    .setup-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; cursor: zoom-out; }
+    .setup-lightbox.open { display: flex; }
+    .setup-lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+
     /* Admin (mirrors shop.html) */
     .admin-toggle { margin-top: 24px; text-align: right; }
     .admin-toggle button {
@@ -435,6 +456,22 @@
       </div>
     </aside>
   </div>
+
+  <!-- Boarding setup photos -->
+  <section class="card setup-card reveal" id="setup" style="display:none;">
+    <div class="setup-head">
+      <p class="eyebrow">Our boarding setup</p>
+      <h2>Where your pet will stay</h2>
+      <p>A look at the enclosures, cages and play areas your pet will use during the stay.</p>
+    </div>
+    <div class="setup-grid" id="setupGrid"></div>
+    <div class="setup-admin" id="setupAdmin">
+      <label for="setupFiles" style="display:block;font-size:.8rem;font-weight:600;color:var(--forest);margin-bottom:6px;">Add boarding setup photos (you can pick several)</label>
+      <input type="file" id="setupFiles" accept="image/*" multiple onchange="uploadSetupPhotos(this)"/>
+      <p class="admin-hint" id="setupStatus">Photos are resized before upload. Add a caption under each photo; it is saved when you leave the box. Photos also appear in the pricing PDF.</p>
+    </div>
+  </section>
+  <div class="setup-lightbox" id="setupLightbox" onclick="this.classList.remove('open')"><img id="setupLightboxImg" alt=""/></div>
 
   <!-- Pricing -->
   <section class="card pricing-card reveal" id="pricing">
@@ -714,6 +751,7 @@
   }
 
   function renderPricing(){
+    if(typeof renderSetupPhotos === 'function') renderSetupPhotos();
     const wrap = document.getElementById('pricingTableWrap');
     if(!pricingTiers.length){
       wrap.innerHTML = '<p style="color:var(--muted);">Pricing coming soon — WhatsApp us for a quote.</p>';
@@ -907,6 +945,132 @@
     }
   }
 
+  // ── BOARDING SETUP PHOTOS ──
+  let setupPhotos = [];
+  async function loadSetupPhotos(){
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing?resource=photos');
+      if(!res.ok) throw new Error('API error ' + res.status);
+      const data = await res.json();
+      setupPhotos = Array.isArray(data.photos) ? data.photos : [];
+    } catch(e) {
+      console.error('Failed to load setup photos:', e);
+    }
+    renderSetupPhotos();
+  }
+  function renderSetupPhotos(){
+    const admin = pricingAdminOpen && sessionStorage.getItem('hvpv_boarding_admin') === '1';
+    const section = document.getElementById('setup');
+    section.style.display = (setupPhotos.length || admin) ? 'block' : 'none';
+    document.getElementById('setupAdmin').classList.toggle('open', admin);
+    const grid = document.getElementById('setupGrid');
+    if(!setupPhotos.length){
+      grid.innerHTML = admin ? '<p class="setup-empty">No photos yet — add some below.</p>' : '';
+      return;
+    }
+    grid.innerHTML = setupPhotos.map((p, i) => `
+      <figure class="setup-item">
+        <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.caption || 'Boarding setup photo')}" loading="lazy" onclick="openSetupPhoto(${i})"/>
+        ${admin ? `
+          <input type="text" maxlength="120" placeholder="Caption (optional)" value="${escapeHtml(p.caption || '')}" onchange="setSetupCaption(${i}, this.value)"/>
+          <div class="setup-tools">
+            <button type="button" onclick="moveSetupPhoto(${i}, -1)" ${i === 0 ? 'disabled' : ''} aria-label="Move left">←</button>
+            <button type="button" onclick="moveSetupPhoto(${i}, 1)" ${i === setupPhotos.length - 1 ? 'disabled' : ''} aria-label="Move right">→</button>
+            <button type="button" class="del" onclick="deleteSetupPhoto(${i})">Delete</button>
+          </div>` : (p.caption ? `<figcaption>${escapeHtml(p.caption)}</figcaption>` : '')}
+      </figure>`).join('');
+  }
+  function openSetupPhoto(i){
+    const p = setupPhotos[i]; if(!p) return;
+    document.getElementById('setupLightboxImg').src = p.url;
+    document.getElementById('setupLightbox').classList.add('open');
+  }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') document.getElementById('setupLightbox').classList.remove('open'); });
+
+  async function saveSetupPhotos(okMsg){
+    const adminKey = sessionStorage.getItem('hvpv_boarding_admin_key');
+    try {
+      const res = await fetch(PRICING_API + '/api/pricing?resource=photos', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey || '' },
+        body: JSON.stringify({ photos: setupPhotos })
+      });
+      if(res.status === 401){ handlePricingAdminAuthFailure(); return false; }
+      if(!res.ok) throw new Error('API error ' + res.status);
+      if(okMsg) showToast(okMsg);
+      return true;
+    } catch(e) {
+      console.error('Failed to save setup photos:', e);
+      showToast('Could not save photos — please try again');
+      await loadSetupPhotos();
+      return false;
+    }
+  }
+  function setSetupCaption(i, value){
+    if(!setupPhotos[i]) return;
+    setupPhotos[i].caption = value.trim().slice(0, 120);
+    saveSetupPhotos('Caption saved');
+  }
+  function moveSetupPhoto(i, dir){
+    const j = i + dir; if(j < 0 || j >= setupPhotos.length) return;
+    [setupPhotos[i], setupPhotos[j]] = [setupPhotos[j], setupPhotos[i]];
+    renderSetupPhotos();
+    saveSetupPhotos();
+  }
+  function deleteSetupPhoto(i){
+    if(!setupPhotos[i]) return;
+    setupPhotos.splice(i, 1);
+    renderSetupPhotos();
+    saveSetupPhotos('Photo removed');
+  }
+  // Resize to at most 1600px on the long side and re-encode as JPEG
+  function resizeImageFile(file, maxSide = 1600, quality = .82){
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(b => b ? resolve(b) : reject(new Error('Could not read photo')), 'image/jpeg', quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read photo — try a JPG or PNG')); };
+      img.src = url;
+    });
+  }
+  async function uploadSetupPhotos(input){
+    const files = Array.from(input.files || []); if(!files.length) return;
+    const status = document.getElementById('setupStatus');
+    input.disabled = true;
+    let added = 0;
+    for(let k = 0; k < files.length; k++){
+      status.textContent = 'Uploading photo ' + (k + 1) + ' of ' + files.length + '…';
+      try {
+        const blob = await resizeImageFile(files[k]);
+        const res = await fetch(PRICING_API + '/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/octet-stream', 'X-File-Type': 'image/jpeg' },
+          body: blob
+        });
+        if(!res.ok){ const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Upload failed'); }
+        const { url } = await res.json();
+        setupPhotos.push({ url, caption: '' });
+        added++;
+      } catch(e) {
+        console.error('Photo upload failed:', e);
+        showToast((files[k].name || 'Photo') + ': ' + e.message);
+      }
+    }
+    input.value = ''; input.disabled = false;
+    status.textContent = 'Photos are resized before upload. Add a caption under each photo; it is saved when you leave the box. Photos also appear in the pricing PDF.';
+    if(added){
+      renderSetupPhotos();
+      await saveSetupPhotos(added + ' photo' + (added > 1 ? 's' : '') + ' added');
+    }
+  }
+
   // ── PRICING PDF ──
   function loadScriptOnce(src){
     return new Promise((resolve, reject) => {
@@ -916,16 +1080,31 @@
       document.head.appendChild(el);
     });
   }
-  function imageToDataUrl(src){
+  // Loads an image and returns a JPEG data URL. With crop {w,h}, the image is
+  // centre-cropped to that size (used for the 4:3 setup photos in the PDF).
+  function imageToDataUrl(src, crop){
     return new Promise(resolve => {
+      const timer = setTimeout(() => resolve(null), 20000); // never let one slow photo block the PDF
+      const done = v => { clearTimeout(timer); resolve(v); };
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
-          c.getContext('2d').drawImage(img, 0, 0); resolve(c.toDataURL('image/jpeg', .9));
-        } catch(e) { resolve(null); }
+          const c = document.createElement('canvas');
+          const ctx = c.getContext('2d');
+          if(crop){
+            c.width = crop.w; c.height = crop.h;
+            const s = Math.max(crop.w / img.naturalWidth, crop.h / img.naturalHeight);
+            const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+            ctx.drawImage(img, (crop.w - dw) / 2, (crop.h - dh) / 2, dw, dh);
+            done(c.toDataURL('image/jpeg', .82));
+          } else {
+            c.width = img.naturalWidth; c.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0); done(c.toDataURL('image/jpeg', .9));
+          }
+        } catch(e) { done(null); }
       };
-      img.onerror = () => resolve(null);
+      img.onerror = () => done(null);
       img.src = src;
     });
   }
@@ -976,6 +1155,33 @@
     doc.setFontSize(9); doc.setTextColor(...muted);
     doc.text("Rates depend on your pet's species and care needs. WhatsApp us for an exact quote.", M, y);
     y += 28;
+
+    // Boarding setup photos, two per row
+    if(setupPhotos.length){
+      const imgs = await Promise.all(setupPhotos.map(p => imageToDataUrl(p.url, { w: 800, h: 600 })));
+      const items = setupPhotos.map((p, i) => ({ data: imgs[i], caption: p.caption || '' })).filter(x => x.data);
+      if(items.length){
+        const gap = 16, cw = (W - 2*M - gap) / 2, ch = cw * 3 / 4;
+        if(y + 22 + ch > H - 50){ doc.addPage(); y = 60; }
+        doc.setTextColor(...forest); doc.setFont('times', 'bold'); doc.setFontSize(14);
+        doc.text('Our boarding setup', M, y); y += 14;
+        for(let i = 0; i < items.length; i += 2){
+          const row = items.slice(i, i + 2);
+          const capH = row.some(r => r.caption) ? 16 : 0;
+          if(y + ch + capH > H - 50){ doc.addPage(); y = 60; }
+          row.forEach((r, k) => {
+            const x = M + k * (cw + gap);
+            doc.addImage(r.data, 'JPEG', x, y, cw, ch);
+            if(r.caption){
+              doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(44,44,44);
+              doc.text(doc.splitTextToSize(r.caption, cw)[0], x, y + ch + 12);
+            }
+          });
+          y += ch + capH + 12;
+        }
+        y += 14;
+      }
+    }
 
     const lines = termsLines();
     if(lines.length){
@@ -1039,6 +1245,7 @@
   updatePricingAdminLogoutVisibility();
   loadPricing();
   loadTerms();
+  loadSetupPhotos();
 </script>
 </body>
 </html>
